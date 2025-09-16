@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('tindak_lanjut', function (Blueprint $table) {
             $table->increments('tindak_lanjut_id');
-            $table->string('jenis_tindak_lanjut', 30);
+            $table->string('jenis_tindak_lanjut', 30)->nullable();
             $table->text('deskripsi');
-            $table->unsignedInteger('pengaduan_id');
-            $table->unsignedInteger('handled_by');
+            $table->unsignedInteger('pengaduan_id')->nullable();
+            $table->unsignedInteger('handled_by')->nullable();
             $table->timestamps();
         });
     }

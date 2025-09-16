@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('bukti_pengaduan', function (Blueprint $table) {
             $table->increments('bukti_pengaduan_id');
-            $table->unsignedInteger('pengaduan_id');
-            $table->string('file_path', 255);
-            $table->enum('jenis_bukti', ['Bukti Digital', 'Bukti Fisik', 'Bukti Lainnya']);
-            $table->date('tanggal_upload_bukti');
-            $table->unsignedInteger('uploaded_by');
+            $table->unsignedInteger('pengaduan_id')->nullable();
+            $table->string('file_path', 255)->nullable();
+            $table->enum('jenis_bukti', ['Bukti Digital', 'Bukti Fisik', 'Bukti Lainnya'])->nullable();
+            $table->unsignedInteger('uploaded_by')->nullable();
             $table->timestamps();
         });
     }

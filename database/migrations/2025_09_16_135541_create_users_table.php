@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void 
     {
-        Schema::create('user', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->increments('user_id');
             $table->string('nim', 25)->nullable();
             $table->string('nama', 100)->nullable();
-            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan', 'Lainnya']);
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan', 'Lainnya'])->nullable();
             $table->string('tempat_lahir', 50)->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->text('alamat')->nullable();

@@ -12,15 +12,14 @@ return new class extends Migration
     
     public function up(): void 
     {
-        Schema::create('pengaduan', function (Blueprint $table) {
+        Schema::create('pengaduans', function (Blueprint $table) {
             $table->increments('pengaduan_id');
-            $table->unsignedInteger('pelapor');
-            $table->string('kategori_kekerasan_id', 50)->nullable();
+            $table->unsignedInteger('pelapor')->nullable();
+            $table->string('kategori_kekerasan', 50)->nullable();
             $table->text('deskripsi_kejadian');
-            $table->date('tanggal_kejadian');
-            $table->date('tanggal_melapor');
-            $table->enum('status_pengaduan', ['Diproses', 'Selesai', 'Menunggu']);
-            $table->enum('status_pelapor', ['Korban', 'Keluarga', 'Teman', 'Saksi']);
+            $table->date('tanggal_kejadian')->nullable();
+            $table->enum('status_pengaduan', ['Diproses', 'Selesai', 'Menunggu'])->nullable();
+            $table->enum('status_pelapor', ['Korban', 'Keluarga', 'Teman', 'Saksi'])->nullable();
             $table->timestamps();
         });
     }
