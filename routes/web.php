@@ -18,6 +18,8 @@ Route::post('/pengaduan/{id}/tindak-lanjut', [PengaduanController::class, 'tinda
 // Route::get('/form', [LaporanController::class, 'showForm'])->name('form')->middleware('auth');
 // Route::post('/form', [LaporanController::class, 'store'])->name('form.store')->middleware('auth');
 
+// cookkk
+
 Route::get('/login', [UserController::class, 'showLogin'])->name('login');
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login.submit');
