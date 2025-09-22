@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('pengaduan', function (Blueprint $table) {
             $table->increments('pengaduan_id');
-            $table->unsignedInteger('pelapor')->nullable();
+            $table->unsignedInteger('user_id')->nullable();
             $table->string('kategori_kekerasan', 50)->nullable();
             $table->text('deskripsi_kejadian');
             $table->date('tanggal_kejadian')->nullable();
