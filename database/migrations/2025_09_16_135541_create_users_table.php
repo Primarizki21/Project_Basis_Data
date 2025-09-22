@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('nomor_telepon', 15)->nullable();
             $table->string('pekerjaan', 50)->nullable();
-            $table->enum('role', ['Pelapor', 'Admin'])->default('Pelapor');
             $table->timestamps();
         });
     }
@@ -31,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('user');
     }
 };
 
