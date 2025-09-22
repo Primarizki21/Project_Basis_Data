@@ -34,8 +34,21 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tables', function (Blueprint $table) {
-            //
+        // Hapus foreign key dari 'pengaduan'
+        Schema::table('pengaduan', function (Blueprint $table) {
+            $table->dropForeign(['pelapor']);
+        });
+
+        // Hapus foreign key dari 'bukti_pengaduan'
+        Schema::table('bukti_pengaduan', function (Blueprint $table) {
+            $table->dropForeign(['pengaduan_id']);
+            $table->dropForeign(['uploaded_by']);
+        });
+
+        // Hapus foreign key dari 'tindak_lanjut'
+        Schema::table('tindak_lanjut', function (Blueprint $table) {
+            $table->dropForeign(['pengaduan_id']);
+            $table->dropForeign(['handled_by']);
         });
     }
 };
