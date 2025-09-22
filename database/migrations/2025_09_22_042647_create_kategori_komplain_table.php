@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kategori_kekerasan', function (Blueprint $table) {
-            $table->increments('kategori_kekerasan_id'); // primary key
-            $table->string('jenis_kekerasan', 50); // pilihan yang tampil di form
-            $table->string('deskripsi_kekerasan', 100)->nullable(); // deskripsi singkat
+        Schema::create('kategori_komplain', function (Blueprint $table) {
+            $table->increments('kategori_komplain_id'); // primary key
+            $table->string('jenis_komplain', 50); // pilihan yang tampil di form
+            $table->string('deskripsi_komplain', 100)->nullable(); // deskripsi singkat
             $table->timestamps(); // created_at & updated_at
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategori_kekerasan');
+        Schema::dropIfExists('kategori_komplain');
     }
 };

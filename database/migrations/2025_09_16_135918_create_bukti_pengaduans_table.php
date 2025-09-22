@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('pengaduan_id')->nullable();
             $table->string('file_path', 255)->nullable();
             $table->enum('jenis_bukti', ['Bukti Digital', 'Bukti Fisik', 'Bukti Lainnya'])->nullable();
-            $table->unsignedInteger('uploaded_by')->nullable();
+            $table->unsignedInteger('user_id')->nullable();
             $table->timestamps();
         });
     }
