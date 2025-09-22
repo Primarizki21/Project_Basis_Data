@@ -13,13 +13,13 @@ return new class extends Migration
     {
         // Add foreign keys to 'pengaduan' table
         Schema::table('pengaduan', function (Blueprint $table) {
-            $table->foreign('pelapor')->references('user_id')->on('user')->onDelete('set null');
+            $table->foreign('user_id')->references('user_id')->on('user')->onDelete('set null');
         });
 
         // Add foreign keys to 'bukti_pengaduan' table
         Schema::table('bukti_pengaduan', function (Blueprint $table) {
             $table->foreign('pengaduan_id')->references('pengaduan_id')->on('pengaduan')->onDelete('set null');
-            $table->foreign('uploaded_by')->references('user_id')->on('user')->onDelete('set null');
+            $table->foreign('user_id')->references('user_id')->on('user')->onDelete('set null');
         });
 
         // Add foreign keys to 'tindak_lanjut' table
@@ -35,13 +35,13 @@ return new class extends Migration
     {
         // Hapus foreign key dari 'pengaduan'
         Schema::table('pengaduan', function (Blueprint $table) {
-            $table->dropForeign(['pelapor']);
+            $table->dropForeign(['user_id']);
         });
 
         // Hapus foreign key dari 'bukti_pengaduan'
         Schema::table('bukti_pengaduan', function (Blueprint $table) {
             $table->dropForeign(['pengaduan_id']);
-            $table->dropForeign(['uploaded_by']);
+            $table->dropForeign(['user_id']);
         });
 
         // Hapus foreign key dari 'tindak_lanjut'

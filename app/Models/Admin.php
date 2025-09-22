@@ -2,31 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-tabel
-
-class User extends Authenticatable
-{
-    use Notifiable;
-
-    protected $table = 'user'; // table name
-=======
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Authenticatable
+class Admin extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'user';
-main
-    protected $primaryKey = 'user_id';
+    protected $table = 'admin';
+    protected $primaryKey = 'admin_id';
     protected $keyType = 'int';
     public $incrementing = true;
     public $timestamps = true;
 
     protected $fillable = [
-        'nim',
+        'nip',
         'nama',
         'jenis_kelamin',
         'tempat_lahir',
@@ -41,9 +32,8 @@ main
         'password',
     ];
 
-    public function pengaduan()
+    public function tindakLanjut()
     {
-        return $this->hasMany(Pengaduan::class, 'user_id');
+        return $this->hasMany(TindakLanjut::class, 'admin_id');
     }
 }
-

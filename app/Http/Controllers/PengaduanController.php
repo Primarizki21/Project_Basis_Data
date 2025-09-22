@@ -53,7 +53,7 @@ class PengaduanController extends Controller
                     'pengaduan_id' => $pengaduan->pengaduan_id,
                     'file_path'    => $path,
                     'jenis_bukti'  => 'Bukti Digital',
-                    'uploaded_by'  => Auth::id(),
+                    'user_id'      => Auth::id(),
                 ]);
             }
         }
@@ -80,23 +80,23 @@ class PengaduanController extends Controller
         $pengaduan = Pengaduan::findOrFail($id);
 
         // Pastikan hanya admin yang bisa input
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
+        // if (!Auth::user()->hasRole('admin')) {
+        //     abort(403, 'Unauthorized');
+        // }
 
         // Jika sudah ada tindak lanjut, update
         if ($pengaduan->tindakLanjut) {
             $pengaduan->tindakLanjut->update([
                 'jenis_tindak_lanjut' => $request->jenis_tindak_lanjut,
                 'deskripsi'           => $request->deskripsi,
-                'handled_by'          => Auth::id(),
+                'admin_id'          => Auth::id(),
             ]);
         } else {
             TindakLanjut::create([
                 'pengaduan_id'        => $pengaduan->pengaduan_id,
                 'jenis_tindak_lanjut' => $request->jenis_tindak_lanjut,
                 'deskripsi'           => $request->deskripsi,
-                'handled_by'          => Auth::id(),
+                'admin_id'          => Auth::id(),
             ]);
         }
 

@@ -3,15 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pengaduan extends Model
 {
+    use HasFactory, Notifiable;
+
     protected $table = 'pengaduan';
     protected $primaryKey = 'pengaduan_id';
+    protected $keyType = 'int';
+    public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
-        'pelapor',
-        'kategori_kekerasan',
+        'user_id',
+        'kategori_komplain_id',
         'deskripsi_kejadian',
         'tanggal_kejadian',
         'status_pengaduan',
@@ -21,7 +28,7 @@ class Pengaduan extends Model
     // Relasi
     public function pelapor()
     {
-        return $this->belongsTo(User::class, 'pelapor');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function bukti()
@@ -31,6 +38,11 @@ class Pengaduan extends Model
 
     public function tindakLanjut()
     {
-        return $this->hasOne(TindakLanjut::class, 'pengaduan_id');
+        return $this->hasMany(TindakLanjut::class, 'pengaduan_id');
+    }
+
+    public function kategoriKomplain()
+    {
+        return $this->belongsTo(KategoriKomplain::class, 'kategori_komplain_id');
     }
 }
