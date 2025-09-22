@@ -26,7 +26,6 @@
     {{-- Form Register --}}
     <form action="{{ route('register') }}" method="POST">
         @csrf
-        <h4>Buat Akun Baru</h4>
         <label>NIM:</label>
         <input type="text" name="nim" required><br>
         <label>Nama:</label>
@@ -41,4 +40,5 @@
         <input type="password" name="password" required><br>
         <button type="submit">Register</button>
     </form>
+
 @endsection

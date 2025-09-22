@@ -25,3 +25,8 @@ Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login.submit');
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
+Route::get('/admin', function () {
+    return view('admin');
+});
+Route::get('/admin', [PengaduanController::class, 'index'])->name('admin.pengaduan.index');
+

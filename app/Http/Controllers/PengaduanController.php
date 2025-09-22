@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class PengaduanController extends Controller
 {
+    // Admin page: list all pengaduan
+    public function index()
+    {
+        $pengaduan = Pengaduan::all(); // get all complaints
+        return view('admin', compact('pengaduan')); // pass variable to view
+    }
+
     // Form pengaduan
     public function create()
     {

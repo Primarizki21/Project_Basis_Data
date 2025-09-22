@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    protected $table = 'user'; // defaultnya 'users', kita ubah ke 'user'
+    use Notifiable;
+
+    protected $table = 'user'; // table name
     protected $primaryKey = 'user_id';
     public $timestamps = true;
 
