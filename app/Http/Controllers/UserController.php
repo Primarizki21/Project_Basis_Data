@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+
 class UserController extends Controller
 {
     // Menampilkan halaman login/register
@@ -23,6 +24,7 @@ class UserController extends Controller
             'nama' => 'required',
             'password' => 'required|min:6',
         ]);
+
 
         User::create([
             'nim' => $request->nim,
