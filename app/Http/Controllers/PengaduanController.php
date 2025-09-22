@@ -98,4 +98,41 @@ class PengaduanController extends Controller
         return redirect()->route('pengaduan.show', $pengaduan->pengaduan_id)
                          ->with('success', 'Tindak lanjut berhasil ditambahkan');
     }
+
+    public function index()
+    {
+        $pengaduan = Pengaduan::all();
+        return view('admin', compact('pengaduan'));
+    }
+
+    public function edit($id)
+    {
+        $pengaduan = Pengaduan::findOrFail($id);
+        return view('pengaduan.edit', compact('pengaduan'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $pengaduan = Pengaduan::findOrFail($id);
+
+        $request->validate([
+            'kategori_kekerasan' => 'required|string|max:50',
+            'deskripsi_kejadian' => 'required|string',
+            'tanggal_kejadian'   => 'required|date',
+            'status_pelapor'     => 'required|string',
+        ]);
+
+        $pengaduan->update($request->all());
+
+        return redirect()->route('admin.pengaduan.index')->with('success', 'Pengaduan berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $pengaduan = Pengaduan::findOrFail($id);
+        $pengaduan->delete();
+
+        return redirect()->route('admin.pengaduan.index')->with('success', 'Pengaduan berhasil dihapus');
+    }
+
 }
