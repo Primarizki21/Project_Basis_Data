@@ -106,11 +106,4 @@ class PengaduanController extends Controller
                          ->with('success', 'Tindak lanjut berhasil ditambahkan');
     }
 
-    public function index()
-    {
-        $pengaduan = Pengaduan::all();
-        return view('admin', compact('pengaduan'));
-    }
-
-    
 }
