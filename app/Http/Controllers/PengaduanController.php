@@ -105,4 +105,12 @@ class PengaduanController extends Controller
         return redirect()->route('pengaduan.show', $pengaduan->pengaduan_id)
                          ->with('success', 'Tindak lanjut berhasil ditambahkan');
     }
+
+    public function index()
+    {
+        $pengaduan = Pengaduan::all();
+        return view('admin', compact('pengaduan'));
+    }
+
+    
 }

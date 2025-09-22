@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('jenis_tindak_lanjut', 30)->nullable();
             $table->text('deskripsi');
             $table->unsignedInteger('pengaduan_id')->nullable();
-            $table->unsignedInteger('handled_by')->nullable();
+            $table->unsignedInteger('admin_id')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tindak_lanjuts');
+        Schema::dropIfExists('tindak_lanjut');
     }
 };

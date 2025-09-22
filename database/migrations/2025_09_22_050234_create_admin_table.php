@@ -9,11 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void 
+    public function up(): void
     {
-        Schema::create('user', function (Blueprint $table) {
-            $table->increments('user_id');
-            $table->string('nim', 25)->nullable();
+        // Tabel Admin
+        Schema::create('admin', function (Blueprint $table) {
+            $table->increments('admin_id');
+            $table->string('nip', 25)->nullable();
             $table->string('nama', 100)->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan', 'Lainnya'])->nullable();
             $table->string('tempat_lahir', 50)->nullable();
@@ -30,8 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user');
+        Schema::dropIfExists('admin');
     }
 };
-
-
