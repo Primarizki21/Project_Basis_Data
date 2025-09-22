@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('pengaduan', function (Blueprint $table) {
             $table->increments('pengaduan_id');
             $table->unsignedInteger('user_id')->nullable();
-            $table->string('kategori_kekerasan', 50)->nullable();
+            $table->unsignedInteger('kategori_komplain_id')->nullable();
             $table->text('deskripsi_kejadian');
             $table->date('tanggal_kejadian')->nullable();
             $table->enum('status_pengaduan', ['Diproses', 'Selesai', 'Menunggu'])->nullable();

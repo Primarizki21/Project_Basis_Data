@@ -35,13 +35,13 @@ return new class extends Migration
     {
         // Hapus foreign key dari 'pengaduan'
         Schema::table('pengaduan', function (Blueprint $table) {
-            $table->dropForeign(['pelapor']);
+            $table->dropForeign(['user_id']);
         });
 
         // Hapus foreign key dari 'bukti_pengaduan'
         Schema::table('bukti_pengaduan', function (Blueprint $table) {
             $table->dropForeign(['pengaduan_id']);
-            $table->dropForeign(['uploaded_by']);
+            $table->dropForeign(['user_id']);
         });
 
         // Hapus foreign key dari 'tindak_lanjut'
