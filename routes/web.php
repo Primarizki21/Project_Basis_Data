@@ -24,4 +24,6 @@ Route::get('/login', [UserController::class, 'showLogin'])->name('login');
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login.submit');
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-
+Route::get('/admin', function () {
+    return view('admin');
+});
