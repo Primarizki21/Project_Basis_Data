@@ -110,7 +110,7 @@
       <h3 class="text-white text-lg font-bold mb-3">Aksi Cepat</h3>
       <div class="flex flex-col md:flex-row gap-3 justify-center">
         <a href="{{ route('pengaduan.form') }}" class="bg-white text-teal-600 font-bold py-2 px-4 rounded-md">Buat Pengaduan Baru</a>
-        <a href="{{ route('riwayat') }}" class="bg-white text-teal-600 font-bold py-2 px-4 rounded-md">Lihat Riwayat</a>
+        <a href="{{ route('riwayat.index') }}" class="bg-white text-teal-600 font-bold py-2 px-4 rounded-md">Lihat Riwayat</a>
         <a href="{{ route('kontak') }}" class="bg-white text-red-600 font-bold py-2 px-4 rounded-md">Kontak Darurat</a>
       </div>
     </div>

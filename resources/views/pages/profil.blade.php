@@ -11,7 +11,7 @@
       <div class="text-sm text-gray-500">{{ Auth::user()->email }}</div>
       <div class="mt-3 flex gap-3">
         <button onclick="document.getElementById('edit-panel').classList.toggle('hidden')" class="px-3 py-2 rounded-md border">Edit Profil</button>
-        <a href="{{ route('riwayat') }}" class="px-3 py-2 rounded-md border text-teal-600">Lihat Riwayat</a>
+        <a href="{{ route('riwayat.index') }}" class="px-3 py-2 rounded-md border text-teal-600">Lihat Riwayat</a>
       </div>
     </div>
   </div>
