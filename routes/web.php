@@ -28,10 +28,10 @@ $protect = function ($view) {
 };
 
 // Protected pages (navbar visible)
-Route::get('/beranda', fn() => $protect('pages.beranda'))->name('beranda');
-Route::get('/profil', fn() => $protect('pages.profil'))->name('profil');
-Route::get('/riwayat', fn() => $protect('pages.riwayat'))->name('riwayat');
-Route::get('/kontak', fn() => $protect('pages.kontak'))->name('kontak');
+// Route::get('/beranda', fn() => $protect('pages.beranda'))->name('beranda');
+// Route::get('/profil', fn() => $protect('pages.profil'))->name('profil');
+// Route::get('/riwayat', fn() => $protect('pages.riwayat'))->name('riwayat');
+// Route::get('/kontak', fn() => $protect('pages.kontak'))->name('kontak');
 
 // Show create pengaduan form
 // Route::get('/pengaduan/create', function () {
@@ -126,7 +126,7 @@ Route::get('/logout', function (Request $r) {
 Route::middleware('auth')->group(function () {
     Route::get('/beranda', fn() => view('pages.beranda'))->name('beranda');
     Route::get('/profil', fn() => view('pages.profil'))->name('profil');
-    Route::get('/riwayat', fn() => view('pages.riwayat'))->name('riwayat');
+    Route::get('/riwayat', [PengaduanController::class, 'riwayat'])->name('riwayat.index');
     Route::get('/kontak', fn() => view('pages.kontak'))->name('kontak');
     
     // Route::get('/pengaduan/create', fn() => view('pengaduan.create'))->name('pengaduan.form');
