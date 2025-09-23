@@ -59,7 +59,7 @@ class PengaduanController extends Controller
             }
         }
 
-        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil dikirim.');
+        return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil dikirim.');
     }
 
 
