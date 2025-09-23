@@ -11,7 +11,7 @@ use App\Models\KategoriKomplain;
 
 class PengaduanController extends Controller
 {
-    // Admin page: list all pengaduan
+    // Admin page: list all pengaduan// Admin page: list all pengaduan
     public function index()
     {
         $pengaduan = Pengaduan::all(); // get all complaints
@@ -28,7 +28,7 @@ class PengaduanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kategori_komplain_id' => 'required|exists:kategori_komplain,id',
+            'kategori_komplain_id' => 'required|exists:kategori_komplain,kategori_komplain_id',
             'deskripsi_kejadian'   => 'required|string',
             'tanggal_kejadian'     => 'nullable|date',
             'status_pelapor'       => 'required|in:Korban,Keluarga,Teman,Saksi',
@@ -70,7 +70,19 @@ class PengaduanController extends Controller
         return view('pengaduan.show', compact('pengaduan'));
     }
 
-    
+    public function riwayat()
+    {
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
+
+        $pengaduan = Pengaduan::with('kategoriKomplain')
+                              ->where('user_id', $userId)
+                              ->latest() // Mengurutkan dari created_at terbaru
+                              ->get();
+
+        // Kirim data ke view 'riwayat'
+        return view('pages.riwayat', ['pengaduan' => $pengaduan]);
+    }
     
     // Admin input tindak lanjut
     public function tindakLanjut(Request $request, $id)
