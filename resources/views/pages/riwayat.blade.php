@@ -28,7 +28,7 @@
               {{-- Karena tidak ada kolom judul, kita tampilkan potongan deskripsi --}}
               <td class="px-3 py-2">{{ Str::limit($p->deskripsi_kejadian, 50) }}</td>
               {{-- Akses nama kategori melalui relasi `kategoriKomplain` --}}
-              <td class="px-3 py-2">{{ $p->kategoriKomplain->jenis_kekerasan ?? 'Tidak ada kategori' }}</td>
+              <td class="px-3 py-2">{{ $p->kategoriKomplain->jenis_komplain ?? 'Tidak ada kategori' }}</td>
               <td class="px-3 py-2">
                 <span class="px-2 py-1 rounded-md text-sm 
                   @if($p->status_pengaduan == 'Selesai') bg-green-100 text-green-800

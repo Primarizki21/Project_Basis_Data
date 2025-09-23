@@ -14,8 +14,8 @@ class PengaduanController extends Controller
     // Admin page: list all pengaduan// Admin page: list all pengaduan
     public function index()
     {
-        $pengaduan = Pengaduan::all(); // get all complaints
-        return view('admin', compact('pengaduan')); // pass variable to view
+        $pengaduan = Pengaduan::with('kategoriKomplain')->latest()->get();
+        return view('admin', compact('pengaduan')); 
     }
 
     // Form pengaduan
@@ -27,40 +27,45 @@ class PengaduanController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'kategori_komplain_id' => 'required|exists:kategori_komplain,kategori_komplain_id',
             'deskripsi_kejadian'   => 'required|string',
             'tanggal_kejadian'     => 'nullable|date',
             'status_pelapor'       => 'required|in:Korban,Keluarga,Teman,Saksi',
-            'bukti.*'              => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'bukti'                => 'nullable|array',
+            'bukti.*'              => 'file|mimes:jpg,jpeg,png,pdf|max:2048', // max 2MB per file
         ]);
 
         // Simpan pengaduan
         $pengaduan = new Pengaduan();
-        $pengaduan->user_id = Auth::id();
+        $pengaduan->user_id             = Auth::id();
         $pengaduan->kategori_komplain_id = $request->kategori_komplain_id;
-        $pengaduan->deskripsi_kejadian = $request->deskripsi_kejadian;
-        $pengaduan->tanggal_kejadian = $request->tanggal_kejadian;
-        $pengaduan->status_pelapor = $request->status_pelapor;
-        $pengaduan->status_pengaduan = 'Menunggu'; 
+        $pengaduan->deskripsi_kejadian   = $request->deskripsi_kejadian;
+        $pengaduan->tanggal_kejadian     = $request->tanggal_kejadian;
+        $pengaduan->status_pelapor       = $request->status_pelapor;
+        $pengaduan->status_pengaduan     = 'Menunggu';
         $pengaduan->save();
 
-        // Simpan bukti bila ada
+        // Simpan bukti (multi-file)
         if ($request->hasFile('bukti')) {
             foreach ($request->file('bukti') as $file) {
-                $path = $file->store('bukti_pengaduan', 'public');
+                if ($file && $file->isValid()) {   // <-- pastikan $file bukan null
+                    $path = $file->store('bukti_pengaduan', 'public');
 
-                BuktiPengaduan::create([
-                    'pengaduan_id' => $pengaduan->pengaduan_id,
-                    'file_path'    => $path,
-                    'jenis_bukti'  => 'Bukti Digital',
-                    'user_id'      => Auth::id(),
-                ]);
+                    BuktiPengaduan::create([
+                        'pengaduan_id' => $pengaduan->pengaduan_id,
+                        'file_path'    => $path,
+                        'jenis_bukti'  => 'Bukti Digital',
+                        'user_id'      => Auth::id(),
+                    ]);
+                }
             }
         }
 
         return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil dikirim.');
     }
+
 
 
     // Detail pengaduan (user & admin)

@@ -6,7 +6,8 @@
     <h2 class="text-xl font-bold mb-2">Buat Pengaduan Baru</h2>
     <p class="text-sm text-gray-500 mb-4">Silakan isi detail pengaduan Anda.</p>
 
-    <form action="{{ route('pengaduan.store') }}" method="POST" class="space-y-3">
+    {{-- FORMUTAMA --}}
+    <form action="{{ route('pengaduan.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
       @csrf
 
       {{-- Kategori --}}
@@ -19,7 +20,6 @@
           @endforeach
         </select>
       </div>
-
 
       {{-- Deskripsi --}}
       <div>
@@ -44,16 +44,16 @@
         </select>
       </div>
 
+      {{-- Upload Bukti --}}
       <div>
         <label class="text-sm font-semibold">Upload Bukti (opsional)</label>
         <input type="file" name="bukti[]" multiple class="w-full mt-1 px-3 py-2 border rounded-md">
         <p class="text-xs text-gray-500">Bisa upload lebih dari satu file (gambar/pdf).</p>
       </div>
 
-
       {{-- Tombol --}}
       <div class="flex gap-3">
-        <button class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">
+        <button type="submit" class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">
           Kirim Pengaduan
         </button>
         <a href="{{ route('beranda') }}" class="px-4 py-2 rounded-md border">Batal</a>
