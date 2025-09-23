@@ -37,5 +37,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pengaduan::class, 'user_id');
     }
+
+    // accessor untuk nama depan
+    public function getFirstNameAttribute()
+    {
+        return explode(' ', $this->name)[0];
+    }
 }
 

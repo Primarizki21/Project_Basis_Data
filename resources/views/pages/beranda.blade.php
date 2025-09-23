@@ -7,8 +7,8 @@
   <div class="rounded-xl p-6 text-white" style="background: linear-gradient(90deg,#0ea5f0,#06b6d4); box-shadow: 0 12px 40px rgba(6,95,70,0.06);">
     <div class="flex justify-between items-center">
       <div>
-        <h1 class="text-2xl font-bold">Halo, <span class="capitalize">{{ session('user.name') ?? 'Pengguna' }}</span> 👋</h1>
-        <p class="text-sm mt-1">Selamat datang di VOIZ — platform pengaduan FTMM.</p>
+          Halo, <span class="capitalize">{{ Auth::user()->nama }}</span> 👋
+          <p class="text-sm mt-1">Selamat datang di VOIZ — platform pengaduan FTMM.</p>
       </div>
       <div class="text-right">
         <div class="text-sm opacity-80">Tanggal</div>
