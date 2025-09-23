@@ -7,6 +7,7 @@ use App\Models\Pengaduan;
 use App\Models\BuktiPengaduan;
 use App\Models\TindakLanjut;
 use Illuminate\Support\Facades\Auth;
+use App\Models\KategoriKomplain;
 
 class PengaduanController extends Controller
 {
@@ -20,31 +21,31 @@ class PengaduanController extends Controller
     // Form pengaduan
     public function create()
     {
-        return view('pengaduan.create');
+        $kategori = KategoriKomplain::all();
+        return view('pengaduan.create', compact('kategori'));
     }
 
-    // Simpan pengaduan + bukti
     public function store(Request $request)
     {
         $request->validate([
-            'kategori_kekerasan' => 'required|string|max:50',
-            'deskripsi_kejadian' => 'required|string',
-            'tanggal_kejadian'   => 'required|date',
-            'status_pelapor'     => 'required|in:Korban,Keluarga,Teman,Saksi',
-            'bukti.*'            => 'nullable|file|max:2048'
+            'kategori_komplain_id' => 'required|exists:kategori_komplain,id',
+            'deskripsi_kejadian'   => 'required|string',
+            'tanggal_kejadian'     => 'nullable|date',
+            'status_pelapor'       => 'required|in:Korban,Keluarga,Teman,Saksi',
+            'bukti.*'              => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         // Simpan pengaduan
-        $pengaduan = Pengaduan::create([
-            'pelapor'           => Auth::id(), // user login
-            'kategori_kekerasan'=> $request->kategori_kekerasan,
-            'deskripsi_kejadian'=> $request->deskripsi_kejadian,
-            'tanggal_kejadian'  => $request->tanggal_kejadian,
-            'status_pengaduan'  => 'Menunggu',
-            'status_pelapor'    => $request->status_pelapor,
-        ]);
+        $pengaduan = new Pengaduan();
+        $pengaduan->user_id = Auth::id();
+        $pengaduan->kategori_komplain_id = $request->kategori_komplain_id;
+        $pengaduan->deskripsi_kejadian = $request->deskripsi_kejadian;
+        $pengaduan->tanggal_kejadian = $request->tanggal_kejadian;
+        $pengaduan->status_pelapor = $request->status_pelapor;
+        $pengaduan->status_pengaduan = 'Menunggu'; 
+        $pengaduan->save();
 
-        // Upload bukti jika ada
+        // Simpan bukti bila ada
         if ($request->hasFile('bukti')) {
             foreach ($request->file('bukti') as $file) {
                 $path = $file->store('bukti_pengaduan', 'public');
@@ -58,9 +59,9 @@ class PengaduanController extends Controller
             }
         }
 
-        return redirect()->route('pengaduan.show', $pengaduan->pengaduan_id)
-                         ->with('success', 'Pengaduan berhasil dibuat');
+        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil dikirim.');
     }
+
 
     // Detail pengaduan (user & admin)
     public function show($id)
@@ -69,6 +70,8 @@ class PengaduanController extends Controller
         return view('pengaduan.show', compact('pengaduan'));
     }
 
+    
+    
     // Admin input tindak lanjut
     public function tindakLanjut(Request $request, $id)
     {
