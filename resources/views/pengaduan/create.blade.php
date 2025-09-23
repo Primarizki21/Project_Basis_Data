@@ -1,30 +1,66 @@
-@extends('layout')
+@extends('layouts.app')
+
+@extends('layouts.app')
 
 @section('content')
-<h2>Buat Pengaduan</h2>
+<div class="max-w-2xl mx-auto">
+  <div class="card p-6">
+    <h2 class="text-xl font-bold mb-2">Buat Pengaduan Baru</h2>
+    <p class="text-sm text-gray-500 mb-4">Silakan isi detail pengaduan Anda.</p>
 
-<form action="{{ route('pengaduan.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    <label>Kategori Kekerasan</label>
-    <input type="text" name="kategori_kekerasan" required>
+    <form action="{{ route('pengaduan.store') }}" method="POST" class="space-y-3">
+      @csrf
 
-    <label>Deskripsi Kejadian</label>
-    <textarea name="deskripsi_kejadian" required></textarea>
+      {{-- Kategori --}}
+      <div>
+        <label class="text-sm font-semibold">Kategori</label>
+        <select name="kategori_komplain_id" required class="w-full mt-1 px-3 py-2 border rounded-md">
+          <option value="">-- Pilih Kategori --</option>
+          @foreach($kategori as $k)
+            <option value="{{ $k->kategori_komplain_id }}">{{ $k->jenis_komplain }}</option>
+          @endforeach
+        </select>
+      </div>
 
-    <label>Tanggal Kejadian</label>
-    <input type="date" name="tanggal_kejadian" required>
 
-    <label>Status Pelapor</label>
-    <select name="status_pelapor" required>
-        <option value="Korban">Korban</option>
-        <option value="Keluarga">Keluarga</option>
-        <option value="Teman">Teman</option>
-        <option value="Saksi">Saksi</option>
-    </select>
+      {{-- Deskripsi --}}
+      <div>
+        <label class="text-sm font-semibold">Deskripsi Kejadian</label>
+        <textarea name="deskripsi_kejadian" rows="5" required class="w-full mt-1 px-3 py-2 border rounded-md"></textarea>
+      </div>
 
-    <label>Upload Bukti (bisa lebih dari 1)</label>
-    <input type="file" name="bukti[]" multiple>
+      {{-- Tanggal --}}
+      <div>
+        <label class="text-sm font-semibold">Tanggal Kejadian</label>
+        <input type="date" name="tanggal_kejadian" class="w-full mt-1 px-3 py-2 border rounded-md">
+      </div>
 
-    <button type="submit">Kirim</button>
-</form>
+      {{-- Status Pelapor --}}
+      <div>
+        <label class="text-sm font-semibold">Status Pelapor</label>
+        <select name="status_pelapor" required class="w-full mt-1 px-3 py-2 border rounded-md">
+          <option value="Korban">Korban</option>
+          <option value="Keluarga">Keluarga</option>
+          <option value="Teman">Teman</option>
+          <option value="Saksi">Saksi</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold">Upload Bukti (opsional)</label>
+        <input type="file" name="bukti[]" multiple class="w-full mt-1 px-3 py-2 border rounded-md">
+        <p class="text-xs text-gray-500">Bisa upload lebih dari satu file (gambar/pdf).</p>
+      </div>
+
+
+      {{-- Tombol --}}
+      <div class="flex gap-3">
+        <button class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">
+          Kirim Pengaduan
+        </button>
+        <a href="{{ route('beranda') }}" class="px-4 py-2 rounded-md border">Batal</a>
+      </div>
+    </form>
+  </div>
+</div>
 @endsection

@@ -28,6 +28,7 @@ main
     protected $fillable = [
         'nim',
         'nama',
+        'email',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
