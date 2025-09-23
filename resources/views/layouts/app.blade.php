@@ -38,7 +38,7 @@
       <nav class="hidden md:flex gap-6 text-sm text-gray-700">
         <a href="{{ route('beranda') }}" class="hover:text-teal-600">Beranda</a>
         <a href="{{ route('profil') }}" class="hover:text-teal-600">Profil</a>
-        <a href="{{ route('riwayat') }}" class="hover:text-teal-600">Riwayat</a>
+        <a href="{{ route('riwayat.index') }}" class="hover:text-teal-600">Riwayat</a>
         <a href="{{ route('kontak') }}" class="hover:text-teal-600">Kontak</a>
       </nav>
 
