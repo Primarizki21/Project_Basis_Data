@@ -114,7 +114,7 @@ Route::post('/forgot', function (Request $r) {
 })->name('forgot');
 
 // Logout
-Route::get('/logout', function (Request $r) {
+Route::post('/logout', function (Request $r) {
     Auth::logout();
     $r->session()->invalidate();
     $r->session()->regenerateToken();
