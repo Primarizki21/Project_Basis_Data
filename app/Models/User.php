@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Seeders\JenisPekerjaanSeeder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +25,7 @@ class User extends Authenticatable
         'tempat_lahir',
         'tanggal_lahir',
         'alamat',
-        'nomor_telepon',
+        'jenis_pekerjaan_id',
         'pekerjaan',
         'password',
     ];
@@ -36,6 +37,11 @@ class User extends Authenticatable
     public function pengaduan()
     {
         return $this->hasMany(Pengaduan::class, 'user_id');
+    }
+
+    public function pekerjaanfk()
+    {
+        return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id');
     }
 
     // accessor untuk nama depan
