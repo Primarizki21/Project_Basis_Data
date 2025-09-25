@@ -20,6 +20,6 @@ class JenisPekerjaan extends Model
 
     public function pekerjaanpk()
     {
-        return $this->hasOne(User::class, 'jenis_pekerjaan_id');
+        return $this->hasMany(User::class, 'jenis_pekerjaan_id');
     }
 }

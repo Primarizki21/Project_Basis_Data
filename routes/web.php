@@ -4,6 +4,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\KategoriKomplainController;
+use App\Http\Controllers\JenisPekerjaanController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,9 @@ use Illuminate\Http\Request;
 
 Route::get('/', fn() => redirect()->route('login.form'));
 Route::resource('kategori', KategoriKomplainController::class);
+
+// Sementara matikan dulu
+// Route::resource('jenis_pekerjaan', JenisPekerjaanController::class);
 
 // Public (no navbar)
 Route::get('/login', fn() => view('auth.login'))->name('login.form');
@@ -77,23 +81,48 @@ Route::post('/register', function (Request $r) {
     return redirect()->route('login.form')->with('success', 'Akun berhasil terdaftar! Silakan login.');
 })->name('register');
 
+// Route::post('/login', function (Request $r) {
+//     $r->validate([
+//         'email' => 'required|email',
+//         'password' => 'required',
+//     ]);
+
+//     if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
+//         return back()->withErrors(['email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'])->withInput();
+//     }
+
+//     // Auth::attempt otomatis cek user + hash password
+//     if (Auth::attempt(['email' => $r->email, 'password' => $r->password])) {
+//         $r->session()->regenerate(); // keamanan (anti session fixation)
+//         return redirect()->route('beranda');
+//     }
+
+//     return back()->withErrors(['email' => 'Email atau password salah'])->withInput();
+// })->name('login');
+
 Route::post('/login', function (Request $r) {
     $r->validate([
         'email' => 'required|email',
         'password' => 'required',
     ]);
-
     if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
         return back()->withErrors(['email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'])->withInput();
     }
-
-    // Auth::attempt otomatis cek user + hash password
-    if (Auth::attempt(['email' => $r->email, 'password' => $r->password])) {
-        $r->session()->regenerate(); // keamanan (anti session fixation)
+    $credentials = $r->only('email', 'password');
+    
+    if (Auth::guard('web')->attempt($credentials)) {
+        $r->session()->regenerate();
         return redirect()->route('beranda');
     }
-
-    return back()->withErrors(['email' => 'Email atau password salah'])->withInput();
+    // $adminCredentials = [
+    //     'email' => $r->email, 
+    //     'password' => $r->password
+    // ];
+    if (Auth::guard('admin')->attempt($credentials)) {
+        $r->session()->regenerate();
+        return redirect()->route('beranda');
+    }
+    return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
 })->name('login');
 
 Route::post('/forgot', function (Request $r) {
