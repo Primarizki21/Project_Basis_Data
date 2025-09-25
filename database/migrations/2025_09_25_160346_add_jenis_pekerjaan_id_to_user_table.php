@@ -17,6 +17,12 @@ return new class extends Migration
                   ->on('jenis_pekerjaan')
                   ->onDelete('set null');
         });
+        Schema::table('admin', function (Blueprint $table) {
+            $table->foreign('jenis_pekerjaan_id')
+                ->references('jenis_pekerjaan_id')
+                ->on('jenis_pekerjaan')
+                ->onDelete('set null');
+        });
     }
 
     /**
@@ -26,6 +32,9 @@ return new class extends Migration
     {
         Schema::table('user', function (Blueprint $table) {
             $table->dropForeign(['jenis_pekerjaan_id']);            
+        });
+        Schema::table('admin', function (Blueprint $table) {
+            $table->dropForeign(['jenis_pekerjaan_id']);
         });
     }
 };
