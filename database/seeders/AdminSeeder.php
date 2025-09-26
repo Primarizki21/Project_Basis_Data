@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
             'alamat'        => 'Gedung FTMM, Kampus C UNAIR, Surabaya',
             'nomor_telepon' => '081234567890',
             'jenis_pekerjaan_id'     => 5,
-            'password'      => Hash::make('admin'), // Password di-hash untuk keamanan
+            'password'      => Hash::make('admin123'), // Password di-hash untuk keamanan
         ]);
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 Route::get('/', fn() => redirect()->route('login.form'));
@@ -101,28 +102,39 @@ Route::post('/register', function (Request $r) {
 // })->name('login');
 
 Route::post('/login', function (Request $r) {
-    $r->validate([
+    $validator = Validator::make($r->all(), [
         'email' => 'required|email',
         'password' => 'required',
     ]);
-    if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
-        return back()->withErrors(['email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'])->withInput();
+
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
     }
     $credentials = $r->only('email', 'password');
-    
+
+    // Debug Admin
+    // dd(Auth::guard('admin')->attempt($credentials));
+
     if (Auth::guard('web')->attempt($credentials)) {
+        if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
+            Auth::guard('web')->logout(); // keluarin lagi
+            return back()->withErrors([
+                'email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'
+            ])->withInput();
+        }
         $r->session()->regenerate();
         return redirect()->route('beranda');
     }
-    // $adminCredentials = [
-    //     'email' => $r->email, 
-    //     'password' => $r->password
-    // ];
     if (Auth::guard('admin')->attempt($credentials)) {
         $r->session()->regenerate();
         return redirect()->route('beranda');
+    } else {
+        dd('Admin login gagal', $credentials, \App\Models\Admin::where('email', $r->email)->first());
     }
-    return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah.'
+    ])->withInput();
 })->name('login');
 
 Route::post('/forgot', function (Request $r) {
@@ -152,7 +164,7 @@ Route::post('/logout', function (Request $r) {
 
 
 // Protected pages (hanya bisa diakses kalau login)
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:web,admin'])->group(function () {
     Route::get('/beranda', fn() => view('pages.beranda'))->name('beranda');
     Route::get('/profil', fn() => view('pages.profil'))->name('profil');
     Route::get('/riwayat', [PengaduanController::class, 'riwayat'])->name('riwayat.index');
