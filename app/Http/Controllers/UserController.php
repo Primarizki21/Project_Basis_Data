@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\JenisPekerjaan;
 
 
 class UserController extends Controller
@@ -59,5 +60,26 @@ class UserController extends Controller
     {
         Auth::logout();
         return redirect()->route('index');
+    }
+
+    public function create()
+    {
+        // Ambil semua data jenis pekerjaan
+        $listPekerjaan = JenisPekerjaan::all();
+
+        // Kirim data tersebut ke view
+        return view('user.create', ['listPekerjaan' => $listPekerjaan]);
+    }
+
+    public function edit(User $user)
+    {
+        // Ambil semua data jenis pekerjaan
+        $listPekerjaan = JenisPekerjaan::all();
+        
+        // Kirim data pekerjaan dan data user yang akan diedit ke view
+        return view('user.edit', [
+            'user' => $user,
+            'listPekerjaan' => $listPekerjaan
+        ]);
     }
 }

@@ -5,11 +5,13 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\KategoriKomplainController;
 use App\Http\Controllers\JenisPekerjaanController;
+use App\Models\JenisPekerjaan;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 Route::get('/', fn() => redirect()->route('login.form'));
@@ -20,8 +22,14 @@ Route::resource('kategori', KategoriKomplainController::class);
 
 // Public (no navbar)
 Route::get('/login', fn() => view('auth.login'))->name('login.form');
-Route::get('/register', fn() => view('auth.register'))->name('register.form');
-Route::get('/forgot', fn() => view('auth.forgot'))->name('password.request');
+Route::get('/register', function () {
+    // 1. Ambil semua data pekerjaan dari database
+    $listPekerjaan = JenisPekerjaan::all();
+
+    // 2. Kirim data tersebut ke view saat menampilkan formulir
+    return view('auth.register', ['listPekerjaan' => $listPekerjaan]);
+    
+})->name('register.form');Route::get('/forgot', fn() => view('auth.forgot'))->name('password.request');
 
 // Protected helper
 $protect = function ($view) {
@@ -52,12 +60,12 @@ Route::post('/register', function (Request $r) {
         'nim' => 'required|string|max:25|unique:user,nim',
         'nama' => 'required|string|max:100',
         'email' => 'required|email|unique:user,email',
-        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan,Lainnya',
+        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
         'tempat_lahir' => 'required|string|max:50',
         'tanggal_lahir' => 'required|date',
         'alamat' => 'required|string',
         'nomor_telepon' => 'required|string|max:15',
-        'pekerjaan' => 'required|string|max:50',
+        'jenis_pekerjaan_id' => 'required|integer|exists:jenis_pekerjaan,jenis_pekerjaan_id',
         'password' => 'required|min:6|confirmed',
     ]);
 
@@ -74,7 +82,7 @@ Route::post('/register', function (Request $r) {
         'tanggal_lahir' => $r->tanggal_lahir,
         'alamat' => $r->alamat,
         'nomor_telepon' => $r->nomor_telepon,
-        'pekerjaan' => $r->pekerjaan,
+        'jenis_pekerjaan_id' => $r->jenis_pekerjaan_id,
         'password' => Hash::make($r->password),
     ]);
 
@@ -101,28 +109,39 @@ Route::post('/register', function (Request $r) {
 // })->name('login');
 
 Route::post('/login', function (Request $r) {
-    $r->validate([
+    $validator = Validator::make($r->all(), [
         'email' => 'required|email',
         'password' => 'required',
     ]);
-    if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
-        return back()->withErrors(['email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'])->withInput();
+
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
     }
     $credentials = $r->only('email', 'password');
-    
+
+    // Debug Admin
+    // dd(Auth::guard('admin')->attempt($credentials));
+
     if (Auth::guard('web')->attempt($credentials)) {
+        if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
+            Auth::guard('web')->logout(); // keluarin lagi
+            return back()->withErrors([
+                'email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'
+            ])->withInput();
+        }
         $r->session()->regenerate();
         return redirect()->route('beranda');
     }
-    // $adminCredentials = [
-    //     'email' => $r->email, 
-    //     'password' => $r->password
-    // ];
     if (Auth::guard('admin')->attempt($credentials)) {
         $r->session()->regenerate();
         return redirect()->route('beranda');
+    } else {
+        dd('Admin login gagal', $credentials, \App\Models\Admin::where('email', $r->email)->first());
     }
-    return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah.'
+    ])->withInput();
 })->name('login');
 
 Route::post('/forgot', function (Request $r) {
@@ -152,10 +171,10 @@ Route::post('/logout', function (Request $r) {
 
 
 // Protected pages (hanya bisa diakses kalau login)
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:web,admin'])->group(function () {
     Route::get('/beranda', fn() => view('pages.beranda'))->name('beranda');
     Route::get('/profil', fn() => view('pages.profil'))->name('profil');
-    Route::get('/riwayat', [PengaduanController::class, 'riwayat'])->name('riwayat.index');
+    Route::get('/riwayat', [PengaduanController::class, 'index'])->name('riwayat.index');
     Route::get('/kontak', fn() => view('pages.kontak'))->name('kontak');
     
     // Route::get('/pengaduan/create', fn() => view('pengaduan.create'))->name('pengaduan.form');

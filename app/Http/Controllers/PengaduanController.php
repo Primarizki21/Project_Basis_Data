@@ -14,8 +14,14 @@ class PengaduanController extends Controller
     // Admin page: list all pengaduan// Admin page: list all pengaduan
     public function index()
     {
-        $pengaduan = Pengaduan::with('kategoriKomplain')->latest()->get();
-        return view('admin', compact('pengaduan')); 
+        $pengaduanQuery = Pengaduan::with('pelapor', 'kategoriKomplain');
+
+        if (Auth::guard('admin')->check()) {
+            $pengaduan = $pengaduanQuery->latest()->get();
+        } else {
+            $pengaduan = $pengaduanQuery->where('user_id', Auth::id())->latest()->get();
+        }
+        return view('pages.riwayat', compact('pengaduan'));
     }
 
     // Form pengaduan
@@ -73,20 +79,6 @@ class PengaduanController extends Controller
     {
         $pengaduan = Pengaduan::with(['bukti', 'tindakLanjut'])->findOrFail($id);
         return view('pengaduan.show', compact('pengaduan'));
-    }
-
-    public function riwayat()
-    {
-        // Ambil ID user yang sedang login
-        $userId = Auth::id();
-
-        $pengaduan = Pengaduan::with('kategoriKomplain')
-                              ->where('user_id', $userId)
-                              ->latest() // Mengurutkan dari created_at terbaru
-                              ->get();
-
-        // Kirim data ke view 'riwayat'
-        return view('pages.riwayat', ['pengaduan' => $pengaduan]);
     }
     
     // Admin input tindak lanjut

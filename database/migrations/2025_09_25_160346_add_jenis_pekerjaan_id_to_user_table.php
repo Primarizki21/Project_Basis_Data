@@ -17,6 +17,7 @@ return new class extends Migration
                   ->on('jenis_pekerjaan')
                   ->onDelete('set null');
         });
+        
         Schema::table('admin', function (Blueprint $table) {
             $table->foreign('jenis_pekerjaan_id')
                 ->references('jenis_pekerjaan_id')
