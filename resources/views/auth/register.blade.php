@@ -33,7 +33,6 @@
           <option value="">-- Pilih --</option>
           <option value="Laki-laki" {{ old('jenis_kelamin')=='Laki-laki'?'selected':'' }}>Laki-laki</option>
           <option value="Perempuan" {{ old('jenis_kelamin')=='Perempuan'?'selected':'' }}>Perempuan</option>
-          <option value="Lainnya" {{ old('jenis_kelamin')=='Lainnya'?'selected':'' }}>Lainnya</option>
         </select>
         @error('jenis_kelamin')<div class="text-rose-500 text-xs mt-1">{{ $message }}</div>@enderror
       </div>
@@ -63,9 +62,25 @@
       </div>
 
       <div>
-        <label class="text-sm font-semibold">Pekerjaan</label>
-        <input name="pekerjaan" value="{{ old('pekerjaan') }}" required class="w-full mt-1 px-3 py-2 border rounded-md">
-        @error('pekerjaan')<div class="text-rose-500 text-xs mt-1">{{ $message }}</div>@enderror
+          <label for="jenis_pekerjaan_id" class="text-sm font-semibold">Pekerjaan</label>
+          
+          <select name="jenis_pekerjaan_id" id="jenis_pekerjaan_id" required class="w-full mt-1 px-3 py-2 border rounded-md">
+              <option value="" disabled selected>-- Pilih Pekerjaan --</option>
+              
+              @foreach ($listPekerjaan as $pekerjaan)
+                  <option value="{{ $pekerjaan->jenis_pekerjaan_id }}" 
+                      {{-- Cek apakah ada input lama atau data dari database yang cocok --}}
+                      @if(old('jenis_pekerjaan_id', $user->jenis_pekerjaan_id ?? '') == $pekerjaan->jenis_pekerjaan_id) selected @endif>
+                      
+                      {{ $pekerjaan->nama_pekerjaan }}
+                  </option>
+              @endforeach
+          </select>
+
+          {{-- Pastikan nama error sesuai dengan nama field yaitu 'jenis_pekerjaan_id' --}}
+          @error('jenis_pekerjaan_id')
+              <div class="text-rose-500 text-xs mt-1">{{ $message }}</div>
+          @enderror
       </div>
 
       <div>
