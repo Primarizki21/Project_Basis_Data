@@ -57,10 +57,6 @@ Route::post('/register', function (Request $r) {
         'password' => 'required|min:6|confirmed',
     ]);
 
-    if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
-            return back()->withErrors(['email'=>'Gunakan email @ftmm.unair.ac.id'])->withInput();
-        }
-
     User::create([
         'nim' => $r->nim,
         'nama' => $r->nama,
