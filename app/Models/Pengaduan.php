@@ -28,7 +28,7 @@ class Pengaduan extends Model
     // Relasi
     public function pelapor()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     public function bukti()
@@ -43,6 +43,6 @@ class Pengaduan extends Model
 
     public function kategoriKomplain()
     {
-        return $this->belongsTo(KategoriKomplain::class, 'kategori_komplain_id');
+        return $this->belongsTo(KategoriKomplain::class, 'kategori_komplain_id', 'kategori_komplain_id');
     }
 }
