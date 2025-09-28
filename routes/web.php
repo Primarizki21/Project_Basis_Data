@@ -37,12 +37,17 @@ $protect = function ($view) {
     return view($view);
 };
 
-// POST endpoints (simulation)
 Route::post('/register', function (Request $r) {
     $r->validate([
         'nim' => 'required|string|max:25|unique:user,nim',
         'nama' => 'required|string|max:100',
-        'email' => 'required|email|unique:user,email',
+        'email' => [
+            'required',
+            'email',
+            'unique:user,email', // Verifikasi ke tabel user
+            'unique:admin,email', // Verifikasi ke tabel admin
+            'ends_with:@ftmm.unair.ac.id'
+        ],
         'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
         'tempat_lahir' => 'required|string|max:50',
         'tanggal_lahir' => 'required|date',

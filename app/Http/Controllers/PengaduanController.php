@@ -40,7 +40,7 @@ class PengaduanController extends Controller
             'tanggal_kejadian'     => 'nullable|date',
             'status_pelapor'       => 'required|in:Korban,Keluarga,Teman,Saksi',
             'bukti'                => 'nullable|array',
-            'bukti.*'              => 'file|mimes:jpg,jpeg,png,pdf|max:2048', // max 2MB per file
+            'bukti.*'              => 'file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         // Simpan pengaduan
@@ -70,15 +70,6 @@ class PengaduanController extends Controller
         }
 
         return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil dikirim.');
-    }
-
-
-
-    // Detail pengaduan (user & admin)
-    public function show($id)
-    {
-        $pengaduan = Pengaduan::with(['bukti', 'tindakLanjut'])->findOrFail($id);
-        return view('pengaduan.show', compact('pengaduan'));
     }
     
     // Admin input tindak lanjut
