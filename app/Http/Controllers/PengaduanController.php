@@ -56,7 +56,7 @@ class PengaduanController extends Controller
         // Simpan bukti (multi-file)
         if ($request->hasFile('bukti')) {
             foreach ($request->file('bukti') as $file) {
-                if ($file && $file->isValid()) {   // <-- pastikan $file bukan null
+                if ($file && $file->isValid()) {
                     $path = $file->store('bukti_pengaduan', 'public');
 
                     BuktiPengaduan::create([
@@ -91,12 +91,6 @@ class PengaduanController extends Controller
 
         $pengaduan = Pengaduan::findOrFail($id);
 
-        // Pastikan hanya admin yang bisa input
-        // if (!Auth::user()->hasRole('admin')) {
-        //     abort(403, 'Unauthorized');
-        // }
-
-        // Jika sudah ada tindak lanjut, update
         if ($pengaduan->tindakLanjut) {
             $pengaduan->tindakLanjut->update([
                 'jenis_tindak_lanjut' => $request->jenis_tindak_lanjut,
@@ -118,4 +112,46 @@ class PengaduanController extends Controller
                          ->with('success', 'Tindak lanjut berhasil ditambahkan');
     }
 
+    public function edit(Pengaduan $pengaduan)
+    {
+        if (Auth::guard('web')->check() && $pengaduan->user_id !== Auth::id()) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        $kategori_komplain = KategoriKomplain::all();
+        return view('pengaduan.edit', compact('pengaduan', 'kategori_komplain'));
+    }
+
+    public function update(Request $request, Pengaduan $pengaduan)
+    {
+        if (Auth::guard('web')->check() && $pengaduan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'deskripsi_kejadian' => 'required|string',
+            'tanggal_kejadian' => 'required|date',
+            'kategori_komplain_id' => 'required|exists:kategori_komplain,kategori_komplain_id',
+        ]);
+        
+        $pengaduan->update($validated);
+
+        if (Auth::guard('admin')->check()) {
+            $pengaduan->status_pengaduan = $request->input('status_pengaduan');
+            $pengaduan->save();
+        }
+
+        return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil diperbarui!');
+    }
+
+    public function destroy(Pengaduan $pengaduan)
+    {
+        if (Auth::guard('web')->check() && $pengaduan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $pengaduan->delete();
+
+        return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil dihapus!');
+    }
 }
