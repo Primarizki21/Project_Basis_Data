@@ -4,7 +4,11 @@
 <div class="max-w-4xl mx-auto space-y-6">
   <div class="flex gap-4">
     <input id="search" placeholder="Cari berdasarkan deskripsi, status, nama pelapor..." class="flex-1 px-3 py-2 border rounded-md" />
-    <a href="{{ route('pengaduan.form') }}" class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">Buat Pengaduan</a>
+    @auth('web')
+        <a href="{{ route('pengaduan.form') }}" class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">
+            Buat Pengaduan
+        </a>
+    @endauth
   </div>
 
   <div class="card p-4">
@@ -34,8 +38,6 @@
             <tr class="border-t">
               <td class="px-3 py-2">{{ $loop->iteration }}</td>
               <td class="px-3 py-2">{{ Str::limit($p->deskripsi_kejadian, 50) }}</td>
-              {{-- DATA BARU DITAMPILKAN DI SINI --}}
-              {{-- Gunakan null-safe operator (?) atau pengecekan untuk menghindari error jika user tidak ada --}}
               @auth('admin')
                 <td class="px-3 py-2 font-medium">{{ $p->pelapor->nama ?? 'User Dihapus/Anonim' }}</td>
               @endauth              
@@ -49,11 +51,28 @@
                 </span>
               </td>
               <td class="px-3 py-2">{{ \Carbon\Carbon::parse($p->tanggal_kejadian)->format('d M Y') }}</td>
+              <td class="px-3 py-2 flex items-center gap-2">
+                  {{-- Tombol Edit --}}
+                  <a href="{{ route('pengaduan.edit', $p->pengaduan_id) }}" 
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 rounded-md text-sm no-underline">
+                    Edit
+                  </a>
+
+                  {{-- Tombol Hapus --}}
+                  <form action="{{ route('pengaduan.destroy', $p->pengaduan_id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin?');">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" 
+                              class="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-3 py-1 rounded-md text-sm">
+                              Hapus
+                      </button>
+                  </form>
+              </td>
             </tr>
           @empty
             <tr>
               {{-- UPDATE COLSPAN MENJADI 6 KARENA ADA TAMBAHAN 1 KOLOM --}}
-              <td colspan="6" class="px-3 py-6 text-center text-gray-500">Belum ada pengaduan yang Anda buat.</td>
+              <td colspan="7" class="px-3 py-6 text-center text-gray-500">Belum ada pengaduan yang Anda buat.</td>
             </tr>
           @endforelse
         </tbody>
