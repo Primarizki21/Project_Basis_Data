@@ -9,6 +9,7 @@ use Database\Seeders\KategoriKomplainSeeder;
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\JenisPekerjaanSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\ProdiSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(KategoriKomplainSeeder::class);
         $this->call(JenisPekerjaanSeeder::class);
+        $this->call(ProdiSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(AdminSeeder::class);
 
