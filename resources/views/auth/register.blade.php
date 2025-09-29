@@ -23,7 +23,7 @@
 
       <div>
         <label class="text-sm font-semibold">Email Institusi</label>
-        <input name="email" value="{{ old('email') }}" required pattern=".+@ftmm\.unair\.ac\.id" class="w-full mt-1 px-3 py-2 border rounded-md">
+        <input name="email" value="{{ old('email') }}" placeholder="Contoh: mahasiswa@ftmm.unair.ac.id" required pattern=".+@ftmm\.unair\.ac\.id" class="w-full mt-1 px-3 py-2 border rounded-md">
         @error('email')<div class="text-rose-500 text-xs mt-1">{{ $message }}</div>@enderror
       </div>
 
@@ -57,7 +57,7 @@
 
       <div>
         <label class="text-sm font-semibold">Nomor Telepon</label>
-        <input name="nomor_telepon" value="{{ old('nomor_telepon') }}" required class="w-full mt-1 px-3 py-2 border rounded-md">
+        <input name="nomor_telepon" value="{{ old('nomor_telepon') }}" placeholder="Contoh: 08123456789" required class="w-full mt-1 px-3 py-2 border rounded-md">
         @error('nomor_telepon')<div class="text-rose-500 text-xs mt-1">{{ $message }}</div>@enderror
       </div>
 
@@ -83,6 +83,28 @@
           @enderror
       </div>
 
+      <div id="info_mahasiswa" class="hidden space-y-4">
+          <hr>
+          <div class="mb-4">
+              <label class="text-sm font-semibold">Program Studi</label>
+              <select name="prodi_id" class="w-full mt-1 px-3 py-2 border rounded-md">
+                  <option value="">-- Pilih Program Studi --</option>
+                  @foreach($listProdi as $prodi)
+                      <option value="{{ $prodi->prodi_id }}" 
+                      @if(old('prodi_id', $user->prodi_id ?? '') == $prodi->prodi_id) selected @endif>
+                      
+                      {{ $prodi->nama_prodi }}
+                  </option>
+                  @endforeach
+              </select>
+          </div>
+          <div>
+              <label class="text-sm font-semibold">Angkatan</label>
+              <input name="angkatan" value="{{ old('angkatan') }}" placeholder="Contoh: 2023" class="w-full mt-1 px-3 py-2 border rounded-md">
+          </div>
+          <hr>
+      </div>
+
       <div>
         <label class="text-sm font-semibold">Password</label>
         <input name="password" type="password" required minlength="6" class="w-full mt-1 px-3 py-2 border rounded-md">
@@ -102,4 +124,18 @@
     </form>
   </div>
 </div>
+
+<script>
+    const jenisPekerjaanSelect = document.getElementById('jenis_pekerjaan_id');
+    const infoMahasiswaDiv = document.getElementById('info_mahasiswa');
+
+    jenisPekerjaanSelect.addEventListener('change', function() {
+        if (this.value === '1') {
+            infoMahasiswaDiv.classList.remove('hidden'); // Tampilkan div
+        } else {
+            infoMahasiswaDiv.classList.add('hidden'); // Sembunyikan div
+            infoMahasiswaDiv.querySelectorAll('input').forEach(input => input.value = '');
+        }
+    });
+</script>
 @endsection
