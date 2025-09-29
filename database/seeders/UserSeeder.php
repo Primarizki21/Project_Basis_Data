@@ -20,6 +20,8 @@ class UserSeeder extends Seeder
             'alamat'        => 'Wonorejo',
             'nomor_telepon' => '08123456789',
             'jenis_pekerjaan_id'     => '1',
+            'prodi_id'     => '1',
+            'angkatan'     => '2023',
             'password'      => Hash::make('123456'),
         ]);
     }

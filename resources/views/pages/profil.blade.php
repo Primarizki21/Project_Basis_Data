@@ -36,12 +36,27 @@
 
   <div class="card p-6">
     <h3 class="font-bold mb-2">Tentang Akun</h3>
-    <div class="text-sm text-gray-600">Halaman profil dummy. Tambah info (prodi, NIM) bila perlu.</div>
+    <div class="text-sm text-gray-600">Halaman profil. Tambah info (prodi, NIM) bila perlu.</div>
     <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
-      <div><div class="text-gray-500">Program Studi</div><div class="font-semibold">Teknologi Sains Data</div></div>
-      <div><div class="text-gray-500">Angkatan</div><div class="font-semibold">2023</div></div>
-      <div><div class="text-gray-500">NIM</div><div class="font-semibold">{{ Auth::user()->nim }}</div></div>
-      <div><div class="text-gray-500">Status</div><div class="font-semibold">Mahasiswa</div></div>
+            <div>
+                <div class="text-gray-500">Program Studi</div>
+                <div class="font-semibold">{{ Auth::user()->prodifk->nama_prodi }}</div>
+            </div>
+
+            <div>
+                <div class="text-gray-500">Angkatan</div>
+                <div class="font-semibold">{{ Auth::user()->angkatan }}</div>
+            </div>
+
+        <div>
+            <div class="text-gray-500">NIM</div>
+            <div class="font-semibold">{{ Auth::user()->nim }}</div>
+        </div>
+
+        <div>
+            <div class="text-gray-500">Status</div>
+            <div class="font-semibold">{{ Auth::user()->pekerjaanfk->nama_pekerjaan ?? 'Tidak diketahui' }}</div>
+        </div>
     </div>
   </div>
 </div>

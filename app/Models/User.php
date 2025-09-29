@@ -26,8 +26,9 @@ class User extends Authenticatable
         'tanggal_lahir',
         'alamat',
         'jenis_pekerjaan_id',
-        'pekerjaan',
         'password',
+        'prodi_id',
+        'angkatan',
     ];
 
     protected $hidden = [
@@ -42,6 +43,11 @@ class User extends Authenticatable
     public function pekerjaanfk()
     {
         return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id');
+    }
+
+    public function prodifk()
+    {
+        return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
     }
 
     // accessor untuk nama depan
