@@ -1,63 +1,158 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto space-y-6">
-  <div class="card p-6 flex gap-6 items-center">
-    <div class="w-24 h-24 rounded-xl bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center text-2xl font-bold text-teal-700">
-      {{ strtoupper(substr(Auth::user()->email ?? 'U', 0, 1)) }}
-    </div>
-    <div class="flex-1">
-      <div class="font-bold text-lg">{{ Auth::user()->nama }}</div>
-      <div class="text-sm text-gray-500">{{ Auth::user()->email }}</div>
-      <div class="mt-3 flex gap-3">
-        <button onclick="document.getElementById('edit-panel').classList.toggle('hidden')" class="px-3 py-2 rounded-md border">Edit Profil</button>
-        <a href="{{ route('riwayat.index') }}" class="px-3 py-2 rounded-md border text-teal-600">Lihat Riwayat</a>
-      </div>
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="fw-bold mb-1">Profil Saya</h2>
+      <p class="text-muted mb-0">Kelola informasi profil dan keamanan akun Anda</p>
     </div>
   </div>
 
-  <div id="edit-panel" class="card p-6 hidden">
-    <form method="POST" action="{{ route('profil.update') }}" class="space-y-3">
-      @csrf
-      <div>
-        <label class="text-sm font-semibold">Nama</label>
-        <input name="nama" required value="{{ Auth::user()->nama }}" class="w-full mt-1 px-3 py-2 border rounded-md">
-      </div>
-      <div>
-        <label class="text-sm font-semibold">No. HP (opsional)</label>
-        <input name="nomor_telepon" value="{{ Auth::user()->nomor_telepon ?? '' }}" class="w-full mt-1 px-3 py-2 border rounded-md">
-      </div>
-      <div class="flex gap-3">
-        <button class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">Simpan</button>
-        <button type="button" onclick="document.getElementById('edit-panel').classList.add('hidden')" class="px-4 py-2 rounded-md border">Batal</button>
-      </div>
-    </form>
-  </div>
+  <div class="row g-4">
+    <!-- Profile Info Card -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 text-center">
+          <!-- Avatar -->
+          <div class="mb-3">
+            <div class="mx-auto" style="width: 120px; height: 120px; border-radius: 20px; background: linear-gradient(135deg, #6B21A8, #0ea5f0); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 3rem; box-shadow: 0 10px 30px rgba(107, 33, 168, 0.3);">
+              {{ strtoupper(substr(Auth::user()->nama ?? 'U', 0, 1)) }}
+            </div>
+          </div>
 
-  <div class="card p-6">
-    <h3 class="font-bold mb-2">Tentang Akun</h3>
-    <div class="text-sm text-gray-600">Halaman profil. Tambah info (prodi, NIM) bila perlu.</div>
-    <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
-            <div>
-                <div class="text-gray-500">Program Studi</div>
-                <div class="font-semibold">{{ Auth::user()->prodifk->nama_prodi }}</div>
+          <!-- User Info -->
+          <h4 class="fw-bold mb-1">{{ Auth::user()->nama ?? 'User Name' }}</h4>
+          <p class="text-muted mb-2">{{ Auth::user()->email ?? 'user@mail.com' }}</p>
+          
+          @auth
+            <span class="badge bg-success px-3 py-2">
+              <i class="bi bi-person me-1"></i>User
+            </span>
+          @endauth
+
+          @auth('admin')
+            <span class="badge px-3 py-2" style="background: linear-gradient(135deg, #6B21A8, #0ea5f0);">
+              <i class="bi bi-shield-check me-1"></i>Administrator
+            </span>
+          @endauth
+
+          <!-- Stats -->
+          <div class="row mt-4 text-center">
+            <div class="col-4">
+              <h5 class="fw-bold mb-0" style="color: #6B21A8;">12</h5>
+              <small class="text-muted">Pengaduan</small>
+            </div>
+            <div class="col-4">
+              <h5 class="fw-bold mb-0" style="color: #0ea5f0;">8</h5>
+              <small class="text-muted">Selesai</small>
+            </div>
+            <div class="col-4">
+              <h5 class="fw-bold mb-0" style="color: #f59e0b;">4</h5>
+              <small class="text-muted">Proses</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body p-4">
+          <h6 class="fw-bold mb-3">Aksi Cepat</h6>
+          <a href="{{ route('pengaduan.create') }}" class="btn w-100 mb-2 text-white" style="background: linear-gradient(135deg, #6B21A8, #0ea5f0); border: none;">
+            <i class="bi bi-plus-circle me-2"></i>Buat Pengaduan
+          </a>
+          <a href="{{ route('riwayat') }}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-clock-history me-2"></i>Lihat Riwayat
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div class="col-lg-8">
+      <!-- Personal Info -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 p-4">
+          <h5 class="fw-bold mb-0">Informasi Personal</h5>
+        </div>
+        <div class="card-body p-4">
+          <form action="{{ route('profil.update') }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Nama Lengkap</label>
+                <input type="text" name="nama" class="form-control form-control-lg" value="{{ Auth::user()->nama ?? '' }}" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" name="email" class="form-control form-control-lg" value="{{ Auth::user()->email ?? '' }}" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">NIM / NIP</label>
+                <input type="text" name="nim" class="form-control form-control-lg" value="{{ Auth::user()->nim ?? '' }}">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">No. Telepon</label>
+                <input type="tel" name="telepon" class="form-control form-control-lg" value="{{ Auth::user()->telepon ?? '' }}">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-semibold">Program Studi</label>
+                <input type="text" name="prodi" class="form-control form-control-lg" value="{{ Auth::user()->prodi ?? '' }}" placeholder="Contoh: Teknologi Sains Data">
+              </div>
             </div>
 
-            <div>
-                <div class="text-gray-500">Angkatan</div>
-                <div class="font-semibold">{{ Auth::user()->angkatan }}</div>
+            <div class="mt-4">
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-save me-2"></i>Simpan Perubahan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 p-4">
+          <h5 class="fw-bold mb-0">Ubah Password</h5>
+        </div>
+        <div class="card-body p-4">
+          <form action="{{ route('profil.password') }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Password Lama</label>
+              <input type="password" name="old_password" class="form-control form-control-lg" required>
             </div>
 
-        <div>
-            <div class="text-gray-500">NIM</div>
-            <div class="font-semibold">{{ Auth::user()->nim }}</div>
-        </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Password Baru</label>
+              <input type="password" name="new_password" class="form-control form-control-lg" required>
+              <small class="text-muted">Minimal 8 karakter</small>
+            </div>
 
-        <div>
-            <div class="text-gray-500">Status</div>
-            <div class="font-semibold">{{ Auth::user()->pekerjaanfk->nama_pekerjaan ?? 'Tidak diketahui' }}</div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Konfirmasi Password Baru</label>
+              <input type="password" name="new_password_confirmation" class="form-control form-control-lg" required>
+            </div>
+
+            <button type="submit" class="btn btn-warning px-4">
+              <i class="bi bi-key me-2"></i>Update Password
+            </button>
+          </form>
         </div>
+      </div>
     </div>
   </div>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 @endsection
