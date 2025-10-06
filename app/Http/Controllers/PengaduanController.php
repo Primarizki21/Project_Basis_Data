@@ -69,7 +69,7 @@ class PengaduanController extends Controller
             }
         }
 
-        return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil dikirim.');
+        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil dikirim.');
     }
     
     // Admin input tindak lanjut
@@ -132,7 +132,7 @@ class PengaduanController extends Controller
             $pengaduan->save();
         }
 
-        return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil diperbarui!');
+        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil diperbarui!');
     }
 
     public function destroy(Pengaduan $pengaduan)
@@ -143,6 +143,6 @@ class PengaduanController extends Controller
 
         $pengaduan->delete();
 
-        return redirect()->route('riwayat.index')->with('success', 'Pengaduan berhasil dihapus!');
+        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil dihapus!');
     }
 }

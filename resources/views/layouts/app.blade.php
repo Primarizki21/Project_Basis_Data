@@ -1,91 +1,97 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>VOIZ - E-Complaint FTMM</title>
-
-  <!-- Tailwind CDN for styling (no build step) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    /* Palette: blue -> teal (tosca) */
-    :root{
-      --bg:#f6fbfd;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --accent-1:#0ea5a9; /* tosca */
-      --accent-2:#0ea5f0; /* blue */
-      --shadow: 0 10px 30px rgba(2,6,23,0.06);
-    }
-    body { background: var(--bg); }
-    .card { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); }
-    .navbar { transition: background .25s ease, transform .18s ease, box-shadow .18s ease; backdrop-filter: blur(6px); }
-    .navbar.scrolled { background: rgba(255,255,255,0.95); box-shadow: 0 8px 30px rgba(2,6,23,0.06); }
-    .toast { position: fixed; right: 20px; top: 20px; z-index: 60; padding: 12px 16px; border-radius: 10px; color:white; font-weight:700; box-shadow:0 12px 30px rgba(2,6,23,0.12); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOIZ FTMM</title>
+    {{-- @vite(['resources/css/app.css','resources/js/app.js']) --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
-<body class="antialiased">
+<body class="bg-light">
 
-{{-- hide navbar on auth pages (login/register/forgot) --}}
-@if (!Request::is('login') && !Request::is('register') && !Request::is('forgot'))
-  <header id="navbar" class="navbar fixed w-full z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="{{ route('beranda') }}" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center text-teal-700 font-bold">V</div>
-        <div class="font-extrabold text-teal-700">VOIZ</div>
-      </a>
-      <nav class="hidden md:flex gap-6 text-sm text-gray-700">
-        <a href="{{ route('beranda') }}" class="hover:text-teal-600">Beranda</a>
-        <a href="{{ route('profil') }}" class="hover:text-teal-600">Profil</a>
-        <a href="{{ route('riwayat.index') }}" class="hover:text-teal-600">Riwayat</a>
-        <a href="{{ route('kontak') }}" class="hover:text-teal-600">Kontak</a>
-      </nav>
+    @guest
+        @include('layouts.navbar')
+        <main>
+            @yield('content')
+        </main>
+    @else
+        {{-- Sidebar --}}
+        @include('layouts.sidebar')
 
-      <div class="flex items-center gap-3">
-        @auth
-          <div class="text-sm text-gray-700 text-right">
-            <div class="font-semibold">{{ Auth::user()->nama }}</div>
-            <div class="text-xs text-gray-500">{{ Auth::user()->email }}</div>
-          </div>
-          <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="ml-3 px-3 py-2 rounded-md bg-white text-teal-600 font-semibold">Logout</button>
-          </form>
-        @else
-          <a href="{{ route('login.form') }}" class="ml-3 px-3 py-2 rounded-md text-sm text-teal-600">Login</a>
-        @endauth
-      </div>
-    </div>
-  </header>
-  <div class="h-16"></div>
-@endif
+        {{-- Main Content Area dengan Margin --}}
+        <div id="main-content" style="margin-left: 280px; min-height: 100vh; transition: margin-left 0.3s ease;">
+            {{-- Toggle Button untuk Mobile --}}
+            <button id="sidebarToggle" class="btn btn-primary d-lg-none" style="position: fixed; top: 15px; left: 15px; z-index: 999; border-radius: 10px;">
+                <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+            </button>
 
-  <main class="max-w-6xl mx-auto px-4 py-6">
-    @yield('content')
-  </main>
+            <div class="p-4">
+                @yield('content')
+            </div>
+        </div>
+    @endguest
 
-  <footer class="mt-8 text-center text-sm text-gray-500 py-6">© {{ date('Y') }} VOIZ — Fakultas Teknologi Maju & Multidisiplin</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {{-- Sidebar Toggle Script --}}
+    @auth
+    <script>
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        let sidebarOpen = true;
 
-  {{-- Toast messages --}}
-  @if(session('success'))
-    <div class="toast bg-teal-500">{{ session('success') }}</div>
-  @endif
-  @if(session('error') || $errors->any())
-    <div class="toast bg-rose-500">@if(session('error')){{ session('error') }}@else{{ $errors->first() }}@endif</div>
-  @endif
+        // Toggle Sidebar Function
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            
+            if (sidebarOpen) {
+                sidebar.style.left = '0';
+                mainContent.style.marginLeft = '280px';
+                toggleBtn.innerHTML = '<i class="bi bi-list" style="font-size: 1.5rem;"></i>';
+            } else {
+                sidebar.style.left = '-280px';
+                mainContent.style.marginLeft = '0';
+                toggleBtn.innerHTML = '<i class="bi bi-x-lg" style="font-size: 1.5rem;"></i>';
+            }
+        }
 
-  <script>
-    // navbar scroll effect
-    const nav = document.getElementById('navbar');
-    if(nav){
-      window.addEventListener('scroll', ()=> {
-        if(window.scrollY > 16) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
-      });
-    }
-    // hide toasts after 4s
-    setTimeout(()=> document.querySelectorAll('.toast').forEach(t => t.style.display='none'), 4000);
-  </script>
+        // Event Listener
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', toggleSidebar);
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggle = toggleBtn && toggleBtn.contains(event.target);
+            const isMobile = window.innerWidth < 992;
+
+            if (!isClickInsideSidebar && !isClickOnToggle && sidebarOpen && isMobile) {
+                toggleSidebar();
+            }
+        });
+
+        // Responsive behavior
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                sidebar.style.left = '0';
+                mainContent.style.marginLeft = '280px';
+                sidebarOpen = true;
+            }
+        });
+
+        // Initialize on mobile
+        if (window.innerWidth < 992) {
+            sidebar.style.left = '-280px';
+            mainContent.style.marginLeft = '0';
+            sidebarOpen = false;
+            if (toggleBtn) {
+                toggleBtn.innerHTML = '<i class="bi bi-x-lg" style="font-size: 1.5rem;"></i>';
+            }
+        }
+    </script>
+    @endauth
 </body>
 </html>
