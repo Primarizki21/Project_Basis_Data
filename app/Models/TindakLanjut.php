@@ -26,12 +26,12 @@ class TindakLanjut extends Model
     // Relasi one-to-one ke pengaduan
     public function pengaduan()
     {
-        return $this->belongsTo(Pengaduan::class, 'pengaduan_id');
+        return $this->belongsTo(Pengaduan::class, 'pengaduan_id', 'pengaduan_id');
     }
 
     // Relasi ke user (admin yang menangani)
     public function handler()
     {
-        return $this->belongsTo(Admin::class, 'admin_id');
+        return $this->belongsTo(Admin::class, 'admin_id', 'admin_id');
     }
 }
