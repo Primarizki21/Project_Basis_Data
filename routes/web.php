@@ -172,8 +172,7 @@ Route::middleware(['auth:web'])->group(function () {
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboardIndex'])->name('dashboard');
     Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
-    Route::view('/visualisasi', 'pages.admin.visualisasi')->name('visualisasi');
-    Route::view('/kelola-user', 'pages.admin.kelola-user')->name('kelola-user');
+    Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
     
     // Admin bisa akses profil juga
     Route::view('/profil', 'pages.profil')->name('profil');
