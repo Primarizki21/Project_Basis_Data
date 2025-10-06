@@ -27,7 +27,7 @@
             </div>
             <div>
               <small class="text-muted d-block">Total Pengaduan</small>
-              <h4 class="fw-bold mb-0" style="color: #6B21A8;">8</h4>
+              <h4 class="fw-bold mb-0" style="color: #6B21A8;">{{ $total ?? 0 }}</h4>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@
             </div>
             <div>
               <small class="text-muted d-block">Sedang Diproses</small>
-              <h4 class="fw-bold mb-0" style="color: #f59e0b;">3</h4>
+              <h4 class="fw-bold mb-0" style="color: #f59e0b;">{{ $diproses ?? 0 }}</h4>
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@
             </div>
             <div>
               <small class="text-muted d-block">Selesai</small>
-              <h4 class="fw-bold mb-0" style="color: #10b981;">5</h4>
+              <h4 class="fw-bold mb-0" style="color: #10b981;">{{ $selesai ?? 0 }}</h4>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@
             </div>
             <div>
               <small class="text-muted d-block">Ditolak</small>
-              <h4 class="fw-bold mb-0" style="color: #ef4444;">0</h4>
+              <h4 class="fw-bold mb-0" style="color: #ef4444;">{{ $ditolak ?? 0 }}</h4>
             </div>
           </div>
         </div>
@@ -97,52 +97,44 @@
             <i class="bi bi-arrow-right me-1"></i>Lihat Semua
           </a>
         </div>
+
         <div class="card-body p-4">
           <div class="row g-3">
-            <!-- Card 1 -->
-            <div class="col-md-4">
-              <div class="card border hover-card h-100">
-                <div class="card-body p-3">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="badge bg-light text-dark">#TKT-001</span>
-                    <span class="badge bg-warning">Diproses</span>
+            @forelse($pengaduanTerbaru as $p)
+              <div class="col-md-4">
+                <div class="card border hover-card h-100">
+                  <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <span class="badge bg-light text-dark">
+                        #TKT-{{ str_pad($p->pengaduan_id, 3, '0', STR_PAD_LEFT) }}
+                      </span>
+                      <span class="badge
+                        @if($p->status_pengaduan == 'Diproses') bg-warning text-dark
+                        @elseif($p->status_pengaduan == 'Selesai') bg-success
+                        @elseif($p->status_pengaduan == 'Ditolak') bg-danger
+                        @else bg-secondary @endif">
+                        {{ $p->status_pengaduan }}
+                      </span>
+                    </div>
+                    <span class="badge mb-2"
+                      style="background: #6B21A8;">
+                      {{ $p->kategoriKomplain->nama_kategori ?? '-' }}
+                    </span>
+                    <p class="text-muted small mb-2 text-truncate">
+                      {{ $p->deskripsi_kejadian }}
+                    </p>
+                    <small class="text-muted">
+                      <i class="bi bi-calendar3 me-1"></i>
+                      {{ \Carbon\Carbon::parse($p->tanggal_kejadian)->translatedFormat('d M Y') }}
+                    </small>
                   </div>
-                  <span class="badge mb-2" style="background: #6B21A8;">Akademik</span>
-                  <p class="text-muted small mb-2">AC ruang kelas rusak sudah 2 minggu...</p>
-                  <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>05 Okt 2025</small>
                 </div>
               </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="col-md-4">
-              <div class="card border hover-card h-100">
-                <div class="card-body p-3">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="badge bg-light text-dark">#TKT-002</span>
-                    <span class="badge bg-success">Selesai</span>
-                  </div>
-                  <span class="badge mb-2" style="background: #0ea5f0;">Fasilitas</span>
-                  <p class="text-muted small mb-2">Toilet lantai 3 kotor tidak ada air...</p>
-                  <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>03 Okt 2025</small>
-                </div>
+            @empty
+              <div class="col-12">
+                <p class="text-center text-muted my-3">Belum ada pengaduan terbaru.</p>
               </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="col-md-4">
-              <div class="card border hover-card h-100">
-                <div class="card-body p-3">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="badge bg-light text-dark">#TKT-003</span>
-                    <span class="badge bg-success">Selesai</span>
-                  </div>
-                  <span class="badge mb-2" style="background: #f59e0b;">Kemahasiswaan</span>
-                  <p class="text-muted small mb-2">Proses surat terlalu lama...</p>
-                  <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>01 Okt 2025</small>
-                </div>
-              </div>
-            </div>
+            @endforelse
           </div>
         </div>
       </div>
@@ -185,17 +177,14 @@
 .hover-lift-card {
   transition: all 0.3s ease;
 }
-
 .hover-lift-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
 }
-
 .hover-card {
   transition: all 0.3s ease;
   cursor: pointer;
 }
-
 .hover-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
