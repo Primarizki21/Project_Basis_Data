@@ -7,17 +7,21 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\{
     UserController, LaporanController, PengaduanController, 
-    KategoriKomplainController, JenisPekerjaanController
+    KategoriKomplainController, JenisPekerjaanController, LandingPageController
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
 
-// Landing Page
-Route::get('/', function() {
-    return view('welcome');
-})->name('welcome');
-
 // Kategori
 Route::resource('kategori', KategoriKomplainController::class);
+
+// Landing Page
+Route::get('/', [LandingPageController::class, 'index'])->name('welcome');
+
+// Halaman form pengaduan anonim
+Route::get('/pengaduan/anonim', [PengaduanController::class, 'createAnonim'])->name('pengaduan.createAnonim');
+// Proses penyimpanan pengaduan anonim
+Route::post('/pengaduan/anonim', [PengaduanController::class, 'storeAnonim'])->name('pengaduan.storeAnonim');
+
 
 // Auth Pages
 Route::get('/login', fn() => view('auth.login'))->name('login.form');
