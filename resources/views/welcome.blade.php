@@ -253,88 +253,56 @@
     </div>
 
     <div class="row g-4">
-      @php
-      $pengaduanAnomimDummy = [
-          (object)[
-              'id' => 1,
-              'kategori' => (object)['jenis_komplain' => 'Akademik'],
-              'deskripsi_kejadian' => 'Ruang kelas AC-nya rusak sudah 2 minggu, sangat panas dan mengganggu konsentrasi belajar. Sudah dilaporkan ke bagian maintenance tapi belum ada tindak lanjut.',
-              'status' => 'selesai',
-              'tanggapan' => 'Terima kasih atas laporannya. AC di ruangan tersebut sudah diperbaiki oleh tim maintenance kami. Mohon maaf atas ketidaknyamanannya.',
-              'tanggapan_at' => now()->subDays(2),
-              'bukti' => null,
-              'created_at' => now()->subDays(5)
-          ],
-          (object)[
-              'id' => 2,
-              'kategori' => (object)['jenis_komplain' => 'Fasilitas'],
-              'deskripsi_kejadian' => 'Toilet di lantai 3 gedung B kotor dan tidak ada air. Kondisinya sangat tidak layak pakai. Mohon segera dibersihkan dan diperbaiki sistem airnya.',
-              'status' => 'proses',
-              'tanggapan' => 'Laporan Anda sedang kami tindaklanjuti. Tim kebersihan sudah dijadwalkan untuk pembersihan menyeluruh hari ini.',
-              'tanggapan_at' => now()->subHours(5),
-              'bukti' => null,
-              'created_at' => now()->subDays(3)
-          ],
-          (object)[
-              'id' => 3,
-              'kategori' => (object)['jenis_komplain' => 'Kemahasiswaan'],
-              'deskripsi_kejadian' => 'Proses pengajuan surat keterangan mahasiswa di bagian administrasi terlalu lama, sudah 1 minggu belum selesai. Padahal katanya hanya butuh 3 hari kerja.',
-              'status' => 'menunggu',
-              'tanggapan' => null,
-              'tanggapan_at' => null,
-              'bukti' => null,
-              'created_at' => now()->subDays(1)
-          ],
-      ];
-      @endphp
+      {{-- Gunakan @forelse untuk loop yang bisa menangani data kosong --}}
+      @forelse($pengaduanAnonim as $index => $anonim)
+          <div class="col-lg-6 fade-in-up" style="animation-delay: {{ $index * 0.1 }}s;">
+              <div class="card border-0 shadow-sm h-100 hover-lift-card">
+                  <div class="card-body p-4">
+                      <div class="d-flex justify-content-between align-items-start mb-3">
+                          <div>
+                              {{-- Asumsi relasi di model Pengaduan sudah dibuat --}}
+                              <span class="badge mb-2" style="background: linear-gradient(135deg, #6B21A8, #7C3AED);">
+                                  {{ $anonim->kategoriKomplain->kategori_komplain_id }} 
+                              </span>
+                              <div class="text-muted small">
+                                  <i class="bi bi-calendar3 me-1"></i>{{ $anonim->created_at->format('d M Y') }}
+                              </div>
+                          </div>
+                          <div class="text-end">
+                              @if($anonim->status_pengaduan == 'Selesai')
+                                  <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Selesai</span>
+                              @elseif($anonim->status_pengaduan == 'Diproses')
+                                  <span class="badge bg-warning text-dark"><i class="bi bi-gear me-1"></i>Diproses</span>
+                              @else
+                                  <span class="badge bg-secondary"><i class="bi bi-hourglass me-1"></i>Menunggu</span>
+                              @endif
+                          </div>
+                      </div>
 
-      @foreach($pengaduanAnomimDummy as $index => $anonim)
-      <div class="col-lg-6 fade-in-up" style="animation-delay: {{ $index * 0.1 }}s;">
-        <div class="card border-0 shadow-sm h-100 hover-lift-card">
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div>
-                <span class="badge mb-2" style="background: linear-gradient(135deg, #6B21A8, #7C3AED);">
-                  {{ $anonim->kategori->jenis_komplain }}
-                </span>
-                <div class="text-muted small">
-                  <i class="bi bi-calendar3 me-1"></i>{{ $anonim->created_at->format('d M Y') }}
-                </div>
-              </div>
-              <div class="text-end">
-                @if($anonim->status == 'selesai')
-                  <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Selesai</span>
-                @elseif($anonim->status == 'proses')
-                  <span class="badge bg-warning"><i class="bi bi-gear me-1"></i>Diproses</span>
-                @else
-                  <span class="badge bg-secondary"><i class="bi bi-hourglass me-1"></i>Menunggu</span>
-                @endif
-              </div>
-            </div>
+                      <div class="mb-3">
+                          <h6 class="fw-bold mb-2">Pengaduan:</h6>
+                          <p class="text-muted mb-0" style="font-size: 0.95rem;">{{ Str::limit($anonim->deskripsi_kejadian, 150) }}</p>
+                      </div>
 
-            <div class="mb-3">
-              <h6 class="fw-bold mb-2">Pengaduan:</h6>
-              <p class="text-muted mb-0" style="font-size: 0.95rem;">{{ Str::limit($anonim->deskripsi_kejadian, 150) }}</p>
-            </div>
-
-            @if($anonim->tanggapan)
-            <div class="mt-3 p-3 animate-slide-in" style="background: linear-gradient(135deg, rgba(107, 33, 168, 0.05), rgba(14, 165, 240, 0.05)); border-left: 4px solid #6B21A8; border-radius: 8px;">
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-person-badge me-2" style="color: #6B21A8; font-size: 1.2rem;"></i>
-                <strong style="color: #6B21A8;">Tanggapan Admin</strong>
+                      {{-- Bagian tanggapan bisa ditambahkan di sini jika ada --}}
+                      
+                  </div>
               </div>
-              <p class="mb-0" style="font-size: 0.9rem;">{{ $anonim->tanggapan }}</p>
-              <small class="text-muted">{{ $anonim->tanggapan_at->format('d M Y') }}</small>
-            </div>
-            @else
-            <div class="text-center py-2">
-              <small class="text-muted fst-italic"><i class="bi bi-clock-history me-1"></i>Menunggu tanggapan...</small>
-            </div>
-            @endif
           </div>
-        </div>
-      </div>
-      @endforeach
+
+      @empty
+          {{-- BLOK INI AKAN TAMPIL JIKA $pengaduanAnonim KOSONG --}}
+          <div class="col-12">
+              <div class="text-center py-5">
+                  <div class="icon-box mx-auto mb-3" style="width: 70px; height: 70px; background-color: #f1f3f5; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                      <i class="bi bi-chat-square-dots text-muted" style="font-size: 2rem;"></i>
+                  </div>
+                  <h4 class="fw-bold">Belum Ada Pengaduan</h4>
+                  <p class="text-muted">Saat ini belum ada pengaduan anonim yang ditampilkan.</p>
+              </div>
+          </div>
+
+      @endforelse
     </div>
 
     <!-- INFO: Form Anonim di-comment dulu sampai backend bikin route-nya -->
@@ -347,10 +315,10 @@
     --}}
     
     <div class="text-center mt-5">
-      <div class="alert alert-info d-inline-block">
-        <i class="bi bi-info-circle me-2"></i>
-        <strong>Form pengaduan anonim akan segera hadir!</strong> Saat ini masih dalam tahap pengembangan.
-      </div>
+      <a href="{{ route('pengaduan.createAnonim') }}" class="btn btn-lg text-white px-5 shadow-lg hover-lift" style="background: linear-gradient(135deg, #6B21A8, #7C3AED); border: none;">
+        <i class="bi bi-pencil-square me-2"></i>
+        Buat Pengaduan Anonim
+      </a>
     </div>
   </div>
 </section>
