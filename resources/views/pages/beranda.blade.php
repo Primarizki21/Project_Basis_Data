@@ -7,24 +7,16 @@
     <div class="col-12">
       <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #6B21A8 0%, #7C3AED 50%, #0ea5f0 100%); border-radius: 15px;">
         <div class="card-body p-4">
-          <div class="d-flex align-items-center justify-content-between text-white">
-            <div>
-              <h3 class="fw-bold mb-2">Selamat Datang, {{ Auth::user()->nama ?? Auth::guard('admin')->user()->nama ?? 'User' }}! 👋</h3>
-              <p class="mb-0 opacity-75">Kelola pengaduan Anda dengan mudah dan cepat</p>
-            </div>
-            <div class="d-none d-md-block">
-              <a href="{{ route('pengaduan.create') }}" class="btn btn-light btn-lg px-4 shadow">
-                <i class="bi bi-plus-circle me-2"></i>Buat Pengaduan Baru
-              </a>
-            </div>
+          <div class="text-white">
+            <h3 class="fw-bold mb-2">Selamat Datang, {{ Auth::user()->nama ?? 'User' }}! 👋</h3>
+            <p class="mb-0 opacity-75">Berikut ringkasan pengaduan Anda hari ini</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Quick Stats for User -->
-  @auth
+  <!-- Quick Stats -->
   <div class="row g-4 mb-4">
     <div class="col-md-3">
       <div class="card border-0 shadow-sm hover-lift-card">
@@ -90,95 +82,99 @@
       </div>
     </div>
   </div>
-  @endauth
 
-  <!-- Recent Activity / Info -->
+  <!-- Main Content -->
   <div class="row g-4">
-    <div class="col-lg-8">
+    <!-- Pengaduan Terbaru -->
+    <div class="col-lg-12">
       <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0 p-4">
-          <h5 class="fw-bold mb-0">Pengaduan Terbaru Anda</h5>
-        </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead style="background: #f8f9fa;">
-                <tr>
-                  <th class="px-4 py-3">No. Tiket</th>
-                  <th class="py-3">Kategori</th>
-                  <th class="py-3">Tanggal</th>
-                  <th class="py-3">Status</th>
-                  <th class="py-3">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="px-4 py-3"><span class="badge bg-light text-dark">#TKT-001</span></td>
-                  <td class="py-3"><span class="badge" style="background: #6B21A8;">Akademik</span></td>
-                  <td class="py-3">05 Okt 2025</td>
-                  <td class="py-3"><span class="badge bg-warning">Diproses</span></td>
-                  <td class="py-3">
-                    <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-3"><span class="badge bg-light text-dark">#TKT-002</span></td>
-                  <td class="py-3"><span class="badge" style="background: #0ea5f0;">Fasilitas</span></td>
-                  <td class="py-3">03 Okt 2025</td>
-                  <td class="py-3"><span class="badge bg-success">Selesai</span></td>
-                  <td class="py-3">
-                    <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-3"><span class="badge bg-light text-dark">#TKT-003</span></td>
-                  <td class="py-3"><span class="badge" style="background: #f59e0b;">Layanan</span></td>
-                  <td class="py-3">01 Okt 2025</td>
-                  <td class="py-3"><span class="badge bg-success">Selesai</span></td>
-                  <td class="py-3">
-                    <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="fw-bold mb-0">Pengaduan Terbaru</h5>
+            <small class="text-muted">3 pengaduan terakhir Anda</small>
           </div>
-          <div class="p-3 text-center border-top">
-            <a href="{{ route('riwayat') }}" class="btn btn-link text-decoration-none">
-              Lihat Semua Pengaduan <i class="bi bi-arrow-right ms-1"></i>
-            </a>
+          <a href="{{ route('riwayat') }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-right me-1"></i>Lihat Semua
+          </a>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-3">
+            <!-- Card 1 -->
+            <div class="col-md-4">
+              <div class="card border hover-card h-100">
+                <div class="card-body p-3">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-light text-dark">#TKT-001</span>
+                    <span class="badge bg-warning">Diproses</span>
+                  </div>
+                  <span class="badge mb-2" style="background: #6B21A8;">Akademik</span>
+                  <p class="text-muted small mb-2">AC ruang kelas rusak sudah 2 minggu...</p>
+                  <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>05 Okt 2025</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-md-4">
+              <div class="card border hover-card h-100">
+                <div class="card-body p-3">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-light text-dark">#TKT-002</span>
+                    <span class="badge bg-success">Selesai</span>
+                  </div>
+                  <span class="badge mb-2" style="background: #0ea5f0;">Fasilitas</span>
+                  <p class="text-muted small mb-2">Toilet lantai 3 kotor tidak ada air...</p>
+                  <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>03 Okt 2025</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-md-4">
+              <div class="card border hover-card h-100">
+                <div class="card-body p-3">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-light text-dark">#TKT-003</span>
+                    <span class="badge bg-success">Selesai</span>
+                  </div>
+                  <span class="badge mb-2" style="background: #f59e0b;">Kemahasiswaan</span>
+                  <p class="text-muted small mb-2">Proses surat terlalu lama...</p>
+                  <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>01 Okt 2025</small>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-4">
-      <!-- Quick Actions -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-0 p-4">
-          <h5 class="fw-bold mb-0">Aksi Cepat</h5>
-        </div>
-        <div class="card-body p-4">
-          <a href="{{ route('pengaduan.create') }}" class="btn w-100 mb-3 text-white" style="background: linear-gradient(135deg, #6B21A8, #7C3AED); border: none;">
-            <i class="bi bi-plus-circle me-2"></i>Buat Pengaduan
-          </a>
-          <a href="{{ route('riwayat') }}" class="btn btn-outline-secondary w-100 mb-3">
-            <i class="bi bi-clock-history me-2"></i>Lihat Riwayat
-          </a>
-          <a href="{{ route('profil') }}" class="btn btn-outline-secondary w-100">
-            <i class="bi bi-person me-2"></i>Edit Profil
-          </a>
-        </div>
-      </div>
-
-      <!-- Info Box -->
+    <!-- Tips & Info -->
+    <div class="col-lg-6">
       <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #0ea5f0, #0284c7);">
         <div class="card-body p-4 text-white">
           <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-info-circle me-2" style="font-size: 1.5rem;"></i>
-            <h6 class="fw-bold mb-0">Informasi</h6>
+            <i class="bi bi-lightbulb me-3" style="font-size: 2rem;"></i>
+            <h5 class="fw-bold mb-0">Tips Pengaduan Efektif</h5>
           </div>
-          <p class="mb-2" style="font-size: 0.9rem;">Pengaduan akan diproses maksimal 3x24 jam sejak diterima.</p>
-          <p class="mb-0" style="font-size: 0.9rem;">Anda akan mendapat notifikasi via email untuk setiap update status pengaduan.</p>
+          <ul class="mb-0 ps-3" style="font-size: 0.9rem; line-height: 1.8;">
+            <li>Jelaskan masalah secara detail dan spesifik</li>
+            <li>Sertakan bukti foto jika memungkinkan</li>
+            <li>Cantumkan lokasi dan waktu kejadian</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Info -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #6B21A8, #7C3AED);">
+        <div class="card-body p-4 text-white">
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-info-circle me-3" style="font-size: 2rem;"></i>
+            <h5 class="fw-bold mb-0">Informasi Penting</h5>
+          </div>
+          <p class="mb-2" style="font-size: 0.9rem;">⏱️ Pengaduan diproses maksimal <strong>3x24 jam</strong></p>
+          <p class="mb-0" style="font-size: 0.9rem;">📧 Notifikasi dikirim via email untuk setiap update</p>
         </div>
       </div>
     </div>
@@ -193,6 +189,17 @@
 .hover-lift-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.hover-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hover-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: #7C3AED !important;
 }
 </style>
 
