@@ -10,6 +10,7 @@ use Database\Seeders\AdminSeeder;
 use Database\Seeders\JenisPekerjaanSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\ProdiSeeder;
+use Database\Seeders\PengaduanSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProdiSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(AdminSeeder::class);
+        $this->call(PengaduanSeeder::class);
 
     }
 }

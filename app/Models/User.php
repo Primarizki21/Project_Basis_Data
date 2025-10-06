@@ -37,12 +37,12 @@ class User extends Authenticatable
 
     public function pengaduan()
     {
-        return $this->hasMany(Pengaduan::class, 'user_id');
+        return $this->hasMany(Pengaduan::class, 'user_id', 'user_id');
     }
 
     public function pekerjaanfk()
     {
-        return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id');
+        return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id', 'jenis_pekerjaan_id');
     }
 
     public function prodifk()

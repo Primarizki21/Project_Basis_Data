@@ -21,7 +21,7 @@ class KategoriKomplain extends Model
 
     public function pengaduan()
     {
-        return $this->hasMany(Pengaduan::class, 'kategori_komplain_id');
+        return $this->hasMany(Pengaduan::class, 'kategori_komplain_id', 'kategori_komplain_id');
     }
 }
 

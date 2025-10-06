@@ -34,12 +34,12 @@ class Pengaduan extends Model
 
     public function bukti()
     {
-        return $this->hasMany(BuktiPengaduan::class, 'pengaduan_id');
+        return $this->hasMany(BuktiPengaduan::class, 'pengaduan_id', 'pengaduan_id');
     }
 
     public function tindakLanjut()
     {
-        return $this->hasMany(TindakLanjut::class, 'pengaduan_id');
+        return $this->hasMany(TindakLanjut::class, 'pengaduan_id', 'pengaduan_id');
     }
 
     public function kategoriKomplain()

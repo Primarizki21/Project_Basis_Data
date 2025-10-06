@@ -35,6 +35,6 @@ class Admin extends Authenticatable
 
     public function tindakLanjut()
     {
-        return $this->hasMany(TindakLanjut::class, 'admin_id');
+        return $this->hasMany(TindakLanjut::class, 'admin_id', 'admin_id');
     }
 }
