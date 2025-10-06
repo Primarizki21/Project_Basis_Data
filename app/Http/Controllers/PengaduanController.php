@@ -145,4 +145,49 @@ class PengaduanController extends Controller
 
         return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil dihapus!');
     }
+
+    public function createAnonim() {
+        $kategori = KategoriKomplain::all();
+        return view('pengaduan.anonim', compact('kategori'));
+    }
+    
+    public function storeAnonim(Request $request)
+    {
+        $request->validate([
+            'kategori_komplain_id' => 'required|exists:kategori_komplain,kategori_komplain_id',
+            'deskripsi_kejadian'   => 'required|string',
+            'tanggal_kejadian'     => 'nullable|date',
+            'lokasi_kejadian'      => 'nullable|string|max:255',
+            'bukti'                => 'nullable|array',
+            'bukti.*'              => 'file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        // Simpan pengaduan anonim
+        $pengaduan = new Pengaduan();
+        $pengaduan->user_id              = null; // Tidak ada user login
+        $pengaduan->kategori_komplain_id = $request->kategori_komplain_id;
+        $pengaduan->deskripsi_kejadian   = $request->deskripsi_kejadian;
+        $pengaduan->tanggal_kejadian     = $request->tanggal_kejadian;
+        $pengaduan->status_pengaduan     = 'Menunggu';
+        $pengaduan->is_anonim            = true;
+        $pengaduan->save();
+
+        // Simpan bukti (multi-file)
+        if ($request->hasFile('bukti')) {
+            foreach ($request->file('bukti') as $file) {
+                if ($file && $file->isValid()) {
+                    $path = $file->store('bukti_pengaduan', 'public');
+
+                    BuktiPengaduan::create([
+                        'pengaduan_id' => $pengaduan->pengaduan_id,
+                        'file_path'    => $path,
+                        'jenis_bukti'  => 'Bukti Digital',
+                        'user_id'      => null, // Anonim, jadi tidak diisi
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('beranda')->with('success', 'Pengaduan anonim berhasil dikirim.');
+    }
 }
