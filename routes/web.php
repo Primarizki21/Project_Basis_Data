@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\{
     UserController, LaporanController, PengaduanController, 
-    KategoriKomplainController, JenisPekerjaanController, LandingPageController
+    KategoriKomplainController, JenisPekerjaanController, LandingPageController, AdminController,
+    AdminDashboardController
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
 
@@ -169,8 +170,8 @@ Route::middleware(['auth:web'])->group(function () {
 
 // Protected Routes - ADMIN ONLY
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::view('/dashboard', 'pages.admin.dashboard')->name('dashboard');
-    Route::view('/kelola-pengaduan', 'pages.admin.kelola-pengaduan')->name('kelola-pengaduan');
+    Route::get('/dashboard', [AdminController::class, 'dashboardIndex'])->name('dashboard');
+    Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
     Route::view('/visualisasi', 'pages.admin.visualisasi')->name('visualisasi');
     Route::view('/kelola-user', 'pages.admin.kelola-user')->name('kelola-user');
     
