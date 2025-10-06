@@ -73,10 +73,10 @@
         <span>Kelola Pengaduan</span>
       </a>
 
-      <a href="{{ route('admin.visualisasi') }}" class="sidebar-link {{ request()->routeIs('admin.visualisasi') ? 'active' : '' }}">
+      {{--<a href="{{ route('admin.visualisasi') }}" class="sidebar-link {{ request()->routeIs('admin.visualisasi') ? 'active' : '' }}">
         <i class="bi bi-bar-chart"></i>
         <span>Visualisasi Data</span>
-      </a>
+      </a>--}}
 
       <div class="mb-2 mt-3">
         <small class="text-white opacity-50 px-3 fw-semibold" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Pengaturan</small>
