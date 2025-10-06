@@ -6,9 +6,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\{
+<<<<<<< HEAD
     UserController, LaporanController, PengaduanController, 
     KategoriKomplainController, JenisPekerjaanController, LandingPageController, AdminController,
     AdminDashboardController
+=======
+    UserController, LaporanController, PengaduanController,
+    KategoriKomplainController, JenisPekerjaanController
+>>>>>>> cbd82ad (Add prodi and angkatan fields to register page)
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
 
@@ -36,10 +41,10 @@ Route::get('/forgot', fn() => view('auth.forgot'))->name('password.request');
 // Register
 Route::post('/register', function (Request $r) {
     $r->validate([
-        'nim' => 'required|string|max:25|unique:user,nim',
+        'nim' => 'required|string|max:25|unique:users,nim',
         'nama' => 'required|string|max:100',
         'email' => [
-            'required','email','unique:user,email','unique:admin,email',
+            'required', 'email', 'unique:users,email', 'unique:admin,email',
             'ends_with:@ftmm.unair.ac.id'
         ],
         'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
@@ -80,13 +85,13 @@ Route::post('/login', function (Request $r) {
     if ($validator->fails()) return back()->withErrors($validator)->withInput();
 
     $credentials = $r->only('email', 'password');
-    
+
     // Try admin login first
     if (Auth::guard('admin')->attempt($credentials)) {
         $r->session()->regenerate();
         return redirect()->route('admin.dashboard');
     }
-    
+
     // Then try user login
     if (Auth::guard('web')->attempt($credentials)) {
         if (!str_ends_with($r->email, '@ftmm.unair.ac.id')) {
@@ -106,7 +111,7 @@ Route::post('/forgot', function (Request $r) {
     $log = session('forgot_log', []);
     $log[] = ['email' => $r->email, 'at' => now()->toDateTimeString()];
     session(['forgot_log' => $log]);
-    return redirect()->route('login.form')->with('success','Link reset password telah dikirim, silakan cek email.');
+    return redirect()->route('login.form')->with('success', 'Link reset password telah dikirim, silakan cek email.');
 })->name('forgot');
 
 // Logout
@@ -114,7 +119,7 @@ Route::post('/logout', function (Request $r) {
     Auth::logout();
     $r->session()->invalidate();
     $r->session()->regenerateToken();
-    return redirect()->route('login.form')->with('success','Kamu telah logout.');
+    return redirect()->route('login.form')->with('success', 'Kamu telah logout.');
 })->name('logout');
 
 // Protected Routes - USER ONLY
@@ -122,11 +127,11 @@ Route::middleware(['auth:web'])->group(function () {
     Route::view('/beranda', 'pages.beranda')->name('beranda');
     Route::view('/profil', 'pages.profil')->name('profil');
     Route::view('/kontak', 'pages.kontak')->name('kontak');
-    
+
     Route::get('/riwayat', function() {
         return view('pages.riwayat');
     })->name('riwayat');
-    
+
     // Pengaduan Routes
     Route::get('/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.create');
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
@@ -153,17 +158,17 @@ Route::middleware(['auth:web'])->group(function () {
             'old_password' => 'required',
             'new_password' => 'required|min:6|confirmed',
         ]);
-        
+
         $user = Auth::user();
-        
+
         if (!Hash::check($r->old_password, $user->password)) {
             return back()->withErrors(['old_password' => 'Password lama tidak sesuai']);
         }
-        
+
         $user->update([
             'password' => Hash::make($r->new_password)
         ]);
-        
+
         return back()->with('success', 'Password berhasil diubah');
     })->name('profil.password');
 });
@@ -174,26 +179,31 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
     Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
     
+    Route::view('/dashboard', 'pages.admin.dashboard')->name('dashboard');
+    Route::view('/kelola-pengaduan', 'pages.admin.kelola-pengaduan')->name('kelola-pengaduan');
+    Route::view('/visualisasi', 'pages.admin.visualisasi')->name('visualisasi');
+    Route::view('/kelola-user', 'pages.admin.kelola-user')->name('kelola-user');
+
     // Admin bisa akses profil juga
     Route::view('/profil', 'pages.profil')->name('profil');
-    
+
     // Admin update password
     Route::put('/profil/password', function (Request $r) {
         $r->validate([
             'old_password' => 'required',
             'new_password' => 'required|min:6|confirmed',
         ]);
-        
+
         $admin = Auth::guard('admin')->user();
-        
+
         if (!Hash::check($r->old_password, $admin->password)) {
             return back()->withErrors(['old_password' => 'Password lama tidak sesuai']);
         }
-        
+
         $admin->update([
             'password' => Hash::make($r->new_password)
         ]);
-        
+
         return back()->with('success', 'Password berhasil diubah');
     })->name('profil.password');
 });

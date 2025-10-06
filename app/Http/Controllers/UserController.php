@@ -14,18 +14,17 @@ class UserController extends Controller
     // Menampilkan halaman login/register
     public function showLogin()
     {
-        return view('user');
+        return view('users');
     }
 
     // Menyimpan user baru
     public function register(Request $request)
     {
         $request->validate([
-            'nim' => 'required|unique:user,nim',
+            'nim' => 'required|unique:users,nim',
             'nama' => 'required',
             'password' => 'required|min:6',
         ]);
-
 
         User::create([
             'nim' => $request->nim,
@@ -35,13 +34,14 @@ class UserController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'alamat' => $request->alamat,
             'nomor_telepon' => $request->nomor_telepon,
-            'pekerjaan' => $request->pekerjaan,
+            'jenis_pekerjaan_id' => $request->jenis_pekerjaan_id ?? null,
             'role' => 'Pelapor',
             'password' => Hash::make($request->password),
         ]);
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat, silakan login.');
     }
+
 
     // Proses login
     public function login(Request $request)
