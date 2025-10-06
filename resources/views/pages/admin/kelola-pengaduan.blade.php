@@ -40,11 +40,9 @@
               <label class="form-label fw-semibold small">Kategori</label>
               <select class="form-select">
                 <option value="">Semua Kategori</option>
-                <option value="1">Akademik</option>
-                <option value="2">Fasilitas</option>
-                <option value="3">Kekerasan</option>
-                <option value="4">Kemahasiswaan</option>
-                <option value="5">Lainnya</option>
+                @foreach($kategoriKomplains as $kategori)
+                  <option value="{{ $kategori->kategori_komplain_id }}">{{ $kategori->jenis_komplain }}</option>
+                @endforeach
               </select>
             </div>
 
@@ -73,61 +71,60 @@
   <!-- Quick Stats -->
   <div class="row g-3 mb-4">
     <div class="col-md-3">
-      <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block">Total Hari Ini</small>
-              <h4 class="fw-bold mb-0" style="color: #6B21A8;">12</h4>
+        <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block">Total Hari Ini</small>
+                        <h4 class="fw-bold mb-0" style="color: #6B21A8;">{{ $totalHariIni }}</h4>
+                    </div>
+                    <i class="bi bi-inbox" style="font-size: 2rem; color: #6B21A8; opacity: 0.3;"></i>
+                </div>
             </div>
-            <i class="bi bi-inbox" style="font-size: 2rem; color: #6B21A8; opacity: 0.3;"></i>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="col-md-3">
-      <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block">Belum Diproses</small>
-              <h4 class="fw-bold mb-0" style="color: #ef4444;">8</h4>
+        <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block">Belum Diproses</small>
+                        <h4 class="fw-bold mb-0" style="color: #ef4444;">{{ $belumDiproses }}</h4>
+                    </div>
+                    <i class="bi bi-hourglass-split" style="font-size: 2rem; color: #ef4444; opacity: 0.3;"></i>
+                </div>
             </div>
-            <i class="bi bi-hourglass-split" style="font-size: 2rem; color: #ef4444; opacity: 0.3;"></i>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="col-md-3">
-      <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block">Sedang Diproses</small>
-              <h4 class="fw-bold mb-0" style="color: #f59e0b;">15</h4>
+        <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block">Sedang Diproses</small>
+                        <h4 class="fw-bold mb-0" style="color: #f59e0b;">{{ $sedangDiproses }}</h4>
+                    </div>
+                    <i class="bi bi-gear" style="font-size: 2rem; color: #f59e0b; opacity: 0.3;"></i>
+                </div>
             </div>
-            <i class="bi bi-gear" style="font-size: 2rem; color: #f59e0b; opacity: 0.3;"></i>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="col-md-3">
-      <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block">Selesai Minggu Ini</small>
-              <h4 class="fw-bold mb-0" style="color: #10b981;">34</h4>
+        <div class="card border-0 shadow-sm hover-card" style="cursor: pointer;">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block">Selesai Minggu Ini</small>
+                        <h4 class="fw-bold mb-0" style="color: #10b981;">{{ $selesaiMingguIni }}</h4>
+                    </div>
+                    <i class="bi bi-check-circle" style="font-size: 2rem; color: #10b981; opacity: 0.3;"></i>
+                </div>
             </div>
-            <i class="bi bi-check-circle" style="font-size: 2rem; color: #10b981; opacity: 0.3;"></i>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 
   <!-- Table Pengaduan -->
   <div class="row">
@@ -136,7 +133,7 @@
         <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
           <div>
             <h5 class="fw-bold mb-0">Daftar Pengaduan</h5>
-            <small class="text-muted">156 total pengaduan ditemukan</small>
+            <small class="text-muted">{{ $pengaduans->total() }} total pengaduan ditemukan</small>
           </div>
           <button class="btn btn-success">
             <i class="bi bi-download me-2"></i>Export Excel
@@ -157,208 +154,61 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- Row 1 - Urgent -->
+                @forelse($pengaduans as $pengaduan)
                 <tr class="table-row-hover">
                   <td class="px-4 py-3">
-                    <div class="d-flex align-items-center">
-                      <span class="badge bg-danger me-2">!</span>
-                      <strong>#TKT-156</strong>
-                    </div>
+                    <strong>#TKT-{{ $pengaduan->pengaduan_id }}</strong>
                   </td>
                   <td class="py-3">
                     <div>
-                      <div class="fw-semibold">Ahmad Rizki</div>
-                      <small class="text-muted">TSD 2023</small>
+                      {{-- Cek jika pelapor adalah user terdaftar atau anonim --}}
+                      @if($pengaduan->pelapor)
+                        <div class="fw-semibold">{{ $pengaduan->pelapor->nama }}</div>
+                        <small class="text-muted">{{ $pengaduan->pelapor->email }}</small>
+                      @else
+                        <div class="fw-semibold">Anonim</div>
+                        <small class="text-muted">Tidak terdaftar</small>
+                      @endif
                     </div>
                   </td>
                   <td class="py-3">
-                    <span class="badge" style="background: #ef4444;">Kekerasan</span>
+                    <span class="badge" style="background-color: {{ $pengaduan->kategoriKomplain->warna ?? '#6c757d' }};">
+                      {{ $pengaduan->kategoriKomplain->jenis_komplain }}
+                    </span>
                   </td>
                   <td class="py-3">
                     <div class="text-truncate" style="max-width: 300px;">
-                      Bullying verbal oleh senior di kelas...
+                      {{ $pengaduan->deskripsi_kejadian }}
                     </div>
                   </td>
                   <td class="py-3">
-                    <small>06 Okt 2025<br>14:30</small>
+                    <small>{{ $pengaduan->created_at->format('d M Y') }}<br>{{ $pengaduan->created_at->format('H:i') }}</small>
                   </td>
                   <td class="py-3">
-                    <span class="badge bg-secondary">Belum Diproses</span>
+                    @if($pengaduan->status_pengaduan == 'Selesai')
+                      <span class="badge bg-success">Selesai</span>
+                    @elseif($pengaduan->status_pengaduan == 'Diproses')
+                      <span class="badge bg-warning">Sedang Diproses</span>
+                    @else
+                      <span class="badge bg-secondary">Belum Diproses</span>
+                    @endif
                   </td>
                   <td class="py-3 text-center">
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary" title="Lihat Detail">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                      <button class="btn btn-outline-success" title="Proses">
-                        <i class="bi bi-gear"></i>
-                      </button>
-                      <button class="btn btn-outline-danger" title="Hapus">
-                        <i class="bi bi-trash"></i>
-                      </button>
+                      <a href="#" class="btn btn-outline-primary" title="Lihat Detail"><i class="bi bi-eye"></i></a>
+                      {{-- Tambahkan route untuk proses dan hapus --}}
+                      <a href="#" class="btn btn-outline-success" title="Proses"><i class="bi bi-gear"></i></a>
+                      <a href="#" class="btn btn-outline-danger" title="Hapus"><i class="bi bi-trash"></i></a>
                     </div>
                   </td>
                 </tr>
-
-                <!-- Row 2 - Processing -->
-                <tr class="table-row-hover">
-                  <td class="px-4 py-3">
-                    <strong>#TKT-155</strong>
-                  </td>
-                  <td class="py-3">
-                    <div>
-                      <div class="fw-semibold">Siti Nurhaliza</div>
-                      <small class="text-muted">TSD 2024</small>
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge" style="background: #0ea5f0;">Fasilitas</span>
-                  </td>
-                  <td class="py-3">
-                    <div class="text-truncate" style="max-width: 300px;">
-                      Toilet lantai 2 kotor dan tidak ada air...
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <small>05 Okt 2025<br>10:15</small>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge bg-warning">Sedang Diproses</span>
-                  </td>
-                  <td class="py-3 text-center">
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                      <button class="btn btn-outline-success">
-                        <i class="bi bi-check2"></i>
-                      </button>
-                      <button class="btn btn-outline-danger">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
+                @empty
+                <tr>
+                  <td colspan="7" class="text-center py-5">
+                    <h5 class="fw-bold">Tidak ada data pengaduan.</h5>
                   </td>
                 </tr>
-
-                <!-- Row 3 - Done -->
-                <tr class="table-row-hover">
-                  <td class="px-4 py-3">
-                    <strong>#TKT-154</strong>
-                  </td>
-                  <td class="py-3">
-                    <div>
-                      <div class="fw-semibold">Budi Santoso</div>
-                      <small class="text-muted">RK 2023</small>
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge" style="background: #6B21A8;">Akademik</span>
-                  </td>
-                  <td class="py-3">
-                    <div class="text-truncate" style="max-width: 300px;">
-                      Nilai UAS tidak sesuai dengan yang diharapkan...
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <small>04 Okt 2025<br>08:20</small>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge bg-success">Selesai</span>
-                  </td>
-                  <td class="py-3 text-center">
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                      <button class="btn btn-outline-secondary" disabled>
-                        <i class="bi bi-check-circle-fill"></i>
-                      </button>
-                      <button class="btn btn-outline-danger">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-
-                <!-- Row 4 -->
-                <tr class="table-row-hover">
-                  <td class="px-4 py-3">
-                    <strong>#TKT-153</strong>
-                  </td>
-                  <td class="py-3">
-                    <div>
-                      <div class="fw-semibold">Dewi Lestari</div>
-                      <small class="text-muted">RN 2024</small>
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge" style="background: #f59e0b;">Kemahasiswaan</span>
-                  </td>
-                  <td class="py-3">
-                    <div class="text-truncate" style="max-width: 300px;">
-                      Proses pengajuan surat rekomendasi terlalu lama...
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <small>03 Okt 2025<br>16:45</small>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge bg-secondary">Belum Diproses</span>
-                  </td>
-                  <td class="py-3 text-center">
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                      <button class="btn btn-outline-success">
-                        <i class="bi bi-gear"></i>
-                      </button>
-                      <button class="btn btn-outline-danger">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-
-                <!-- Row 5 -->
-                <tr class="table-row-hover">
-                  <td class="px-4 py-3">
-                    <strong>#TKT-152</strong>
-                  </td>
-                  <td class="py-3">
-                    <div>
-                      <div class="fw-semibold">Eko Prasetyo</div>
-                      <small class="text-muted">SMB 2023</small>
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge" style="background: #0ea5f0;">Fasilitas</span>
-                  </td>
-                  <td class="py-3">
-                    <div class="text-truncate" style="max-width: 300px;">
-                      WiFi kampus sering putus dan lambat...
-                    </div>
-                  </td>
-                  <td class="py-3">
-                    <small>02 Okt 2025<br>13:10</small>
-                  </td>
-                  <td class="py-3">
-                    <span class="badge bg-warning">Sedang Diproses</span>
-                  </td>
-                  <td class="py-3 text-center">
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                      <button class="btn btn-outline-success">
-                        <i class="bi bi-check2"></i>
-                      </button>
-                      <button class="btn btn-outline-danger">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                @endforelse
               </tbody>
             </table>
           </div>
@@ -366,24 +216,15 @@
         
         <!-- Pagination -->
         <div class="card-footer bg-white border-0 p-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Menampilkan 1-5 dari 156 pengaduan</small>
-            <nav>
-              <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled">
-                  <a class="page-link" href="#">Previous</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">32</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#">Next</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+            <div class="d-flex justify-content-between align-items-center">
+                {{-- Teks "Menampilkan X-Y dari Z" yang dibuat otomatis --}}
+                <small class="text-muted">
+                    Menampilkan {{ $pengaduans->firstItem() }} - {{ $pengaduans->lastItem() }} dari {{ $pengaduans->total() }} pengaduan
+                </small>
+                <div>
+                    {{ $pengaduans->links() }}
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -422,15 +263,6 @@
   padding: 0.25rem 0.5rem;
 }
 
-.pagination .page-link {
-  color: #6B21A8;
-  border-color: #e5e7eb;
-}
-
-.pagination .page-item.active .page-link {
-  background: #6B21A8;
-  border-color: #6B21A8;
-}
 </style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">

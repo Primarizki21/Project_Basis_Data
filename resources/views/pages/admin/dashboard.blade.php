@@ -1,3 +1,4 @@
+/* stylelint-disable */
 @extends('layouts.app')
 
 @section('content')
@@ -19,75 +20,72 @@
   <!-- Quick Stats -->
   <div class="row g-4 mb-4">
     <div class="col-xl-3 col-md-6 animate-on-scroll" style="animation-delay: 0.1s;">
-      <div class="card border-0 shadow-sm hover-lift-card">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block mb-1">Total Pengaduan</small>
-              <h3 class="fw-bold mb-0 counter" data-target="156" style="color: #6B21A8;">0</h3>
-              <small class="text-success"><i class="bi bi-arrow-up"></i> 12% dari bulan lalu</small>
+        <div class="card border-0 shadow-sm hover-lift-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block mb-1">Total Pengaduan</small>
+                        <h3 class="fw-bold mb-0 counter" data-target="{{ $totalPengaduan }}" style="color: #6B21A8;">0</h3>
+                    </div>
+                    <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #6B21A8, #7C3AED); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-file-earmark-text text-white" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
             </div>
-            <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #6B21A8, #7C3AED); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-              <i class="bi bi-file-earmark-text text-white" style="font-size: 1.5rem;"></i>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="col-xl-3 col-md-6 animate-on-scroll" style="animation-delay: 0.2s;">
-      <div class="card border-0 shadow-sm hover-lift-card">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block mb-1">Belum Diproses</small>
-              <h3 class="fw-bold mb-0 counter" data-target="23" style="color: #ef4444;">0</h3>
-              <small class="text-danger"><i class="bi bi-exclamation-triangle"></i> Perlu tindakan</small>
+        <div class="card border-0 shadow-sm hover-lift-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block mb-1">Belum Diproses</small>
+                        <h3 class="fw-bold mb-0 counter" data-target="{{ $belumDiproses }}" style="color: #ef4444;">0</h3>
+                        <small class="text-danger"><i class="bi bi-exclamation-triangle"></i> Perlu tindakan</small>
+                    </div>
+                    <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-hourglass-split text-white" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
             </div>
-            <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-              <i class="bi bi-hourglass-split text-white" style="font-size: 1.5rem;"></i>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="col-xl-3 col-md-6 animate-on-scroll" style="animation-delay: 0.3s;">
-      <div class="card border-0 shadow-sm hover-lift-card">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block mb-1">Selesai Bulan Ini</small>
-              <h3 class="fw-bold mb-0 counter" data-target="89" style="color: #10b981;">0</h3>
-              <small class="text-success"><i class="bi bi-check2"></i> Target 85% tercapai</small>
+        <div class="card border-0 shadow-sm hover-lift-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block mb-1">Selesai Bulan Ini</small>
+                        <h3 class="fw-bold mb-0 counter" data-target="{{ $selesaiBulanIni }}" style="color: #10b981;">0</h3>
+                    </div>
+                    <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-check-circle text-white" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
             </div>
-            <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-              <i class="bi bi-check-circle text-white" style="font-size: 1.5rem;"></i>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="col-xl-3 col-md-6 animate-on-scroll" style="animation-delay: 0.4s;">
-      <div class="card border-0 shadow-sm hover-lift-card">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-muted d-block mb-1">Total User Aktif</small>
-              <h3 class="fw-bold mb-0 counter" data-target="342" style="color: #0ea5f0;">0</h3>
-              <small class="text-muted"><i class="bi bi-people"></i> Mahasiswa & Staff</small>
+        <div class="card border-0 shadow-sm hover-lift-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted d-block mb-1">Total User Aktif</small>
+                        <h3 class="fw-bold mb-0 counter" data-target="{{ $totalUsers }}" style="color: #0ea5f0;">0</h3>
+                        <small class="text-muted"><i class="bi bi-people"></i> Mahasiswa & Staff</small>
+                    </div>
+                    <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #0ea5f0, #0284c7); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-people text-white" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
             </div>
-            <div class="icon-box" style="width: 55px; height: 55px; background: linear-gradient(135deg, #0ea5f0, #0284c7); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-              <i class="bi bi-people text-white" style="font-size: 1.5rem;"></i>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Charts Row -->
+  <!-- Charts Row
   <div class="row g-4 mb-4">
     <div class="col-lg-8">
       <div class="card border-0 shadow-sm">
@@ -110,7 +108,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- Recent Activities -->
   <div class="row g-4">
@@ -122,90 +120,43 @@
         </div>
         <div class="card-body p-0">
           <div class="activity-timeline">
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #10b981;">
-                <i class="bi bi-check-circle"></i>
-              </div>
-              <div class="activity-content">
-                <strong>Pengaduan #TKT-156 selesai</strong>
-                <p class="text-muted mb-0 small">AC ruang 301 telah diperbaiki</p>
-                <small class="text-muted">2 menit yang lalu</small>
-              </div>
-            </div>
 
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #f59e0b;">
-                <i class="bi bi-gear"></i>
-              </div>
-              <div class="activity-content">
-                <strong>Pengaduan #TKT-155 sedang diproses</strong>
-                <p class="text-muted mb-0 small">Toilet lantai 2 dalam perbaikan</p>
-                <small class="text-muted">15 menit yang lalu</small>
-              </div>
-            </div>
+              @forelse($activities as $activity)
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: {{ $activity->icon_color }};">
+                        <i class="bi {{ $activity->icon_class }}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>{{ $activity->description }}</strong>
+                        <br><br>
+                        @if ($activity->subject)
+                            @if ($activity->subject_type === 'App\Models\Pengaduan')
+                                <p class="text-muted mb-0 small fst-italic">
+                                    "{{ Str::limit($activity->subject->deskripsi_kejadian, 50) }}"
+                                </p>
+                            @elseif ($activity->subject_type === 'App\Models\User')
+                                <p class="text-muted mb-0 small">
+                                    {{ $activity->subject->email }}
+                                </p>
+                            @endif
+                        @endif
+                        <small class="text-muted">{{ $activity->created_at->diffForHumans() }}</small>
+                    </div>
+                </div>
 
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #0ea5f0;">
-                <i class="bi bi-file-earmark-plus"></i>
-              </div>
-              <div class="activity-content">
-                <strong>Pengaduan baru masuk</strong>
-                <p class="text-muted mb-0 small">Projector Lab A tidak berfungsi</p>
-                <small class="text-muted">1 jam yang lalu</small>
-              </div>
-            </div>
+              @empty
+                  {{-- Ini akan ditampilkan jika variabel $activities kosong --}}
+                  <div class="activity-item">
+                      <div class="activity-icon" style="background: #6c757d;">
+                          <i class="bi bi-info-circle"></i>
+                      </div>
+                      <div class="activity-content">
+                          <strong>Belum ada aktivitas.</strong>
+                          <p class="text-muted mb-0 small">Semua aktivitas terbaru akan muncul di sini.</p>
+                      </div>
+                  </div>
+              @endforelse
 
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #6B21A8;">
-                <i class="bi bi-person-plus"></i>
-              </div>
-              <div class="activity-content">
-                <strong>User baru terdaftar</strong>
-                <p class="text-muted mb-0 small">Ahmad Rizki - TSD 2024</p>
-                <small class="text-muted">2 jam yang lalu</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-6">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0 p-4">
-          <h5 class="fw-bold mb-0">Pengaduan Prioritas Tinggi</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="priority-list">
-            <div class="priority-item mb-3 p-3" style="background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 8px;">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge bg-danger">URGENT</span>
-                <small class="text-muted">#TKT-154</small>
-              </div>
-              <h6 class="fw-bold mb-1">Kekerasan - Bullying di Kelas</h6>
-              <p class="text-muted small mb-2">Laporan dari mahasiswa TSD angkatan 2023...</p>
-              <a href="#" class="btn btn-sm btn-outline-danger">Tindak Lanjut</a>
-            </div>
-
-            <div class="priority-item mb-3 p-3" style="background: #fff7ed; border-left: 4px solid #f59e0b; border-radius: 8px;">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge bg-warning text-dark">HIGH</span>
-                <small class="text-muted">#TKT-153</small>
-              </div>
-              <h6 class="fw-bold mb-1">Akademik - Nilai Tidak Sesuai</h6>
-              <p class="text-muted small mb-2">Komplain tentang nilai UAS yang tidak masuk...</p>
-              <a href="#" class="btn btn-sm btn-outline-warning">Tindak Lanjut</a>
-            </div>
-
-            <div class="priority-item p-3" style="background: #eff6ff; border-left: 4px solid #0ea5f0; border-radius: 8px;">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge bg-info">MEDIUM</span>
-                <small class="text-muted">#TKT-152</small>
-              </div>
-              <h6 class="fw-bold mb-1">Fasilitas - WiFi Lemot</h6>
-              <p class="text-muted small mb-2">Internet di perpustakaan sangat lambat...</p>
-              <a href="#" class="btn btn-sm btn-outline-info">Tindak Lanjut</a>
-            </div>
           </div>
         </div>
       </div>
