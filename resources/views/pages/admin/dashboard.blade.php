@@ -1,3 +1,4 @@
+/* stylelint-disable */
 @extends('layouts.app')
 
 @section('content')
@@ -122,49 +123,43 @@
         </div>
         <div class="card-body p-0">
           <div class="activity-timeline">
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #10b981;">
-                <i class="bi bi-check-circle"></i>
-              </div>
-              <div class="activity-content">
-                <strong>Pengaduan #TKT-156 selesai</strong>
-                <p class="text-muted mb-0 small">AC ruang 301 telah diperbaiki</p>
-                <small class="text-muted">2 menit yang lalu</small>
-              </div>
-            </div>
 
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #f59e0b;">
-                <i class="bi bi-gear"></i>
-              </div>
-              <div class="activity-content">
-                <strong>Pengaduan #TKT-155 sedang diproses</strong>
-                <p class="text-muted mb-0 small">Toilet lantai 2 dalam perbaikan</p>
-                <small class="text-muted">15 menit yang lalu</small>
-              </div>
-            </div>
+              @forelse($activities as $activity)
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: {{ $activity->icon_color }};">
+                        <i class="bi {{ $activity->icon_class }}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>{{ $activity->description }}</strong>
+                        <br><br>
+                        @if ($activity->subject)
+                            @if ($activity->subject_type === 'App\Models\Pengaduan')
+                                <p class="text-muted mb-0 small fst-italic">
+                                    "{{ Str::limit($activity->subject->deskripsi_kejadian, 50) }}"
+                                </p>
+                            @elseif ($activity->subject_type === 'App\Models\User')
+                                <p class="text-muted mb-0 small">
+                                    {{ $activity->subject->email }}
+                                </p>
+                            @endif
+                        @endif
+                        <small class="text-muted">{{ $activity->created_at->diffForHumans() }}</small>
+                    </div>
+                </div>
 
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #0ea5f0;">
-                <i class="bi bi-file-earmark-plus"></i>
-              </div>
-              <div class="activity-content">
-                <strong>Pengaduan baru masuk</strong>
-                <p class="text-muted mb-0 small">Projector Lab A tidak berfungsi</p>
-                <small class="text-muted">1 jam yang lalu</small>
-              </div>
-            </div>
+              @empty
+                  {{-- Ini akan ditampilkan jika variabel $activities kosong --}}
+                  <div class="activity-item">
+                      <div class="activity-icon" style="background: #6c757d;">
+                          <i class="bi bi-info-circle"></i>
+                      </div>
+                      <div class="activity-content">
+                          <strong>Belum ada aktivitas.</strong>
+                          <p class="text-muted mb-0 small">Semua aktivitas terbaru akan muncul di sini.</p>
+                      </div>
+                  </div>
+              @endforelse
 
-            <div class="activity-item">
-              <div class="activity-icon" style="background: #6B21A8;">
-                <i class="bi bi-person-plus"></i>
-              </div>
-              <div class="activity-content">
-                <strong>User baru terdaftar</strong>
-                <p class="text-muted mb-0 small">Ahmad Rizki - TSD 2024</p>
-                <small class="text-muted">2 jam yang lalu</small>
-              </div>
-            </div>
           </div>
         </div>
       </div>
