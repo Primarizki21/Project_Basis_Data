@@ -1,93 +1,115 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6">
-  <div class="flex gap-4">
-    <input id="search" placeholder="Cari berdasarkan deskripsi, status, nama pelapor..." class="flex-1 px-3 py-2 border rounded-md" />
-    @auth('web')
-        <a href="{{ route('pengaduan.form') }}" class="bg-gradient-to-r from-blue-500 to-teal-500 text-white px-4 py-2 rounded-md">
-            Buat Pengaduan
-        </a>
-    @endauth
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="fw-bold mb-1">Riwayat Pengaduan</h2>
+      <p class="text-muted mb-0">Daftar semua pengaduan yang pernah Anda ajukan</p>
+    </div>
   </div>
 
-  <div class="card p-4">
-    <div class="mb-3 text-sm text-gray-500">
-    @auth('admin')
-        Daftar Seluruh Pengaduan
-    @else
-        Daftar Pengaduan Anda
-    @endauth
+  <!-- Filter Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small">Status</label>
+              <select class="form-select">
+                <option value="">Semua Status</option>
+                <option value="menunggu">Menunggu</option>
+                <option value="proses">Diproses</option>
+                <option value="selesai">Selesai</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small">Kategori</label>
+              <select class="form-select">
+                <option value="">Semua Kategori</option>
+                <option value="akademik">Akademik</option>
+                <option value="fasilitas">Fasilitas</option>
+                <option value="kekerasan">Kekerasan</option>
+                <option value="kemahasiswaan">Kemahasiswaan</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">&nbsp;</label>
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary">
+                  <i class="bi bi-funnel me-2"></i>Filter
+                </button>
+                <button class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-clockwise me-2"></i>Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="text-left text-gray-500">
-          <tr>
-            <th class="px-3 py-2">No</th>
-            <th class="px-3 py-2">Judul/Deskripsi</th>
-            @auth('admin')
-              <th class="px-3 py-2">Pelapor</th>
-            @endauth
-            <th class="px-3 py-2">Kategori</th>
-            <th class="px-3 py-2">Status</th>
-            <th class="px-3 py-2">Tanggal Kejadian</th>
-          </tr>
-        </thead>
-        <tbody id="table-body">
-          @forelse($pengaduan as $p)
-            <tr class="border-t">
-              <td class="px-3 py-2">{{ $loop->iteration }}</td>
-              <td class="px-3 py-2">{{ Str::limit($p->deskripsi_kejadian, 50) }}</td>
-              @auth('admin')
-                <td class="px-3 py-2 font-medium">{{ $p->pelapor->nama ?? 'User Dihapus/Anonim' }}</td>
-              @endauth              
-              <td class="px-3 py-2">{{ $p->kategoriKomplain->jenis_komplain ?? 'Tidak ada kategori' }}</td>
-              <td class="px-3 py-2">
-                <span class="px-2 py-1 rounded-md text-sm 
-                  @if($p->status_pengaduan == 'Selesai') bg-green-100 text-green-800
-                  @elseif($p->status_pengaduan == 'Diproses') bg-blue-100 text-blue-800
-                  @else bg-yellow-100 text-yellow-800 @endif">
-                  {{ $p->status_pengaduan }}
-                </span>
-              </td>
-              <td class="px-3 py-2">{{ \Carbon\Carbon::parse($p->tanggal_kejadian)->format('d M Y') }}</td>
-              <td class="px-3 py-2 flex items-center gap-2">
-                  {{-- Tombol Edit --}}
-                  <a href="{{ route('pengaduan.edit', $p->pengaduan_id) }}" 
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-1 rounded-md text-sm no-underline">
-                    Edit
-                  </a>
+  </div>
 
-                  {{-- Tombol Hapus --}}
-                  <form action="{{ route('pengaduan.destroy', $p->pengaduan_id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin?');">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" 
-                              class="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-3 py-1 rounded-md text-sm">
-                              Hapus
-                      </button>
-                  </form>
-              </td>
-            </tr>
-          @empty
-            <tr>
-              {{-- UPDATE COLSPAN MENJADI 6 KARENA ADA TAMBAHAN 1 KOLOM --}}
-              <td colspan="7" class="px-3 py-6 text-center text-gray-500">Belum ada pengaduan yang Anda buat.</td>
-            </tr>
-          @endforelse
-        </tbody>
-      </table>
+  <!-- Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+                <tr>
+                  <th class="px-4 py-3">No. Tiket</th>
+                  <th class="py-3">Kategori</th>
+                  <th class="py-3">Deskripsi</th>
+                  <th class="py-3">Tanggal</th>
+                  <th class="py-3">Status</th>
+                  <th class="py-3">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 py-3"><span class="badge bg-light text-dark fw-bold">#TKT-001</span></td>
+                  <td class="py-3"><span class="badge" style="background: #6B21A8;">Akademik</span></td>
+                  <td class="py-3">
+                    <div style="max-width: 300px;">
+                      <p class="mb-0 text-truncate">AC di ruang kelas rusak...</p>
+                    </div>
+                  </td>
+                  <td class="py-3"><small class="text-muted">05 Okt 2025</small></td>
+                  <td class="py-3"><span class="badge bg-warning">Diproses</span></td>
+                  <td class="py-3">
+                    <button class="btn btn-sm btn-outline-primary">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3"><span class="badge bg-light text-dark fw-bold">#TKT-002</span></td>
+                  <td class="py-3"><span class="badge" style="background: #0ea5f0;">Fasilitas</span></td>
+                  <td class="py-3">
+                    <div style="max-width: 300px;">
+                      <p class="mb-0 text-truncate">Toilet kotor tidak ada air...</p>
+                    </div>
+                  </td>
+                  <td class="py-3"><small class="text-muted">03 Okt 2025</small></td>
+                  <td class="py-3"><span class="badge bg-success">Selesai</span></td>
+                  <td class="py-3">
+                    <button class="btn btn-sm btn-outline-primary">Detail</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-4 border-top">
+            <p class="text-muted small mb-0">Menampilkan 2 pengaduan</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<script>
-  const search = document.getElementById('search');
-  search?.addEventListener('input', (e) => {
-    const q = e.target.value.toLowerCase();
-    document.querySelectorAll('#table-body tr').forEach(row => {
-      row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
-    });
-  });
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 @endsection

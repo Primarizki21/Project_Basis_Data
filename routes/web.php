@@ -1,53 +1,40 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\PengaduanController;
-use App\Http\Controllers\KategoriKomplainController;
-use App\Http\Controllers\JenisPekerjaanController;
-use App\Models\JenisPekerjaan;
-use App\Models\User;
-use App\Models\Prodi;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use App\Http\Controllers\{
+    UserController, LaporanController, PengaduanController, 
+    KategoriKomplainController, JenisPekerjaanController
+};
+use App\Models\{User, Prodi, JenisPekerjaan};
 
+// Landing Page
+Route::get('/', function() {
+    return view('welcome');
+})->name('welcome');
 
-Route::get('/', fn() => redirect()->route('login.form'));
+// Kategori
 Route::resource('kategori', KategoriKomplainController::class);
 
-// Sementara matikan dulu
-// Route::resource('jenis_pekerjaan', JenisPekerjaanController::class);
-
-// Public (no navbar)
+// Auth Pages
 Route::get('/login', fn() => view('auth.login'))->name('login.form');
 Route::get('/register', function () {
     $listPekerjaan = JenisPekerjaan::all();
     $listProdi = Prodi::all();
-
     return view('auth.register', compact('listPekerjaan', 'listProdi'));
-    
-})->name('register.form');Route::get('/forgot', fn() => view('auth.forgot'))->name('password.request');
+})->name('register.form');
+Route::get('/forgot', fn() => view('auth.forgot'))->name('password.request');
 
-// Protected helper
-$protect = function ($view) {
-    if (! session('user')) {
-        return redirect()->route('login.form')->with('error','Silakan login terlebih dahulu.');
-    }
-    return view($view);
-};
-
+// Register
 Route::post('/register', function (Request $r) {
     $r->validate([
         'nim' => 'required|string|max:25|unique:user,nim',
         'nama' => 'required|string|max:100',
         'email' => [
-            'required',
-            'email',
-            'unique:user,email', // Verifikasi ke tabel user
-            'unique:admin,email', // Verifikasi ke tabel admin
+            'required','email','unique:user,email','unique:admin,email',
             'ends_with:@ftmm.unair.ac.id'
         ],
         'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
@@ -79,54 +66,42 @@ Route::post('/register', function (Request $r) {
     return redirect()->route('login.form')->with('success', 'Akun berhasil terdaftar! Silakan login.');
 })->name('register');
 
+// Login
 Route::post('/login', function (Request $r) {
     $validator = Validator::make($r->all(), [
         'email' => 'required|email',
         'password' => 'required',
     ]);
+    if ($validator->fails()) return back()->withErrors($validator)->withInput();
 
-    if ($validator->fails()) {
-        return back()->withErrors($validator)->withInput();
-    }
     $credentials = $r->only('email', 'password');
-
-    // Debug Admin
-    // dd(Auth::guard('admin')->attempt($credentials));
-
+    
+    // Try admin login first
+    if (Auth::guard('admin')->attempt($credentials)) {
+        $r->session()->regenerate();
+        return redirect()->route('admin.dashboard');
+    }
+    
+    // Then try user login
     if (Auth::guard('web')->attempt($credentials)) {
-        if (! str_ends_with($r->email, '@ftmm.unair.ac.id')) {
-            Auth::guard('web')->logout(); // keluarin lagi
-            return back()->withErrors([
-                'email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'
-            ])->withInput();
+        if (!str_ends_with($r->email, '@ftmm.unair.ac.id')) {
+            Auth::guard('web')->logout();
+            return back()->withErrors(['email' => 'Hanya email @ftmm.unair.ac.id yang diperbolehkan.'])->withInput();
         }
         $r->session()->regenerate();
         return redirect()->route('beranda');
     }
-    if (Auth::guard('admin')->attempt($credentials)) {
-        $r->session()->regenerate();
-        return redirect()->route('beranda');
-    }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah.'
-    ])->withInput();
+    return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
 })->name('login');
 
+// Forgot password
 Route::post('/forgot', function (Request $r) {
-    $r->validate([
-        'email' => 'required|email',
-    ]);
-
+    $r->validate(['email' => 'required|email']);
     $log = session('forgot_log', []);
-    $log[] = [
-        'email' => $r->email,
-        'at' => now()->toDateTimeString(),
-    ];
+    $log[] = ['email' => $r->email, 'at' => now()->toDateTimeString()];
     session(['forgot_log' => $log]);
-
-    return redirect()->route('login.form')
-        ->with('success','Link reset password telah dikirim, silakan cek email.');
+    return redirect()->route('login.form')->with('success','Link reset password telah dikirim, silakan cek email.');
 })->name('forgot');
 
 // Logout
@@ -137,32 +112,84 @@ Route::post('/logout', function (Request $r) {
     return redirect()->route('login.form')->with('success','Kamu telah logout.');
 })->name('logout');
 
-
-// Protected pages (hanya bisa diakses kalau login)
-Route::middleware(['auth:web,admin'])->group(function () {
-    Route::get('/beranda', fn() => view('pages.beranda'))->name('beranda');
-    Route::get('/profil', fn() => view('pages.profil'))->name('profil');
-    Route::get('/riwayat', [PengaduanController::class, 'index'])->name('riwayat.index');
-    Route::get('/kontak', fn() => view('pages.kontak'))->name('kontak');
+// Protected Routes - USER ONLY
+Route::middleware(['auth:web'])->group(function () {
+    Route::view('/beranda', 'pages.beranda')->name('beranda');
+    Route::view('/profil', 'pages.profil')->name('profil');
+    Route::view('/kontak', 'pages.kontak')->name('kontak');
     
-    Route::get('/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.form');
-    Route::post('/pengaduan/store', [PengaduanController::class, 'store'])->name('pengaduan.store');
-
+    Route::get('/riwayat', function() {
+        return view('pages.riwayat');
+    })->name('riwayat');
+    
+    // Pengaduan Routes
+    Route::get('/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.create');
+    Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
     Route::delete('/pengaduan/{pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.destroy');
-    
+
+    // Update Profil & Password
     Route::post('/profil/update', function (Request $r) {
         $r->validate([
             'nama' => 'required',
             'nomor_telepon' => 'nullable|string|max:15',
         ]);
-        
         $user = Auth::user();
-        $user->nama = $r->nama;
-        $user->nomor_telepon = $r->nomor_telepon ?? $user->nomor_telepon;
-        $user->save();
-        
+        $user->update([
+            'nama' => $r->nama,
+            'nomor_telepon' => $r->nomor_telepon ?? $user->nomor_telepon,
+        ]);
         return back()->with('success', 'Profil berhasil diperbarui.');
     })->name('profil.update');
+
+    Route::put('/profil/password', function (Request $r) {
+        $r->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+        
+        $user = Auth::user();
+        
+        if (!Hash::check($r->old_password, $user->password)) {
+            return back()->withErrors(['old_password' => 'Password lama tidak sesuai']);
+        }
+        
+        $user->update([
+            'password' => Hash::make($r->new_password)
+        ]);
+        
+        return back()->with('success', 'Password berhasil diubah');
+    })->name('profil.password');
+});
+
+// Protected Routes - ADMIN ONLY
+Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::view('/dashboard', 'pages.admin.dashboard')->name('dashboard');
+    Route::view('/kelola-pengaduan', 'pages.admin.kelola-pengaduan')->name('kelola-pengaduan');
+    Route::view('/visualisasi', 'pages.admin.visualisasi')->name('visualisasi');
+    Route::view('/kelola-user', 'pages.admin.kelola-user')->name('kelola-user');
+    
+    // Admin bisa akses profil juga
+    Route::view('/profil', 'pages.profil')->name('profil');
+    
+    // Admin update password
+    Route::put('/profil/password', function (Request $r) {
+        $r->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+        
+        $admin = Auth::guard('admin')->user();
+        
+        if (!Hash::check($r->old_password, $admin->password)) {
+            return back()->withErrors(['old_password' => 'Password lama tidak sesuai']);
+        }
+        
+        $admin->update([
+            'password' => Hash::make($r->new_password)
+        ]);
+        
+        return back()->with('success', 'Password berhasil diubah');
+    })->name('profil.password');
 });
