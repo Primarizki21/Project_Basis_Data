@@ -19,7 +19,6 @@ Route::get('/', [LandingPageController::class, 'index'])->name('welcome');
 
 // Halaman form pengaduan anonim
 Route::get('/pengaduan/anonim', [PengaduanController::class, 'createAnonim'])->name('pengaduan.createAnonim');
-
 // Proses penyimpanan pengaduan anonim
 Route::post('/pengaduan/anonim', [PengaduanController::class, 'storeAnonim'])->name('pengaduan.storeAnonim');
 
