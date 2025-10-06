@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('deskripsi_kejadian');
             $table->date('tanggal_kejadian')->nullable();
             $table->enum('status_pengaduan', ['Diproses', 'Selesai', 'Menunggu'])->nullable();
+            $table->boolean('is_anonim')->default(false);
             $table->enum('status_pelapor', ['Korban', 'Keluarga', 'Teman', 'Saksi'])->nullable();
             $table->timestamps();
         });

@@ -22,8 +22,8 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('nomor_telepon', 15)->nullable();
             $table->unsignedInteger('jenis_pekerjaan_id')->nullable();
-            $table->unsignedInteger('prodi_id')->nullable()->after('jenis_pekerjaan_id');
-            $table->string('angkatan', 4)->nullable()->after('prodi_id');
+            $table->unsignedInteger('prodi_id')->nullable();
+            $table->string('angkatan', 4)->nullable();
             $table->string('password')->nullable();
             $table->timestamps();
         });
