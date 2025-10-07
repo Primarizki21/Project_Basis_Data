@@ -30,6 +30,7 @@
       <!-- Form Card -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
+          {{-- Ini untuk cek yang update user atau admin --}}
           <form action="{{ Auth::guard('admin')->check() ? route('admin.pengaduan.update', $pengaduan) : route('pengaduan.update', $pengaduan) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -62,6 +63,7 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Ubah Status Pengaduan</label>
                     <select name="status_pengaduan" class="form-select form-select-lg" required>
+                      {{-- Sementara ditolak hapus dulu, nanti ditambah --}}
                         @foreach(['Menunggu', 'Diproses', 'Selesai'] as $status)
                             <option value="{{ $status }}" @if(old('status_pengaduan', $pengaduan->status_pengaduan) == $status) selected @endif>{{ $status }}</option>
                         @endforeach
