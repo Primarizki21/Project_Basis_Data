@@ -16,6 +16,13 @@ class DashboardController extends Controller
         $selesai = Pengaduan::where('user_id', $userId)->where('status_pengaduan', 'Selesai')->count();
         $menunggu = Pengaduan::where('user_id', $userId)->where('status_pengaduan', 'Menunggu')->count();
         $ditolak = Pengaduan::where('user_id', $userId)->where('status_pengaduan', 'Ditolak')->count();
+        $warnaKategori = [
+            'Akademik' => '#0d6efd',
+            'Fasilitas' => '#198754',
+            'Kekerasan' => '#dc3545',
+            'Kemahasiswaan' => '#ffc107',
+            'Lainnya' => '#6c757d',
+        ];
 
         $pengaduanTerbaru = Pengaduan::with('kategoriKomplain')
             ->where('user_id', $userId)
@@ -24,7 +31,14 @@ class DashboardController extends Controller
             ->get();
 
         return view('pages.beranda', compact(
-            'total', 'diproses', 'selesai', 'menunggu', 'ditolak', 'pengaduanTerbaru', 'totalPengaduan'
+            'total', 
+            'diproses', 
+            'selesai', 
+            'menunggu', 
+            'ditolak', 
+            'pengaduanTerbaru', 
+            'totalPengaduan',
+            'warnaKategori'
         ));
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Pengaduan;
 use App\Models\BuktiPengaduan;
 use App\Models\TindakLanjut;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Models\KategoriKomplain;
 
 class PengaduanController extends Controller
@@ -15,13 +16,22 @@ class PengaduanController extends Controller
     public function index()
     {
         $pengaduanQuery = Pengaduan::with('pelapor', 'kategoriKomplain');
-
+        $warnaKategori = [
+            'Akademik' => '#0d6efd',
+            'Fasilitas' => '#198754',
+            'Kekerasan' => '#dc3545',
+            'Kemahasiswaan' => '#ffc107',
+            'Lainnya' => '#6c757d',
+        ];
         if (Auth::guard('admin')->check()) {
             $pengaduan = $pengaduanQuery->latest()->get();
         } else {
             $pengaduan = $pengaduanQuery->where('user_id', Auth::id())->latest()->get();
         }
-        return view('pages.riwayat', compact('pengaduan'));
+        return view('pages.riwayat', compact(
+            'warnaKategori', 
+            'pengaduan'
+        ));
     }
 
     // Form pengaduan
@@ -115,24 +125,41 @@ class PengaduanController extends Controller
 
     public function update(Request $request, Pengaduan $pengaduan)
     {
-        if (Auth::guard('web')->check() && $pengaduan->user_id !== Auth::id()) {
+        if (Gate::denies('update', $pengaduan)) {
             abort(403);
         }
 
         $validated = $request->validate([
-            'deskripsi_kejadian' => 'required|string',
-            'tanggal_kejadian' => 'required|date',
-            'kategori_komplain_id' => 'required|exists:kategori_komplain,kategori_komplain_id',
+            'deskripsi_kejadian' => 'sometimes|required|string',
+            'tanggal_kejadian' => 'sometimes|required|date',
+            'kategori_komplain_id' => 'sometimes|required|exists:kategori_komplain,kategori_komplain_id',
         ]);
         
-        $pengaduan->update($validated);
+        if (!Auth::guard('admin')->check()) {
+            $pengaduan->update($validated);
+        }
 
         if (Auth::guard('admin')->check()) {
-            $pengaduan->status_pengaduan = $request->input('status_pengaduan');
+            $adminValidated = $request->validate([
+                'status_pengaduan' => 'required|string|in:Menunggu,Diproses,Selesai,Ditolak',
+                'deskripsi_tindak_lanjut' => 'required|string|min:10' // Deskripsi tindak lanjut wajib diisi
+            ]);
+
+            $pengaduan->tindakLanjut()->create([
+                'jenis_tindak_lanjut' => 'Penanganan oleh Admin',
+                'deskripsi'           => $adminValidated['deskripsi_tindak_lanjut'],
+                'admin_id'            => Auth::guard('admin')->id(),
+            ]);
+            
+            $pengaduan->status_pengaduan = $adminValidated['status_pengaduan'];
             $pengaduan->save();
         }
 
-        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil diperbarui!');
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.kelola-pengaduan')->with('success', 'Pengaduan berhasil diperbarui!');
+        } else {
+            return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil diperbarui!');
+        }
     }
 
     public function destroy(Pengaduan $pengaduan)
