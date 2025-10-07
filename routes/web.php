@@ -6,18 +6,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\{
-<<<<<<< HEAD
-    UserController, LaporanController, PengaduanController, 
-    KategoriKomplainController, JenisPekerjaanController, LandingPageController, AdminController,
-    AdminDashboardController
-=======
     UserController,
     LaporanController,
     PengaduanController,
     KategoriKomplainController,
     JenisPekerjaanController,
     DashboardController
->>>>>>> cbd82ad (Add prodi and angkatan fields to register page)
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
 
