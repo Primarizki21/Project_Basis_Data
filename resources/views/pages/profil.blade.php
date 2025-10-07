@@ -137,7 +137,7 @@
             </div>
             <div class="col-12">
               <label class="form-label fw-semibold text-muted small">Program Studi</label>
-              <div class="form-control-plaintext fw-bold">{{ Auth::user()->prodi ?? '-' }}</div>
+              <div class="form-control-plaintext fw-bold">{{ Auth::user()->prodifk->nama_prodi ?? '-' }}</div>
             </div>
           </div>
           @endauth

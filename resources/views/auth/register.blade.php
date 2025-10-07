@@ -350,7 +350,9 @@
                             <select class="form-select" id="prodi" name="prodi">
                                 <option value="">Pilih Prodi</option>
                                 @foreach($listProdi ?? [] as $prodi)
-                                <option value="{{ $prodi->nama_prodi }}" {{ old('prodi') == $prodi->nama_prodi ? 'selected' : '' }}>{{ $prodi->nama_prodi }}</option>
+                                <option value="{{ $prodi->prodi_id }}" {{ old('prodi') == $prodi->prodi_id ? 'selected' : '' }}>
+                                    {{ $prodi->nama_prodi }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>

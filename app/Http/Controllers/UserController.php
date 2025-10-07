@@ -16,13 +16,13 @@ class UserController extends Controller
     // ============================
     public function showLogin()
     {
-        return view('users');
+        return view('user');
     }
 
     public function register(Request $request)
     {
         $request->validate([
-            'nim' => 'required|unique:users,nim',
+            'nim' => 'required|unique:user,nim',
             'nama' => 'required',
             'password' => 'required|min:6',
         ]);
@@ -104,6 +104,7 @@ class UserController extends Controller
         $ditolak = Pengaduan::where('user_id', $user->user_id)
             ->where('status_pengaduan', 'Ditolak')
             ->count();
+
 
         return view('pages.profil', compact(
             'user',

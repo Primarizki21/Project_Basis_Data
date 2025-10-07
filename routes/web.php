@@ -13,6 +13,7 @@ use App\Http\Controllers\{
     JenisPekerjaanController,
     DashboardController,
     LandingPageController,
+    LandingPageController,
     AdminController
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
@@ -64,7 +65,7 @@ Route::post('/register', function (Request $r) {
         'alamat' => 'required|string',
         'nomor_telepon' => 'required|string|max:15',
         'jenis_pekerjaan_id' => 'required|integer|exists:jenis_pekerjaan,jenis_pekerjaan_id',
-        'prodi' => 'required_if:jenis_pekerjaan_id,1|string|max:100',
+        'prodi' => 'required_if:jenis_pekerjaan_id,1|integer|exists:prodi,prodi_id',
         'angkatan' => 'required_if:jenis_pekerjaan_id,1|string|max:4',
         'password' => 'required|min:6|confirmed',
     ]);
@@ -79,7 +80,7 @@ Route::post('/register', function (Request $r) {
         'alamat' => $r->alamat,
         'nomor_telepon' => $r->nomor_telepon,
         'jenis_pekerjaan_id' => $r->jenis_pekerjaan_id,
-        'prodi' => $r->prodi,
+        'prodi_id' => $r->prodi,
         'angkatan' => $r->angkatan,
         'password' => Hash::make($r->password),
     ]);
