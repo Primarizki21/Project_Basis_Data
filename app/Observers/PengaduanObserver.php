@@ -10,6 +10,7 @@ class PengaduanObserver
     public function created(Pengaduan $pengaduan): void
     {
         ActivityLog::create([
+            'user_id' => $pengaduan->user_id,
             'description' => "Pengaduan baru masuk",
             'subject_id' => $pengaduan->pengaduan_id,
             'subject_type' => Pengaduan::class,
@@ -18,16 +19,46 @@ class PengaduanObserver
 
     public function updated(Pengaduan $pengaduan): void
     {
-        // Cek jika kolom status_pengaduan yang berubah
         if ($pengaduan->isDirty('status_pengaduan')) {
-            $status = $pengaduan->status_pengaduan; // "Diproses" atau "Selesai"
+            $status = $pengaduan->status_pengaduan;
             ActivityLog::create([
-                'description' => "Pengaduan #TKT-{$pengaduan->pengaduan_id} statusnya diubah menjadi {$status}",
-                'subject_id' => $pengaduan->pengaduan_id,
+                'user_id'      => $pengaduan->user_id, // Log dikaitkan dengan user pemilik pengaduan
+                'description'  => "Status pengaduan #TKT-{$pengaduan->pengaduan_id} diubah menjadi '{$status}' oleh admin.",
+                'subject_id'   => $pengaduan->pengaduan_id,
+                'subject_type' => Pengaduan::class,
+            ]);
+        }
+
+        if ($pengaduan->isDirty('deskripsi_kejadian')) {
+            ActivityLog::create([
+                'user_id'      => $pengaduan->user_id,
+                'description'  => "Deskripsi untuk pengaduan #TKT-{$pengaduan->pengaduan_id} telah diperbarui.",
+                'subject_id'   => $pengaduan->pengaduan_id,
+                'subject_type' => Pengaduan::class,
+            ]);
+        }
+
+        if ($pengaduan->isDirty('tanggal_kejadian')) {
+            $newDate = \Carbon\Carbon::parse($pengaduan->tanggal_kejadian)->format('d F Y');
+            ActivityLog::create([
+                'user_id'      => $pengaduan->user_id,
+                'description'  => "Tanggal kejadian untuk #TKT-{$pengaduan->pengaduan_id} diubah menjadi {$newDate}.",
+                'subject_id'   => $pengaduan->pengaduan_id,
+                'subject_type' => Pengaduan::class,
+            ]);
+        }
+
+        if ($pengaduan->isDirty('kategori_komplain_id')) {
+            $newCategoryName = $pengaduan->kategoriKomplain->jenis_komplain;
+            ActivityLog::create([
+                'user_id'      => $pengaduan->user_id,
+                'description'  => "Kategori pengaduan #TKT-{$pengaduan->pengaduan_id} diubah menjadi '{$newCategoryName}'.",
+                'subject_id'   => $pengaduan->pengaduan_id,
                 'subject_type' => Pengaduan::class,
             ]);
         }
     }
+
 
     /**
      * Handle the Pengaduan "deleted" event.
