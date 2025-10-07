@@ -8,6 +8,8 @@ use App\Models\Pengaduan;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\ActivityLog;
+use App\Models\Prodi;
+use App\Models\JenisPekerjaan;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -31,7 +33,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function kelolaPengaduan()
+    public function kelolaPengaduan(Request $request)
     {
         $totalHariIni = Pengaduan::whereDate('created_at', today())->count();
         $belumDiproses = Pengaduan::where('status_pengaduan', 'Menunggu')->count();
@@ -44,10 +46,9 @@ class AdminController extends Controller
                                      ->count();
 
         $kategoriKomplains = KategoriKomplain::orderBy('jenis_komplain')->get();
-
-        $pengaduans = Pengaduan::with(['pelapor', 'kategoriKomplain'])
-                               ->latest()
-                               ->paginate(10);
+        // $pengaduans = Pengaduan::with(['pelapor', 'kategoriKomplain'])
+        //                        ->latest()
+        //                        ->paginate(10);
 
         $warnaKategori = [
             'Akademik' => '#0d6efd',
@@ -56,6 +57,39 @@ class AdminController extends Controller
             'Kemahasiswaan' => '#ffc107',
             'Lainnya' => '#6c757d',
         ];
+        // --- MULAI LOGIKA FILTER DINAMIS ---
+        // Ganti query pengaduan yang statis dengan yang dinamis
+        $query = Pengaduan::with(['pelapor', 'kategoriKomplain']);
+
+        // Filter 1: Berdasarkan Pencarian Teks (No. Tiket atau Deskripsi)
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            // Cek apakah pencarian adalah nomor tiket (contoh: #TKT-001)
+            if (preg_match('/^#?TKT-?(\d+)$/i', $searchTerm, $matches)) {
+                $query->where('pengaduan_id', $matches[1]);
+            } else {
+                $query->where('deskripsi_kejadian', 'like', '%' . $searchTerm . '%');
+            }
+        }
+
+        // Filter 2: Berdasarkan Status
+        if ($request->filled('status')) {
+            $query->where('status_pengaduan', $request->status);
+        }
+
+        // Filter 3: Berdasarkan Kategori
+        if ($request->filled('kategori_komplain_id')) {
+            $query->where('kategori_komplain_id', $request->kategori_komplain_id);
+        }
+
+        // Filter 4: Berdasarkan Tanggal
+        if ($request->filled('tanggal')) {
+            $query->whereDate('tanggal_kejadian', $request->tanggal);
+        }
+
+        // Eksekusi query dengan paginasi
+        $pengaduans = $query->latest()->paginate(10)->withQueryString();
+        // --- AKHIR LOGIKA FILTER ---
         return view('pages.admin.kelola-pengaduan', [
             'totalHariIni' => $totalHariIni,
             'belumDiproses' => $belumDiproses,
@@ -67,16 +101,37 @@ class AdminController extends Controller
         ]);
     }
 
-    public function kelolaUser()
+    public function kelolaUser(Request $request) // <-- 2. Tambahkan Request $request di sini
     {
         $totalUsers = User::count();
-        $totalMahasiswa = User::where('jenis_pekerjaan_id', 'Mahasiswa')->count();
+        $totalMahasiswa = User::where('jenis_pekerjaan_id', '1')->count();
         $totalStaff = User::whereIn('jenis_pekerjaan_id', ['2', '3', '4'])->count();
         $totalAdmin = Admin::count();
-        $users = User::with('prodifk', 'pekerjaanfk') // Asumsi nama relasi
-                     ->latest()
-                     ->paginate(5);
+        $prodis = Prodi::orderBy('nama_prodi', 'asc')->get();
+        $jenisPekerjaan = JenisPekerjaan::all();
         $admins = Admin::paginate(5, ['*'], 'admin_page');
+
+        $query = User::with('prodifk', 'pekerjaanfk');
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('nama', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('nim', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        if ($request->filled('jenis_pekerjaan_id')) {
+            $query->where('jenis_pekerjaan_id', $request->jenis_pekerjaan_id);
+        }
+
+        if ($request->filled('prodi_id')) {
+            $query->where('prodi_id', $request->prodi_id);
+        }
+
+        $users = $query->latest()->paginate(5)->withQueryString();
+
         return view('pages.admin.kelola-user', [
             'totalUsers' => $totalUsers,
             'totalMahasiswa' => $totalMahasiswa,
@@ -84,6 +139,8 @@ class AdminController extends Controller
             'totalAdmin' => $totalAdmin,
             'users' => $users,
             'admins' => $admins,
+            'prodis' => $prodis,
+            'jenisPekerjaan' => $jenisPekerjaan
         ]);
     }
 }
