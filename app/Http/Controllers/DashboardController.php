@@ -38,7 +38,7 @@ class DashboardController extends Controller
             'ditolak', 
             'pengaduanTerbaru', 
             'totalPengaduan',
-            'warnaKategori'
+            'warnaKategori' // Warna Kategori
         ));
     }
 }

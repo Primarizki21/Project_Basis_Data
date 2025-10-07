@@ -13,7 +13,6 @@ use App\Http\Controllers\{
     JenisPekerjaanController,
     DashboardController,
     LandingPageController,
-    LandingPageController,
     AdminController
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
