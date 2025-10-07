@@ -209,26 +209,6 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
     Route::delete('/pengaduan/{pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.destroy');
-
-    // Profil (admin)
-    Route::get('/profil', [UserController::class, 'profil'])->name('profil');
-
-    Route::put('/profil/password', function (Request $r) {
-        $r->validate([
-            'old_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
-        ]);
-        
-        $admin = Auth::guard('admin')->user();
-        
-        if (!Hash::check($r->old_password, $admin->password)) {
-            return back()->withErrors(['old_password' => 'Password lama tidak sesuai']);
-        }
-        
-        $admin->update([
-            'password' => Hash::make($r->new_password)
-        ]);
-        
-        return back()->with('success', 'Password berhasil diubah');
-    })->name('profil.password');
+    Route::get('/profil', [AdminController::class, 'profilIndex'])->name('profil');
+    Route::put('/profil/password', [AdminController::class, 'updatePassword'])->name('profil.password');
 });

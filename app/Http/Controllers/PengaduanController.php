@@ -170,7 +170,7 @@ class PengaduanController extends Controller
 
         $pengaduan->delete();
 
-        return redirect()->route('riwayat')->with('success', 'Pengaduan berhasil dihapus!');
+        return redirect()->route('admin.kelola-pengaduan')->with('success', 'Pengaduan berhasil dihapus!');
     }
 
     public function createAnonim() {
