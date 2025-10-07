@@ -253,16 +253,14 @@
     </div>
 
     <div class="row g-4">
-      {{-- Gunakan @forelse untuk loop yang bisa menangani data kosong --}}
       @forelse($pengaduanAnonim as $index => $anonim)
           <div class="col-lg-6 fade-in-up" style="animation-delay: {{ $index * 0.1 }}s;">
               <div class="card border-0 shadow-sm h-100 hover-lift-card">
                   <div class="card-body p-4">
                       <div class="d-flex justify-content-between align-items-start mb-3">
                           <div>
-                              {{-- Asumsi relasi di model Pengaduan sudah dibuat --}}
-                              <span class="badge mb-2" style="background: linear-gradient(135deg, #6B21A8, #7C3AED);">
-                                  {{ $anonim->kategoriKomplain->kategori_komplain_id }} 
+                              <span class="badge mb-2" style="background-color: {{ $warnaKategori[$anonim->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
+                                  {{ $anonim->kategoriKomplain->jenis_komplain }} 
                               </span>
                               <div class="text-muted small">
                                   <i class="bi bi-calendar3 me-1"></i>{{ $anonim->created_at->format('d M Y') }}
@@ -291,7 +289,6 @@
           </div>
 
       @empty
-          {{-- BLOK INI AKAN TAMPIL JIKA $pengaduanAnonim KOSONG --}}
           <div class="col-12">
               <div class="text-center py-5">
                   <div class="icon-box mx-auto mb-3" style="width: 70px; height: 70px; background-color: #f1f3f5; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
@@ -304,15 +301,6 @@
 
       @endforelse
     </div>
-
-    <!-- INFO: Form Anonim di-comment dulu sampai backend bikin route-nya -->
-    {{-- 
-    <div class="text-center mt-5">
-      <button class="btn btn-lg text-white px-5 shadow-lg hover-lift" style="background: linear-gradient(135deg, #6B21A8, #7C3AED); border: none;" onclick="toggleFormAnonim()">
-        <i class="bi bi-pencil-square me-2"></i>Ajukan Pengaduan Anonim
-      </button>
-    </div>
-    --}}
     
     <div class="text-center mt-5">
       <a href="{{ route('pengaduan.createAnonim') }}" class="btn btn-lg text-white px-5 shadow-lg hover-lift" style="background: linear-gradient(135deg, #6B21A8, #7C3AED); border: none;">

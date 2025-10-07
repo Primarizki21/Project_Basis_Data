@@ -13,6 +13,17 @@ class LandingPageController extends Controller
                                     ->latest()
                                     ->take(6)
                                     ->get();
-        return view('welcome', ['pengaduanAnonim' => $pengaduanAnonim]);
+        
+        $warnaKategori = [
+            'Akademik' => '#0d6efd',
+            'Fasilitas' => '#198754',
+            'Kekerasan' => '#dc3545',
+            'Kemahasiswaan' => '#ffc107',
+            'Lainnya' => '#6c757d',
+        ];
+        return view('welcome', [
+            'pengaduanAnonim' => $pengaduanAnonim,
+            'warnaKategori' => $warnaKategori
+        ]);
     }
 }
