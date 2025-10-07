@@ -128,7 +128,12 @@
                     </div>
                     <div class="activity-content">
                         <strong>{{ $activity->description }}</strong>
-                        <br><br>
+                        @if ($activity->user)
+                            <p class="text-muted mb-0 small">
+                                Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
+                            </p>
+                        @endif
+
                         @if ($activity->subject)
                             @if ($activity->subject_type === 'App\Models\Pengaduan')
                                 <p class="text-muted mb-0 small fst-italic">
