@@ -30,6 +30,7 @@
       <!-- Form Card -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
+          {{-- Ini untuk cek yang update user atau admin --}}
           <form action="{{ Auth::guard('admin')->check() ? route('admin.pengaduan.update', $pengaduan) : route('pengaduan.update', $pengaduan) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
