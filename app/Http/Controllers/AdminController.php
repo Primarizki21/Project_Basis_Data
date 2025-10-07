@@ -13,10 +13,13 @@ use App\Models\JenisPekerjaan;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 use App\Models\Prodi;
 use App\Models\JenisPekerjaan;
 >>>>>>> 58272ab (fixed missing landingpage controller on web.php)
+=======
+>>>>>>> 78b4a6c (fix tambah user)
 use Illuminate\Support\Facades\Hash;
 
 
@@ -105,7 +108,6 @@ class AdminController extends Controller
         $prodis = Prodi::orderBy('nama_prodi', 'asc')->get();
         $jenisPekerjaan = JenisPekerjaan::all();
         $admins = Admin::paginate(5, ['*'], 'admin_page');
-<<<<<<< HEAD
 
         $query = User::with('prodifk', 'pekerjaanfk');
 
@@ -128,10 +130,6 @@ class AdminController extends Controller
 
         $users = $query->latest()->paginate(5)->withQueryString();
 
-=======
-        $prodis = Prodi::orderBy('nama_prodi')->get();
-        $jenisPekerjaan = JenisPekerjaan::orderBy('nama_pekerjaan')->get();
->>>>>>> c167a67 (fix user in kelola user)
         return view('pages.admin.kelola-user', [
             'totalUsers' => $totalUsers,
             'totalMahasiswa' => $totalMahasiswa,
@@ -140,11 +138,7 @@ class AdminController extends Controller
             'users' => $users,
             'admins' => $admins,
             'prodis' => $prodis,
-<<<<<<< HEAD
             'jenisPekerjaan' => $jenisPekerjaan
-=======
-            'jenisPekerjaan' =>$jenisPekerjaan,
->>>>>>> c167a67 (fix user in kelola user)
         ]);
     }
     public function storeUser(Request $request)
