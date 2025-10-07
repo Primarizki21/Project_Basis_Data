@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Models;
 
 use Database\Seeders\JenisPekerjaanSeeder;
@@ -11,7 +12,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'user';
+    protected $table = 'users';
     protected $primaryKey = 'user_id';
     protected $keyType = 'int';
     public $incrementing = true;

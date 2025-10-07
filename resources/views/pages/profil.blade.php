@@ -35,19 +35,23 @@
               <i class="bi bi-person me-1"></i>Mahasiswa
             </span>
 
-            <!-- Stats for USER -->
+            <!-- Stats for USER (synced with dashboard) -->
             <div class="row mt-4 text-center">
-              <div class="col-4">
-                <h5 class="fw-bold mb-0" style="color: #6B21A8;">12</h5>
-                <small class="text-muted">Pengaduan</small>
+              <div class="col-3">
+                <h5 class="fw-bold mb-0" style="color: #6B21A8;">{{ $totalPengaduan ?? 0 }}</h5>
+                <small class="text-muted">Total</small>
               </div>
-              <div class="col-4">
-                <h5 class="fw-bold mb-0" style="color: #10b981;">8</h5>
+              <div class="col-3">
+                <h5 class="fw-bold mb-0" style="color: #f59e0b;">{{ $menunggu ?? 0 }}</h5>
+                <small class="text-muted">Menunggu</small>
+              </div>
+              <div class="col-3">
+                <h5 class="fw-bold mb-0" style="color: #0ea5f0;">{{ $diproses ?? 0 }}</h5>
+                <small class="text-muted">Diproses</small>
+              </div>
+              <div class="col-3">
+                <h5 class="fw-bold mb-0" style="color: #10b981;">{{ $selesai ?? 0 }}</h5>
                 <small class="text-muted">Selesai</small>
-              </div>
-              <div class="col-4">
-                <h5 class="fw-bold mb-0" style="color: #f59e0b;">4</h5>
-                <small class="text-muted">Proses</small>
               </div>
             </div>
           @endauth
@@ -62,15 +66,22 @@
             <!-- Stats for ADMIN -->
             <div class="row mt-4 text-center">
               <div class="col-4">
-                <h5 class="fw-bold mb-0" style="color: #6B21A8;">1247</h5>
+                <h5 class="fw-bold mb-0" style="color: #6B21A8;">{{ $totalPengaduan ?? 0 }}</h5>
                 <small class="text-muted">Total</small>
               </div>
               <div class="col-4">
-                <h5 class="fw-bold mb-0" style="color: #10b981;">342</h5>
-                <small class="text-muted">User</small>
+                <h5 class="fw-bold mb-0" style="color: #10b981;">{{ $selesai ?? 0 }}</h5>
+                <small class="text-muted">Selesai</small>
               </div>
               <div class="col-4">
-                <h5 class="fw-bold mb-0" style="color: #0ea5f0;">87%</h5>
+                <h5 class="fw-bold mb-0" style="color: #0ea5f0;">
+                  @php
+                    $persentase = ($totalPengaduan ?? 0) > 0
+                        ? round(($selesai / $totalPengaduan) * 100)
+                        : 0;
+                  @endphp
+                  {{ $persentase }}%
+                </h5>
                 <small class="text-muted">Resolved</small>
               </div>
             </div>
@@ -99,37 +110,31 @@
 
     <!-- Info & Password Section -->
     <div class="col-lg-8">
-      <!-- Personal Info - READ ONLY -->
+      <!-- Personal Info -->
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 p-4">
           <h5 class="fw-bold mb-0">Informasi Personal</h5>
           <small class="text-muted">Data ini tidak dapat diubah. Hubungi admin jika ada kesalahan.</small>
         </div>
         <div class="card-body p-4">
-          
           @auth('web')
-          <!-- USER FIELDS -->
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted small">Nama Lengkap</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::user()->nama ?? '-' }}</div>
             </div>
-
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted small">Email</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::user()->email ?? '-' }}</div>
             </div>
-
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted small">NIM</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::user()->nim ?? '-' }}</div>
             </div>
-
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted small">No. Telepon</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::user()->nomor_telepon ?? '-' }}</div>
             </div>
-
             <div class="col-12">
               <label class="form-label fw-semibold text-muted small">Program Studi</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::user()->prodi ?? '-' }}</div>
@@ -138,46 +143,21 @@
           @endauth
 
           @auth('admin')
-          <!-- ADMIN FIELDS -->
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted small">Nama Lengkap</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->nama ?? 'Administrator Utama' }}</div>
             </div>
-            
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted small">Email</label>
               <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->email ?? 'admin@ftmm.unair.ac.id' }}</div>
             </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted small">NIP</label>
-              <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->nip ?? '-' }}</div>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted small">No. Telepon</label>
-              <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->nomor_telepon ?? '-' }}</div>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted small">Jabatan</label>
-              <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->jabatan ?? 'Administrator Sistem' }}</div>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted small">Role</label>
-              <div class="form-control-plaintext">
-                <span class="badge" style="background: linear-gradient(135deg, #6B21A8, #0ea5f0);">Super Administrator</span>
-              </div>
-            </div>
           </div>
           @endauth
-
         </div>
       </div>
 
-      <!-- Change Password - COLLAPSIBLE -->
+      <!-- Change Password Section -->
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 p-4">
           <div class="d-flex justify-content-between align-items-center">
@@ -191,7 +171,7 @@
             </button>
           </div>
         </div>
-        
+
         <div id="passwordForm" style="display: none;">
           <div class="card-body p-4 border-top">
             @if(session('success'))
@@ -223,7 +203,6 @@
               <div class="mb-3">
                 <label class="form-label fw-semibold">Password Baru <span class="text-danger">*</span></label>
                 <input type="password" name="new_password" class="form-control form-control-lg" placeholder="Min. 6 karakter" required>
-                <small class="text-muted">Minimal 6 karakter, gunakan kombinasi huruf dan angka</small>
               </div>
 
               <div class="mb-4">
@@ -267,21 +246,6 @@ function togglePasswordForm() {
   padding: 0.75rem 0;
   border-bottom: 1px solid #e5e7eb;
   color: #1f2937;
-}
-
-#passwordForm {
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 </style>
 

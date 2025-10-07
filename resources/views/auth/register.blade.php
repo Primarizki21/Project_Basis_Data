@@ -350,7 +350,7 @@
                             <select class="form-select" id="prodi" name="prodi">
                                 <option value="">Pilih Prodi</option>
                                 @foreach($listProdi ?? [] as $prodi)
-                                <option value="{{ $prodi->prodi }}" {{ old('prodi') == $prodi->prodi ? 'selected' : '' }}>{{ $prodi->prodi }}</option>
+                                <option value="{{ $prodi->nama_prodi }}" {{ old('prodi') == $prodi->nama_prodi ? 'selected' : '' }}>{{ $prodi->nama_prodi }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -358,7 +358,7 @@
                         <!-- Angkatan (Conditional) -->
                         <div class="col-md-6" id="angkatanField" style="display: none;">
                             <label for="angkatan" class="form-label">Angkatan</label>
-                            <input type="text" class="form-control" id="angkatan" name="angkatan" value="{{ old('angkatan') }}" placeholder="2020">
+                            <input type="text" class="form-control" id="angkatan" name="angkatan" value="{{ old('angkatan') }}" placeholder="2023">
                         </div>
 
                         <!-- Password -->
@@ -389,18 +389,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Show/hide prodi & angkatan based on jenis pekerjaan
-        document.getElementById('jenis_pekerjaan_id').addEventListener('change', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            const pekerjaanSelect = document.getElementById('jenis_pekerjaan_id');
             const prodiField = document.getElementById('prodiField');
             const angkatanField = document.getElementById('angkatanField');
-            
-            if (this.value == '1') { // Mahasiswa
-                prodiField.style.display = 'block';
-                angkatanField.style.display = 'block';
-            else {
-                prodiField.style.display = 'none';
-                angkatanField.style.display = 'none';
+
+            function toggleFields() {
+                if (pekerjaanSelect.value === '1') {
+                    prodiField.style.display = 'block';
+                    angkatanField.style.display = 'block';
+                } else {
+                    prodiField.style.display = 'none';
+                    angkatanField.style.display = 'none';
+                }
             }
+
+            pekerjaanSelect.addEventListener('change', toggleFields);
+            toggleFields();
         });
     </script>
 </body>
