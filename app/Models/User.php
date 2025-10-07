@@ -30,6 +30,7 @@ class User extends Authenticatable
         'password',
         'prodi_id',
         'angkatan',
+        'nomor_telepon'
     ];
 
     protected $hidden = [
@@ -46,7 +47,7 @@ class User extends Authenticatable
         return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id', 'jenis_pekerjaan_id');
     }
 
-    public function prodi()
+    public function prodifk()
     {
         return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
     }

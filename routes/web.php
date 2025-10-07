@@ -65,7 +65,7 @@ Route::post('/register', function (Request $r) {
         'alamat' => 'required|string',
         'nomor_telepon' => 'required|string|max:15',
         'jenis_pekerjaan_id' => 'required|integer|exists:jenis_pekerjaan,jenis_pekerjaan_id',
-        'prodi' => 'required_if:jenis_pekerjaan_id,1|string|max:100',
+        'prodi' => 'required_if:jenis_pekerjaan_id,1|integer|exists:prodi,prodi_id',
         'angkatan' => 'required_if:jenis_pekerjaan_id,1|string|max:4',
         'password' => 'required|min:6|confirmed',
     ]);

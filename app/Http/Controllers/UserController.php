@@ -105,7 +105,6 @@ class UserController extends Controller
             ->where('status_pengaduan', 'Ditolak')
             ->count();
 
-        dd($user->toArray());
 
         return view('pages.profil', compact(
             'user',
