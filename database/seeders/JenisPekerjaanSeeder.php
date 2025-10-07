@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\DB; // <-- Jangan lupa tambahkan ini
 
 class JenisPekerjaanSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         // Siapkan data pekerjaan dalam bentuk array
