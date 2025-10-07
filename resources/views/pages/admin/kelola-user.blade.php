@@ -86,51 +86,55 @@
 
   <!-- Filter & Search -->
   <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label fw-semibold small">Cari User</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                  <i class="bi bi-search"></i>
-                </span>
-                <input type="text" class="form-control border-start-0" placeholder="Nama, NIM, atau email...">
+      <div class="col-12">
+          <div class="card border-0 shadow-sm">
+              <div class="card-body p-4">
+                  <form action="{{ route('admin.kelola-user') }}" method="GET">
+                      <div class="row g-3 align-items-end">
+                          <div class="col-md-4">
+                              <label class="form-label fw-semibold small">Cari User</label>
+                              <div class="input-group">
+                                  <span class="input-group-text bg-white border-end-0">
+                                      <i class="bi bi-search"></i>
+                                  </span>
+                                  <input type="text" name="search" class="form-control border-start-0" placeholder="Nama, NIM, atau email..." value="{{ request('search') }}">
+                              </div>
+                          </div>
+
+                          <div class="col-md-3">
+                              <label class="form-label fw-semibold small">Role</label>
+                              <select class="form-select" name="jenis_pekerjaan_id">
+                                  <option value="" {{ request('jenis_pekerjaan_id') == '' ? 'selected' : '' }}>Semua Role</option>
+                                  @foreach($jenisPekerjaan as $kerja)
+                                      <option value="{{ $kerja->jenis_pekerjaan_id }}" {{ request('jenis_pekerjaan_id') == $kerja->jenis_pekerjaan_id ? 'selected' : '' }}>
+                                          {{ $kerja->nama_pekerjaan }}
+                                      </option>
+                                  @endforeach
+                              </select>
+                          </div>
+
+                          <div class="col-md-3">
+                              <label class="form-label fw-semibold small">Program Studi</label>
+                              <select class="form-select" name="prodi_id">
+                                  <option value="" {{ request('prodi_id') == '' ? 'selected' : '' }}>Semua Prodi</option>
+                                  @foreach($prodis as $prodi)
+                                      <option value="{{ $prodi->prodi_id }}" {{ request('prodi_id') == $prodi->prodi_id ? 'selected' : '' }}>
+                                          {{ $prodi->nama_prodi }}
+                                      </option>
+                                  @endforeach
+                              </select>
+                          </div>
+
+                          <div class="col-md-2">
+                              <button type="submit" class="btn btn-primary w-100">
+                                  <i class="bi bi-funnel me-1"></i>Filter
+                              </button>
+                          </div>
+                      </div>
+                  </form>
               </div>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label fw-semibold small">Role</label>
-              <select class="form-select">
-                <option value="">Semua Role</option>
-                <option value="mahasiswa">Mahasiswa</option>
-                <option value="staff">Staff</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label fw-semibold small">Program Studi</label>
-              <select class="form-select">
-                <option value="">Semua Prodi</option>
-                <option value="tsd">Teknologi Sains Data</option>
-                <option value="rk">Rekayasa Keselamatan</option>
-                <option value="rn">Rekayasa Nanoteknologi</option>
-                <option value="smb">Studi Manajemen Bencana</option>
-              </select>
-            </div>
-
-            <div class="col-md-2">
-              <label class="form-label fw-semibold small">&nbsp;</label>
-              <button class="btn btn-primary w-100">
-                <i class="bi bi-funnel me-1"></i>Filter
-              </button>
-            </div>
           </div>
-        </div>
       </div>
-    </div>
   </div>
 
   <!-- User Table -->
@@ -164,7 +168,7 @@
                                         </div>
                                         <div>
                                             <div class="fw-semibold">{{ $user->nama }}</div>
-                                            <small class="text-muted">{{ $user->role ?? 'User' }}</small>
+                                            <small class="text-muted">{{ $user->pekerjaanfk->nama_pekerjaan ?? 'User' }}</small>
                                         </div>
                                     </div>
                                 </td>
@@ -172,7 +176,6 @@
                                 <td class="py-3">{{ $user->email }}</td>
                                 <td class="py-3">{{ $user->prodifk->nama_prodi ?? '-' }}</td>
                                 <td class="py-3">
-                                    {{-- Badge dinamis berdasarkan role --}}
                                     @if($user->pekerjaanfk->nama_pekerjaan == 'Mahasiswa')
                                         <span class="badge bg-success">Mahasiswa</span>
                                     @elseif(in_array($user->pekerjaanfk->nama_pekerjaan, ['Dosen', 'Tendik', 'Peneliti']))

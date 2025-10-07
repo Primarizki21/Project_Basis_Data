@@ -12,60 +12,66 @@
 
   <!-- Filter & Search Bar -->
   <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <div class="row g-3">
-            <div class="col-md-3">
-              <label class="form-label fw-semibold small">Cari Pengaduan</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                  <i class="bi bi-search"></i>
-                </span>
-                <input type="text" class="form-control border-start-0" placeholder="No. tiket atau deskripsi...">
+      <div class="col-12">
+          <div class="card border-0 shadow-sm">
+              <div class="card-body p-4">
+                  <form action="{{ route('admin.kelola-pengaduan') }}" method="GET">
+                      <div class="row g-3 align-items-end">
+                          <div class="col-md-3">
+                              <label class="form-label fw-semibold small">Cari Pengaduan</label>
+                              <div class="input-group">
+                                  <span class="input-group-text bg-white border-end-0">
+                                      <i class="bi bi-search"></i>
+                                  </span>
+                                  <input type="text" name="search" class="form-control border-start-0" placeholder="No. tiket atau deskripsi..." value="{{ request('search') }}">
+                              </div>
+                          </div>
+
+                          <div class="col-md-2">
+                              <label class="form-label fw-semibold small">Status</label>
+                              <select class="form-select" name="status">
+                                  <option value="" {{ request('status') == '' ? 'selected' : '' }}>Semua Status</option>
+                                  <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>Belum Diproses</option>
+                                  <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Sedang Diproses</option>
+                                  <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                              </select>
+                          </div>
+
+                          <div class="col-md-2">
+                              <label class="form-label fw-semibold small">Kategori</label>
+                              <select class="form-select" name="kategori_komplain_id">
+                                  <option value="" {{ request('kategori_komplain_id') == '' ? 'selected' : '' }}>Semua Kategori</option>
+                                  @foreach($kategoriKomplains as $kategori)
+                                      <option value="{{ $kategori->kategori_komplain_id }}" {{ request('kategori_komplain_id') == $kategori->kategori_komplain_id ? 'selected' : '' }}>
+                                          {{ $kategori->jenis_komplain }}
+                                      </option>
+                                  @endforeach
+                              </select>
+                          </div>
+
+                          <div class="col-md-2">
+                              <label class="form-label fw-semibold small">Tanggal</label>
+                              {{-- 5. Tambahkan 'name' --}}
+                              <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}">
+                          </div>
+
+                          <div class="col-md-3">
+                              <label class="form-label fw-semibold small">&nbsp;</label>
+                              <div class="d-flex gap-2">
+                                  <button type="submit" class="btn btn-primary flex-grow-1">
+                                      <i class="bi bi-funnel me-1"></i>Filter
+                                  </button>
+                                  {{-- 6. Ubah tombol reset menjadi link --}}
+                                  <a href="{{ route('admin.kelola-pengaduan') }}" class="btn btn-outline-secondary" title="Reset Filter">
+                                      <i class="bi bi-arrow-clockwise"></i>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </form>
               </div>
-            </div>
-
-            <div class="col-md-2">
-              <label class="form-label fw-semibold small">Status</label>
-              <select class="form-select">
-                <option value="">Semua Status</option>
-                <option value="menunggu">Belum Diproses</option>
-                <option value="diproses">Sedang Diproses</option>
-                <option value="selesai">Selesai</option>
-              </select>
-            </div>
-
-            <div class="col-md-2">
-              <label class="form-label fw-semibold small">Kategori</label>
-              <select class="form-select">
-                <option value="">Semua Kategori</option>
-                @foreach($kategoriKomplains as $kategori)
-                  <option value="{{ $kategori->kategori_komplain_id }}">{{ $kategori->jenis_komplain }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="col-md-2">
-              <label class="form-label fw-semibold small">Tanggal</label>
-              <input type="date" class="form-control" value="{{ date('Y-m-d') }}">
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label fw-semibold small">&nbsp;</label>
-              <div class="d-flex gap-2">
-                <button class="btn btn-primary flex-grow-1">
-                  <i class="bi bi-funnel me-1"></i>Filter
-                </button>
-                <button class="btn btn-outline-secondary">
-                  <i class="bi bi-arrow-clockwise"></i>
-                </button>
-              </div>
-            </div>
           </div>
-        </div>
       </div>
-    </div>
   </div>
 
   <!-- Quick Stats -->
