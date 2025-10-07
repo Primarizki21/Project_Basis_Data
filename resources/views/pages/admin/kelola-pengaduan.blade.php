@@ -51,7 +51,6 @@
 
                           <div class="col-md-2">
                               <label class="form-label fw-semibold small">Tanggal</label>
-                              {{-- 5. Tambahkan 'name' --}}
                               <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}">
                           </div>
 
@@ -61,7 +60,6 @@
                                   <button type="submit" class="btn btn-primary flex-grow-1">
                                       <i class="bi bi-funnel me-1"></i>Filter
                                   </button>
-                                  {{-- 6. Ubah tombol reset menjadi link --}}
                                   <a href="{{ route('admin.kelola-pengaduan') }}" class="btn btn-outline-secondary" title="Reset Filter">
                                       <i class="bi bi-arrow-clockwise"></i>
                                   </a>
@@ -202,7 +200,13 @@
                   <td class="py-3 text-center">
                     <div class="btn-group btn-group-sm">
                       <a href="{{ route('admin.pengaduan.edit', $pengaduan->pengaduan_id) }}" class="btn btn-outline-success" title="Proses"><i class="bi bi-gear"></i></a>
-                      <a href="#" class="btn btn-outline-danger" title="Hapus"><i class="bi bi-trash"></i></a>
+                      <form action="{{ route('admin.pengaduan.destroy', $pengaduan->pengaduan_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Anda yakin ingin menghapus pengaduan ini?');">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="btn btn-outline-danger" title="Hapus">
+                              <i class="bi bi-trash"></i>
+                          </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
