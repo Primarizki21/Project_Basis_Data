@@ -12,6 +12,9 @@ use App\Models\Prodi;
 use App\Models\JenisPekerjaan;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class AdminController extends Controller
 {
@@ -130,6 +133,32 @@ class AdminController extends Controller
             'jenisPekerjaan' => $jenisPekerjaan
         ]);
     }
+    public function storeUser(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:user,email',
+            'nim' => 'required|string|max:50',
+            'nomor_telepon' => 'nullable|string|max:20',
+            'password' => 'required|confirmed|min:6',
+            'jenis_pekerjaan_id' => 'required|exists:jenis_pekerjaan,jenis_pekerjaan_id',
+            'prodi_id' => 'required|exists:prodi,prodi_id',
+        ]);
+
+        $user = new User();
+        $user->nama = $validated['nama'];
+        $user->email = $validated['email'];
+        $user->nim = $validated['nim'];
+        $user->nomor_telepon = $validated['nomor_telepon'] ?? null;
+        $user->jenis_pekerjaan_id = $validated['jenis_pekerjaan_id'];
+        $user->prodi_id = $validated['prodi_id'];
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return redirect()->route('admin.kelola-user')->with('success', 'User berhasil ditambahkan!');
+    }
+
+
 
     public function profilIndex()
     {
