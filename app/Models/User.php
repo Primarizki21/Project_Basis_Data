@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->hasMany(Pengaduan::class, 'user_id', 'user_id');
     }
 
+    public function activity()
+    {
+        return $this->hasMany(ActivityLog::class, 'user_id', 'user_id');
+    }
+
     public function pekerjaanfk()
     {
         return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id', 'jenis_pekerjaan_id');

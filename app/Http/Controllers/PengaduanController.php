@@ -142,7 +142,7 @@ class PengaduanController extends Controller
         if (Auth::guard('admin')->check()) {
             $adminValidated = $request->validate([
                 'status_pengaduan' => 'required|string|in:Menunggu,Diproses,Selesai,Ditolak',
-                'deskripsi_tindak_lanjut' => 'required|string|min:10' // Deskripsi tindak lanjut wajib diisi
+                'deskripsi_tindak_lanjut' => 'required|string|min:4' // Deskripsi tindak lanjut wajib diisi
             ]);
 
             $pengaduan->tindakLanjut()->create([
