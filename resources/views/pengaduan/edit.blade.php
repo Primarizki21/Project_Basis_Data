@@ -30,7 +30,7 @@
       <!-- Form Card -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
-          <form action="{{ route('pengaduan.update', $pengaduan->pengaduan_id) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('pengaduan.update', $pengaduan) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -43,9 +43,12 @@
                   <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
                     {{ $k->jenis_komplain }}
                   </option>
+<<<<<<< HEAD
                   <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
                     {{ $k->jenis_komplain }}
                   </option>
+=======
+>>>>>>> 7a4f8be (fix route and logic)
                 @endforeach
               </select>
             </div>
