@@ -206,10 +206,19 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/dashboard', [AdminController::class, 'dashboardIndex'])->name('dashboard');
     Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
     Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
+<<<<<<< HEAD
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
     Route::delete('/pengaduan/{pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.destroy');
 
+=======
+    
+    // Route::view('/dashboard', 'pages.admin.dashboard')->name('dashboard');
+    // Route::view('/kelola-pengaduan', 'pages.admin.kelola-pengaduan')->name('kelola-pengaduan');
+    // Route::view('/visualisasi', 'pages.admin.visualisasi')->name('visualisasi');
+    // Route::view('/kelola-user', 'pages.admin.kelola-user')->name('kelola-user');
+    
+>>>>>>> 20088d5 (fixing table users to user)
     // Profil (admin)
     Route::get('/profil', [UserController::class, 'profil'])->name('profil');
 
