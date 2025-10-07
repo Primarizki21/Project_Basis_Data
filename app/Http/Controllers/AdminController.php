@@ -49,6 +49,13 @@ class AdminController extends Controller
                                ->latest()
                                ->paginate(10);
 
+        $warnaKategori = [
+            'Akademik' => '#0d6efd',
+            'Fasilitas' => '#198754',
+            'Kekerasan' => '#dc3545',
+            'Kemahasiswaan' => '#ffc107',
+            'Lainnya' => '#6c757d',
+        ];
         return view('pages.admin.kelola-pengaduan', [
             'totalHariIni' => $totalHariIni,
             'belumDiproses' => $belumDiproses,
@@ -56,6 +63,7 @@ class AdminController extends Controller
             'selesaiMingguIni' => $selesaiMingguIni,
             'kategoriKomplains' => $kategoriKomplains,
             'pengaduans' => $pengaduans,
+            'warnaKategori' => $warnaKategori
         ]);
     }
 
