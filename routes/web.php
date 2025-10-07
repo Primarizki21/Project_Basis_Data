@@ -11,7 +11,8 @@ use App\Http\Controllers\{
     PengaduanController,
     KategoriKomplainController,
     JenisPekerjaanController,
-    DashboardController
+    DashboardController,
+    LandingPageController
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
 
