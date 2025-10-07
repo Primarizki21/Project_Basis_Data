@@ -10,7 +10,7 @@ class DashboardController extends Controller
     public function index()
     {
         $userId = Auth::id();
-
+        $totalPengaduan = Pengaduan::where('user_id', $userId)->count();
         $total = Pengaduan::where('user_id', $userId)->count();
         $diproses = Pengaduan::where('user_id', $userId)->where('status_pengaduan', 'Diproses')->count();
         $selesai = Pengaduan::where('user_id', $userId)->where('status_pengaduan', 'Selesai')->count();
@@ -24,7 +24,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('pages.beranda', compact(
-            'total', 'diproses', 'selesai', 'menunggu', 'ditolak', 'pengaduanTerbaru'
+            'total', 'diproses', 'selesai', 'menunggu', 'ditolak', 'pengaduanTerbaru', 'totalPengaduan'
         ));
     }
 }
