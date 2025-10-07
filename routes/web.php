@@ -64,8 +64,8 @@ Route::post('/register', function (Request $r) {
         'alamat' => 'required|string',
         'nomor_telepon' => 'required|string|max:15',
         'jenis_pekerjaan_id' => 'required|integer|exists:jenis_pekerjaan,jenis_pekerjaan_id',
-        'prodi' => 'required_if:jenis_pekerjaan_id,1|integer|exists:prodi,prodi_id',
-        'angkatan' => 'required_if:jenis_pekerjaan_id,1|string|max:4',
+        'prodi' => 'required_if:jenis_pekerjaan_id,1|integer|exists:prodi,prodi_id|nullable',
+        'angkatan' => 'required_if:jenis_pekerjaan_id,1|digits:4|nullable',
         'password' => 'required|min:6|confirmed',
     ]);
 
@@ -83,7 +83,6 @@ Route::post('/register', function (Request $r) {
         'angkatan' => $r->angkatan,
         'password' => Hash::make($r->password),
     ]);
-
     return redirect()->route('login.form')->with('success', 'Akun berhasil terdaftar! Silakan login.');
 })->name('register');
 

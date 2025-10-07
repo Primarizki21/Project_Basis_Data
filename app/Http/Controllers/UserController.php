@@ -24,9 +24,12 @@ class UserController extends Controller
     {
         $request->validate([
             'nim' => 'required|unique:user,nim',
-            'nim' => 'required|unique:user,nim',
             'nama' => 'required',
             'password' => 'required|min:6',
+            'jenis_kelamin' => 'required|string',
+            'role' => 'required|string',
+            'prodi' => 'required_if:role,mahasiswa|integer|nullable',
+            'angkatan' => 'required_if:role,mahasiswa|integer|nullable',
         ]);
 
         User::create([
@@ -38,6 +41,8 @@ class UserController extends Controller
             'alamat' => $request->alamat,
             'nomor_telepon' => $request->nomor_telepon,
             'jenis_pekerjaan_id' => $request->jenis_pekerjaan_id ?? null,
+            'prodi' => $request->prodi ?? null,
+            'angkatan' => $request->angkatan ?? null,
             'role' => 'Pelapor',
             'password' => Hash::make($request->password),
         ]);
