@@ -92,7 +92,6 @@
                     {{ $k->jenis_komplain }}
                   </option>
                 @endforeach
-                @endforeach
               </select>
             </div>
 
