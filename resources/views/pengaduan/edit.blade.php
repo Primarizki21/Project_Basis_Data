@@ -30,6 +30,7 @@
       <!-- Form Card -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
+          <form action="{{ route('pengaduan.update', $pengaduan->pengaduan_id) }}" method="POST" enctype="multipart/form-data">
           {{-- Ini untuk cek yang update user atau admin --}}
           <form action="{{ Auth::guard('admin')->check() ? route('admin.pengaduan.update', $pengaduan) : route('pengaduan.update', $pengaduan) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -87,6 +88,10 @@
                   <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
                     {{ $k->jenis_komplain }}
                   </option>
+                  <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
+                    {{ $k->jenis_komplain }}
+                  </option>
+                @endforeach
                 @endforeach
               </select>
             </div>

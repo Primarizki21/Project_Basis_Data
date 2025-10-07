@@ -133,6 +133,36 @@
                       </div>
                   </form>
               </div>
+<<<<<<< HEAD
+=======
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small">Role</label>
+              <select class="form-select">
+                <option value="">Semua Role</option>
+                <option value="mahasiswa">Mahasiswa</option>
+                <option value="staff">Staff</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small">Program Studi</label>
+              <select class="form-select" name="filter_prodi" id="filter_prodi>
+                @foreach ($prodis as $prodi)
+                  <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
+                @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label fw-semibold small">&nbsp;</label>
+              <button class="btn btn-primary w-100">
+                <i class="bi bi-funnel me-1"></i>Filter
+              </button>
+            </div>
+>>>>>>> c167a67 (fix user in kelola user)
           </div>
       </div>
   </div>
@@ -305,66 +335,65 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body p-4">
-        <form>
+        <form id="formTambahUser" action="{{route('admin.kelola-user.store') }}" method="POST">
+          @csrf
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label fw-semibold">Nama Lengkap</label>
-              <input type="text" class="form-control" required>
+              <input type="text" name="nama" class="form-control" required>
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Email</label>
-              <input type="email" class="form-control" placeholder="@ftmm.unair.ac.id" required>
+              <input type="email" name="email" class="form-control" placeholder="@ftmm.unair.ac.id" required>
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">NIM/NIP</label>
-              <input type="text" class="form-control">
+              <input type="text" name="nim" class="form-control">
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">No. Telepon</label>
-              <input type="tel" class="form-control">
+              <input type="tel" name="nomor_telepon" class="form-control">
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Role</label>
-              <select class="form-select" required>
+              <select name="jenis_pekerjaan_id" id="role" class="form-select" required>
                 <option value="">-- Pilih Role --</option>
-                <option value="mahasiswa">Mahasiswa</option>
-                <option value="staff">Staff</option>
-                <option value="admin">Admin</option>
+                @foreach ($jenisPekerjaan as $jenis)
+                    <option value="{{ $jenis->jenis_pekerjaan_id }}">{{ $jenis->nama_pekerjaan }}</option>
+                @endforeach
               </select>
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Program Studi</label>
-              <select class="form-select">
+              <select name="prodi_id" id="prodi" class="form-select" required>
                 <option value="">-- Pilih Prodi --</option>
-                <option value="tsd">Teknologi Sains Data</option>
-                <option value="rk">Rekayasa Keselamatan</option>
-                <option value="rn">Rekayasa Nanoteknologi</option>
-                <option value="smb">Studi Manajemen Bencana</option>
+                @foreach ($prodis as $prodi)
+                    <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}</option>
+                @endforeach
               </select>
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Password</label>
-              <input type="password" class="form-control" required>
+              <input type="password" name="password" class="form-control" required>
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Konfirmasi Password</label>
-              <input type="password" class="form-control" required>
+              <input type="password" name="password_confirmation" class="form-control" required>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <button type="button" class="btn btn-primary">
-          <i class="bi bi-save me-2"></i>Simpan User
-        </button>
+        <button type="submit" class="btn btn-primary" form="formTambahUser">Simpan User</button>
+
       </div>
     </div>
   </div>

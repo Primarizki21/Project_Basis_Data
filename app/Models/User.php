@@ -17,6 +17,7 @@ class User extends Authenticatable
     protected $keyType = 'int';
     public $incrementing = true;
     public $timestamps = true;
+    
 
     protected $fillable = [
         'nim',
