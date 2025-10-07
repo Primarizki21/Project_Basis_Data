@@ -64,7 +64,6 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Ubah Status Pengaduan</label>
                     <select name="status_pengaduan" class="form-select form-select-lg" required>
-                      {{-- Sementara ditolak hapus dulu, nanti ditambah --}}
                         @foreach(['Menunggu', 'Diproses', 'Selesai'] as $status)
                             <option value="{{ $status }}" @if(old('status_pengaduan', $pengaduan->status_pengaduan) == $status) selected @endif>{{ $status }}</option>
                         @endforeach
