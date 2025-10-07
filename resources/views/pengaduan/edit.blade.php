@@ -62,7 +62,7 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Ubah Status Pengaduan</label>
                     <select name="status_pengaduan" class="form-select form-select-lg" required>
-                        @foreach(['Menunggu', 'Diproses', 'Selesai', 'Ditolak'] as $status)
+                        @foreach(['Menunggu', 'Diproses', 'Selesai'] as $status)
                             <option value="{{ $status }}" @if(old('status_pengaduan', $pengaduan->status_pengaduan) == $status) selected @endif>{{ $status }}</option>
                         @endforeach
                     </select>
