@@ -172,7 +172,7 @@
                     </div>
                   </td>
                   <td class="py-3">
-                    <span class="badge" style="background-color: {{ $pengaduan->kategoriKomplain->warna ?? '#6c757d' }};">
+                    <span class="badge" style="background-color: {{ $warnaKategori[$pengaduan->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
                       {{ $pengaduan->kategoriKomplain->jenis_komplain }}
                     </span>
                   </td>
@@ -195,9 +195,7 @@
                   </td>
                   <td class="py-3 text-center">
                     <div class="btn-group btn-group-sm">
-                      <a href="#" class="btn btn-outline-primary" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                      {{-- Tambahkan route untuk proses dan hapus --}}
-                      <a href="#" class="btn btn-outline-success" title="Proses"><i class="bi bi-gear"></i></a>
+                      <a href="{{ route('admin.pengaduan.edit', $pengaduan->pengaduan_id) }}" class="btn btn-outline-success" title="Proses"><i class="bi bi-gear"></i></a>
                       <a href="#" class="btn btn-outline-danger" title="Hapus"><i class="bi bi-trash"></i></a>
                     </div>
                   </td>

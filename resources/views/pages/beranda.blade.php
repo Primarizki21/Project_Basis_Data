@@ -116,8 +116,8 @@
                       </span>
                     </div>
                     <span class="badge mb-2"
-                      style="background: #6B21A8;">
-                      {{ $p->kategoriKomplain->nama_kategori ?? '-' }}
+                      style="background-color: {{ $warnaKategori[$p->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
+                      {{ $p->kategoriKomplain->jenis_komplain ?? '-' }}
                     </span>
                     <p class="text-muted small mb-2 text-truncate">
                       {{ $p->deskripsi_kejadian }}
