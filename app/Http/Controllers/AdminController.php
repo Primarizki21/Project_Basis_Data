@@ -49,10 +49,6 @@ class AdminController extends Controller
                                      ->count();
 
         $kategoriKomplains = KategoriKomplain::orderBy('jenis_komplain')->get();
-        // $pengaduans = Pengaduan::with(['pelapor', 'kategoriKomplain'])
-        //                        ->latest()
-        //                        ->paginate(10);
-
         $warnaKategori = [
             'Akademik' => '#0d6efd',
             'Fasilitas' => '#198754',
@@ -60,14 +56,10 @@ class AdminController extends Controller
             'Kemahasiswaan' => '#ffc107',
             'Lainnya' => '#6c757d',
         ];
-        // --- MULAI LOGIKA FILTER DINAMIS ---
-        // Ganti query pengaduan yang statis dengan yang dinamis
         $query = Pengaduan::with(['pelapor', 'kategoriKomplain']);
 
-        // Filter 1: Berdasarkan Pencarian Teks (No. Tiket atau Deskripsi)
         if ($request->filled('search')) {
             $searchTerm = $request->search;
-            // Cek apakah pencarian adalah nomor tiket (contoh: #TKT-001)
             if (preg_match('/^#?TKT-?(\d+)$/i', $searchTerm, $matches)) {
                 $query->where('pengaduan_id', $matches[1]);
             } else {
@@ -75,24 +67,19 @@ class AdminController extends Controller
             }
         }
 
-        // Filter 2: Berdasarkan Status
         if ($request->filled('status')) {
             $query->where('status_pengaduan', $request->status);
         }
 
-        // Filter 3: Berdasarkan Kategori
         if ($request->filled('kategori_komplain_id')) {
             $query->where('kategori_komplain_id', $request->kategori_komplain_id);
         }
 
-        // Filter 4: Berdasarkan Tanggal
         if ($request->filled('tanggal')) {
             $query->whereDate('tanggal_kejadian', $request->tanggal);
         }
 
-        // Eksekusi query dengan paginasi
         $pengaduans = $query->latest()->paginate(10)->withQueryString();
-        // --- AKHIR LOGIKA FILTER ---
         return view('pages.admin.kelola-pengaduan', [
             'totalHariIni' => $totalHariIni,
             'belumDiproses' => $belumDiproses,
@@ -172,4 +159,35 @@ class AdminController extends Controller
     }
 
 
+
+    public function profilIndex()
+    {
+        $totalPengaduan = Pengaduan::count();
+        $selesai = Pengaduan::where('status_pengaduan', 'Selesai')->count();
+
+        return view('pages.admin.profil', [
+            'totalPengaduan' => $totalPengaduan,
+            'selesai' => $selesai,
+        ]);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+        
+        $admin = Auth::guard('admin')->user();
+        
+        if (!Hash::check($request->old_password, $admin->password)) {
+            return back()->withErrors(['old_password' => 'Password lama tidak sesuai.']);
+        }
+        
+        $admin->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+        
+        return back()->with('success', 'Password berhasil diubah!');
+    }
 }
