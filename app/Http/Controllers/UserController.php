@@ -4,28 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Pengaduan;
+use App\Models\JenisPekerjaan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\JenisPekerjaan;
-
 
 class UserController extends Controller
 {
-    // Menampilkan halaman login/register
+    // ============================
+    // AUTH SECTION
+    // ============================
     public function showLogin()
     {
-        return view('user');
+        return view('users');
     }
 
-    // Menyimpan user baru
     public function register(Request $request)
     {
         $request->validate([
-            'nim' => 'required|unique:user,nim',
+            'nim' => 'required|unique:users,nim',
             'nama' => 'required',
             'password' => 'required|min:6',
         ]);
-
 
         User::create([
             'nim' => $request->nim,
@@ -35,7 +35,7 @@ class UserController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'alamat' => $request->alamat,
             'nomor_telepon' => $request->nomor_telepon,
-            'pekerjaan' => $request->pekerjaan,
+            'jenis_pekerjaan_id' => $request->jenis_pekerjaan_id ?? null,
             'role' => 'Pelapor',
             'password' => Hash::make($request->password),
         ]);
@@ -43,7 +43,6 @@ class UserController extends Controller
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat, silakan login.');
     }
 
-    // Proses login
     public function login(Request $request)
     {
         $credentials = $request->only('nim', 'password');
@@ -55,31 +54,64 @@ class UserController extends Controller
         return back()->with('error', 'NIM atau Password salah.');
     }
 
-    // Logout
     public function logout()
     {
         Auth::logout();
         return redirect()->route('index');
     }
 
+    // ============================
+    // USER CRUD SECTION
+    // ============================
     public function create()
     {
-        // Ambil semua data jenis pekerjaan
         $listPekerjaan = JenisPekerjaan::all();
-
-        // Kirim data tersebut ke view
         return view('user.create', ['listPekerjaan' => $listPekerjaan]);
     }
 
     public function edit(User $user)
     {
-        // Ambil semua data jenis pekerjaan
         $listPekerjaan = JenisPekerjaan::all();
-        
-        // Kirim data pekerjaan dan data user yang akan diedit ke view
         return view('user.edit', [
             'user' => $user,
             'listPekerjaan' => $listPekerjaan
         ]);
+    }
+
+    // ============================
+    // PROFIL PAGE SECTION
+    // ============================
+    public function profil()
+    {
+        $user = Auth::user();
+
+        // Total semua pengaduan user
+        $totalPengaduan = Pengaduan::where('user_id', $user->user_id)->count();
+
+        // Hitung per status — sama dengan dashboard
+        $menunggu = Pengaduan::where('user_id', $user->user_id)
+            ->where('status_pengaduan', 'Menunggu')
+            ->count();
+
+        $diproses = Pengaduan::where('user_id', $user->user_id)
+            ->where('status_pengaduan', 'Diproses')
+            ->count();
+
+        $selesai = Pengaduan::where('user_id', $user->user_id)
+            ->where('status_pengaduan', 'Selesai')
+            ->count();
+
+        $ditolak = Pengaduan::where('user_id', $user->user_id)
+            ->where('status_pengaduan', 'Ditolak')
+            ->count();
+
+        return view('pages.profil', compact(
+            'user',
+            'totalPengaduan',
+            'menunggu',
+            'diproses',
+            'selesai',
+            'ditolak'
+        ));
     }
 }

@@ -20,20 +20,20 @@
               <label class="form-label fw-semibold small">Status</label>
               <select class="form-select">
                 <option value="">Semua Status</option>
-                <option value="menunggu">Menunggu</option>
-                <option value="proses">Diproses</option>
-                <option value="selesai">Selesai</option>
+                <option value="Menunggu">Menunggu</option>
+                <option value="Diproses">Diproses</option>
+                <option value="Selesai">Selesai</option>
               </select>
             </div>
             <div class="col-md-3">
               <label class="form-label fw-semibold small">Kategori</label>
               <select class="form-select">
                 <option value="">Semua Kategori</option>
-                <option value="akademik">Akademik</option>
-                <option value="fasilitas">Fasilitas</option>
-                <option value="kekerasan">Kekerasan</option>
-                <option value="kemahasiswaan">Kemahasiswaan</option>
-                <option value="lainnya">Lainnya</option>
+                <option value="Akademik">Akademik</option>
+                <option value="Fasilitas">Fasilitas</option>
+                <option value="Kekerasan">Kekerasan</option>
+                <option value="Kemahasiswaan">Kemahasiswaan</option>
+                <option value="Lainnya">Lainnya</option>
               </select>
             </div>
             <div class="col-md-6">
@@ -67,43 +67,74 @@
                   <th class="py-3">Deskripsi</th>
                   <th class="py-3">Tanggal</th>
                   <th class="py-3">Status</th>
-                  <th class="py-3">Aksi</th>
+                  <th class="py-3 text-center">Aksi</th>
                 </tr>
               </thead>
+
               <tbody>
-                <tr>
-                  <td class="px-4 py-3"><span class="badge bg-light text-dark fw-bold">#TKT-001</span></td>
-                  <td class="py-3"><span class="badge" style="background: #6B21A8;">Akademik</span></td>
-                  <td class="py-3">
-                    <div style="max-width: 300px;">
-                      <p class="mb-0 text-truncate">AC di ruang kelas rusak...</p>
-                    </div>
-                  </td>
-                  <td class="py-3"><small class="text-muted">05 Okt 2025</small></td>
-                  <td class="py-3"><span class="badge bg-warning">Diproses</span></td>
-                  <td class="py-3">
-                    <button class="btn btn-sm btn-outline-primary">Detail</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-3"><span class="badge bg-light text-dark fw-bold">#TKT-002</span></td>
-                  <td class="py-3"><span class="badge" style="background: #0ea5f0;">Fasilitas</span></td>
-                  <td class="py-3">
-                    <div style="max-width: 300px;">
-                      <p class="mb-0 text-truncate">Toilet kotor tidak ada air...</p>
-                    </div>
-                  </td>
-                  <td class="py-3"><small class="text-muted">03 Okt 2025</small></td>
-                  <td class="py-3"><span class="badge bg-success">Selesai</span></td>
-                  <td class="py-3">
-                    <button class="btn btn-sm btn-outline-primary">Detail</button>
-                  </td>
-                </tr>
+                @if($pengaduan->isEmpty())
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                      <i class="bi bi-inbox me-2"></i>Belum ada pengaduan yang diajukan.
+                    </td>
+                  </tr>
+                @else
+                  @foreach($pengaduan as $item)
+                    <tr>
+                      <td class="px-4 py-3">
+                        <span class="badge bg-light text-dark fw-bold">
+                          #TKT-{{ str_pad($item->pengaduan_id, 3, '0', STR_PAD_LEFT) }}
+                        </span>
+                      </td>
+
+                      <td class="py-3">
+                        <span class="badge"
+                              style="background:
+                                {{ $item->kategoriKomplain->nama_kategori == 'Akademik' ? '#6B21A8' :
+                                   ($item->kategoriKomplain->nama_kategori == 'Fasilitas' ? '#0ea5f0' :
+                                   ($item->kategoriKomplain->nama_kategori == 'Kekerasan' ? '#dc2626' : '#7C3AED')) }}">
+                          {{ $item->kategoriKomplain->nama_kategori ?? '-' }}
+                        </span>
+                      </td>
+
+                      <td class="py-3">
+                        <div style="max-width: 300px;">
+                          <p class="mb-0 text-truncate">{{ $item->deskripsi_kejadian }}</p>
+                        </div>
+                      </td>
+
+                      <td class="py-3">
+                        <small class="text-muted">
+                          {{ $item->tanggal_kejadian ? \Carbon\Carbon::parse($item->tanggal_kejadian)->format('d M Y') : '-' }}
+                        </small>
+                      </td>
+
+                      <td class="py-3">
+                        @if($item->status_pengaduan == 'Menunggu')
+                          <span class="badge bg-secondary">{{ $item->status_pengaduan }}</span>
+                        @elseif($item->status_pengaduan == 'Diproses')
+                          <span class="badge bg-warning text-dark">{{ $item->status_pengaduan }}</span>
+                        @elseif($item->status_pengaduan == 'Selesai')
+                          <span class="badge bg-success">{{ $item->status_pengaduan }}</span>
+                        @endif
+                      </td>
+
+                      <td class="py-3 text-center">
+                        <a href="{{ route('pengaduan.edit', $item->pengaduan_id) }}" class="btn btn-sm btn-outline-primary">
+                          <i class="bi bi-eye me-1"></i>Detail
+                        </a>
+                      </td>
+                    </tr>
+                  @endforeach
+                @endif
               </tbody>
             </table>
           </div>
+
           <div class="p-4 border-top">
-            <p class="text-muted small mb-0">Menampilkan 2 pengaduan</p>
+            <p class="text-muted small mb-0">
+              Menampilkan {{ $pengaduan->count() }} pengaduan
+            </p>
           </div>
         </div>
       </div>
