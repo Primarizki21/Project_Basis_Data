@@ -11,6 +11,12 @@ use App\Models\ActivityLog;
 use App\Models\Prodi;
 use App\Models\JenisPekerjaan;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
+<<<<<<< HEAD
+=======
+use App\Models\Prodi;
+use App\Models\JenisPekerjaan;
+>>>>>>> 58272ab (fixed missing landingpage controller on web.php)
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -100,6 +106,7 @@ class AdminController extends Controller
         $prodis = Prodi::orderBy('nama_prodi', 'asc')->get();
         $jenisPekerjaan = JenisPekerjaan::all();
         $admins = Admin::paginate(5, ['*'], 'admin_page');
+<<<<<<< HEAD
 
         $query = User::with('prodifk', 'pekerjaanfk');
 
@@ -122,6 +129,10 @@ class AdminController extends Controller
 
         $users = $query->latest()->paginate(5)->withQueryString();
 
+=======
+        $prodis = Prodi::orderBy('nama_prodi')->get();
+        $jenisPekerjaan = JenisPekerjaan::orderBy('nama_pekerjaan')->get();
+>>>>>>> c167a67 (fix user in kelola user)
         return view('pages.admin.kelola-user', [
             'totalUsers' => $totalUsers,
             'totalMahasiswa' => $totalMahasiswa,
@@ -130,7 +141,11 @@ class AdminController extends Controller
             'users' => $users,
             'admins' => $admins,
             'prodis' => $prodis,
+<<<<<<< HEAD
             'jenisPekerjaan' => $jenisPekerjaan
+=======
+            'jenisPekerjaan' =>$jenisPekerjaan,
+>>>>>>> c167a67 (fix user in kelola user)
         ]);
     }
     public function storeUser(Request $request)
@@ -159,6 +174,7 @@ class AdminController extends Controller
     }
 
 
+<<<<<<< HEAD
 
     public function profilIndex()
     {
@@ -190,32 +206,6 @@ class AdminController extends Controller
         
         return back()->with('success', 'Password berhasil diubah!');
     }
-
-    public function showUserDetail(User $user)
-    {
-        $totalPengaduan = Pengaduan::where('user_id', $user->user_id)->count();
-        $menunggu = Pengaduan::where('user_id', $user->user_id)->where('status_pengaduan', 'Menunggu')->count();
-        $diproses = Pengaduan::where('user_id', $user->user_id)->where('status_pengaduan', 'Diproses')->count();
-        $selesai = Pengaduan::where('user_id', $user->user_id)->where('status_pengaduan', 'Selesai')->count();
-
-        return view('pages.admin.users.detail', compact(
-            'user',
-            'totalPengaduan',
-            'menunggu',
-            'diproses',
-            'selesai'
-        ));
-    }
-
-    public function destroyUser(User $user)
-    {
-        if (auth('admin')->id() == $user->user_id) {
-            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri!');
-        }
-        
-        $user->delete();
-
-        return redirect()->route('admin.kelola-user')
-                         ->with('success', 'User berhasil dihapus!');
-    }
+=======
+>>>>>>> 58272ab (fixed missing landingpage controller on web.php)
 }
