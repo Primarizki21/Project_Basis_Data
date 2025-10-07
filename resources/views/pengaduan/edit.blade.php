@@ -85,12 +85,6 @@
                   <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
                     {{ $k->jenis_komplain }}
                   </option>
-<<<<<<< HEAD
-                  <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
-                    {{ $k->jenis_komplain }}
-                  </option>
-=======
->>>>>>> 7a4f8be (fix route and logic)
                 @endforeach
               </select>
             </div>
