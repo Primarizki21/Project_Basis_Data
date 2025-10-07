@@ -30,9 +30,51 @@
       <!-- Form Card -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
-          <form action="{{ route('pengaduan.update', $pengaduan->pengaduan_id) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ Auth::guard('admin')->check() ? route('admin.pengaduan.update', $pengaduan) : route('pengaduan.update', $pengaduan) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
+            {{-- PANEL ADMIN --}}
+            @if(Auth::guard('admin')->check())
+            <div class="p-3 rounded mb-4" style="background-color: #f8f9fa;">
+                <h5 class="fw-bold">Panel Admin</h5>
+                <hr>
+
+                {{-- RIWAYAT TINDAK LANJUT YANG SUDAH ADA --}}
+                @if($pengaduan->tindakLanjut->isNotEmpty())
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Riwayat Tindak Lanjut</label>
+                    <div class="list-group">
+                        @foreach($pengaduan->tindakLanjut->sortByDesc('created_at') as $tindakLanjut)
+                        <div class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <p class="mb-1">{{ $tindakLanjut->deskripsi }}</p>
+                                <small class="text-nowrap">{{ $tindakLanjut->created_at->diffForHumans() }}</small>
+                            </div>
+                            <small class="text-muted">Oleh: Admin ID {{ $tindakLanjut->admin_id }}</small>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+                
+                {{-- FORM UNTUK TINDAK LANJUT BARU --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Ubah Status Pengaduan</label>
+                    <select name="status_pengaduan" class="form-select form-select-lg" required>
+                        @foreach(['Menunggu', 'Diproses', 'Selesai'] as $status)
+                            <option value="{{ $status }}" @if(old('status_pengaduan', $pengaduan->status_pengaduan) == $status) selected @endif>{{ $status }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label fw-semibold">Tambah Catatan Tindak Lanjut Baru</label>
+                    <textarea name="deskripsi_tindak_lanjut" rows="4" required class="form-control form-control-lg">{{ old('deskripsi_tindak_lanjut') }}</textarea>
+                    <small class="text-muted">Catatan ini akan ditambahkan sebagai riwayat baru.</small>
+                </div>
+            </div>
+            @endif
+            {{-- AKHIR PANEL ADMIN --}}
 
             <!-- Kategori -->
             <div class="mb-4">
@@ -40,9 +82,6 @@
               <select name="kategori_komplain_id" class="form-select form-select-lg" required>
                 <option value="">-- Pilih Kategori --</option>
                 @foreach($kategori_komplain as $k)
-                  <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
-                    {{ $k->jenis_komplain }}
-                  </option>
                   <option value="{{ $k->kategori_komplain_id }}" @if($pengaduan->kategori_komplain_id == $k->kategori_komplain_id) selected @endif>
                     {{ $k->jenis_komplain }}
                   </option>

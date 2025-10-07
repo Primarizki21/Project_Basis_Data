@@ -89,11 +89,8 @@
 
                       <td class="py-3">
                         <span class="badge"
-                              style="background:
-                                {{ $item->kategoriKomplain->nama_kategori == 'Akademik' ? '#6B21A8' :
-                                   ($item->kategoriKomplain->nama_kategori == 'Fasilitas' ? '#0ea5f0' :
-                                   ($item->kategoriKomplain->nama_kategori == 'Kekerasan' ? '#dc2626' : '#7C3AED')) }}">
-                          {{ $item->kategoriKomplain->nama_kategori ?? '-' }}
+                              style="background-color: {{ $warnaKategori[$item->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
+                          {{ $item->kategoriKomplain->jenis_komplain ?? '-' }}
                         </span>
                       </td>
 
@@ -111,17 +108,17 @@
 
                       <td class="py-3">
                         @if($item->status_pengaduan == 'Menunggu')
-                          <span class="badge bg-secondary">{{ $item->status_pengaduan }}</span>
+                          <span class="badge bg-secondary">Belum Diproses</span>
                         @elseif($item->status_pengaduan == 'Diproses')
-                          <span class="badge bg-warning text-dark">{{ $item->status_pengaduan }}</span>
+                          <span class="badge bg-warning">Sedang Diproses</span>
                         @elseif($item->status_pengaduan == 'Selesai')
-                          <span class="badge bg-success">{{ $item->status_pengaduan }}</span>
+                          <span class="badge bg-success">Selesai</span>
                         @endif
                       </td>
 
                       <td class="py-3 text-center">
-                        <a href="{{ route('pengaduan.edit', $item->pengaduan_id) }}" class="btn btn-sm btn-outline-primary">
-                          <i class="bi bi-eye me-1"></i>Detail
+                        <a href="{{ route('pengaduan.edit', $item->pengaduan_id) }}" class="btn btn-sm btn-outline-success">
+                          <i class="bi bi-gear me-1"></i>Setting
                         </a>
                       </td>
                     </tr>

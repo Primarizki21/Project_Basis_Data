@@ -12,22 +12,21 @@ use App\Http\Controllers\{
     KategoriKomplainController,
     JenisPekerjaanController,
     DashboardController,
-    LandingPageController
+    LandingPageController,
+    AdminController
 };
 use App\Models\{User, Prodi, JenisPekerjaan};
 
 // Landing Page
-Route::get('/', function() {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', [LandingPageController::class, 'index'])->name('welcome');
+// Route::get('/', function() {
+//     return view('welcome');
+// })->name('welcome');
 
 // =====================
 //  KATEGORI KOMPLAIN
 // =====================
 Route::resource('kategori', KategoriKomplainController::class);
-
-// Landing Page
-Route::get('/', [LandingPageController::class, 'index'])->name('welcome');
 
 // Halaman form pengaduan anonim
 Route::get('/pengaduan/anonim', [PengaduanController::class, 'createAnonim'])->name('pengaduan.createAnonim');
@@ -164,7 +163,6 @@ Route::middleware(['auth:web'])->group(function () {
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
-    Route::delete('/pengaduan/{pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.destroy');
 
     // Profil Update
     Route::post('/profil/update', function (Request $r) {
@@ -208,12 +206,10 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/dashboard', [AdminController::class, 'dashboardIndex'])->name('dashboard');
     Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
     Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
-    
-    Route::view('/dashboard', 'pages.admin.dashboard')->name('dashboard');
-    Route::view('/kelola-pengaduan', 'pages.admin.kelola-pengaduan')->name('kelola-pengaduan');
-    Route::view('/visualisasi', 'pages.admin.visualisasi')->name('visualisasi');
-    Route::view('/kelola-user', 'pages.admin.kelola-user')->name('kelola-user');
-    
+    Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
+    Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
+    Route::delete('/pengaduan/{pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.destroy');
+
     // Profil (admin)
     Route::get('/profil', [UserController::class, 'profil'])->name('profil');
 
