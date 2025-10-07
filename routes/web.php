@@ -80,7 +80,7 @@ Route::post('/register', function (Request $r) {
         'alamat' => $r->alamat,
         'nomor_telepon' => $r->nomor_telepon,
         'jenis_pekerjaan_id' => $r->jenis_pekerjaan_id,
-        'prodi' => $r->prodi,
+        'prodi_id' => $r->prodi,
         'angkatan' => $r->angkatan,
         'password' => Hash::make($r->password),
     ]);

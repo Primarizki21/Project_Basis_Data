@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'users';
+    protected $table = 'user';
     protected $primaryKey = 'user_id';
     protected $keyType = 'int';
     public $incrementing = true;
@@ -46,7 +46,7 @@ class User extends Authenticatable
         return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id', 'jenis_pekerjaan_id');
     }
 
-    public function prodifk()
+    public function prodi()
     {
         return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
     }
