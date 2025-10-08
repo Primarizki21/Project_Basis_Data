@@ -211,4 +211,6 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::delete('/pengaduan/{pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.destroy');
     Route::get('/profil', [AdminController::class, 'profilIndex'])->name('profil');
     Route::put('/profil/password', [AdminController::class, 'updatePassword'])->name('profil.password');
+    Route::get('/kelola-user/detail/{user}', [AdminController::class, 'showUserDetail'])->name('kelola-user.detail');
+    Route::delete('/kelola-user/{user}', [AdminController::class, 'destroyUser'])->name('kelola-user.destroy');
 });

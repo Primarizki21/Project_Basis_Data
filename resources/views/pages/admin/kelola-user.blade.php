@@ -190,8 +190,16 @@
                                 <td class="py-3 text-center">
                                     <div class="btn-group btn-group-sm">
                                         <a href="#" class="btn btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
-                                        <a href="#" class="btn btn-outline-info" title="Detail"><i class="bi bi-eye"></i></a>
-                                        <a href="#" class="btn btn-outline-danger" title="Hapus"><i class="bi bi-trash"></i></a>
+                                        <a href="{{ route('admin.kelola-user.detail', $user->user_id) }}" class="btn btn-outline-info" title="Detail">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <form action="{{ route('admin.kelola-user.destroy', $user->user_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Anda yakin ingin menghapus user ini secara permanen?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
