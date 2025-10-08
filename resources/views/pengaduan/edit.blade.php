@@ -6,9 +6,15 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex align-items-center">
-        <a href="{{ route('riwayat') }}" class="btn btn-outline-secondary me-3">
-          <i class="bi bi-arrow-left"></i>
-        </a>
+        @if(Auth::guard('admin')->check())
+          <a href="{{ route('admin.kelola-pengaduan') }}" class="btn btn-outline-secondary me-3">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+        @else
+          <a href="{{ route('riwayat') }}" class="btn btn-outline-secondary me-3">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+        @endif
         <div>
           <h2 class="fw-bold mb-1">Edit Pengaduan</h2>
           <p class="text-muted mb-0">Ubah detail pengaduan Anda sebelum diproses</p>
@@ -35,13 +41,11 @@
             @csrf
             @method('PUT')
 
-            {{-- PANEL ADMIN --}}
             @if(Auth::guard('admin')->check())
             <div class="p-3 rounded mb-4" style="background-color: #f8f9fa;">
                 <h5 class="fw-bold">Panel Admin</h5>
                 <hr>
 
-                {{-- RIWAYAT TINDAK LANJUT YANG SUDAH ADA --}}
                 @if($pengaduan->tindakLanjut->isNotEmpty())
                 <div class="mb-4">
                     <label class="form-label fw-semibold">Riwayat Tindak Lanjut</label>
@@ -59,7 +63,6 @@
                 </div>
                 @endif
                 
-                {{-- FORM UNTUK TINDAK LANJUT BARU --}}
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Ubah Status Pengaduan</label>
                     <select name="status_pengaduan" class="form-select form-select-lg" required>
@@ -76,7 +79,6 @@
                 </div>
             </div>
             @endif
-            {{-- AKHIR PANEL ADMIN --}}
 
             <!-- Kategori -->
             <div class="mb-4">
@@ -134,9 +136,15 @@
               <button type="submit" class="btn btn-lg text-white px-5" style="background: linear-gradient(135deg, #6B21A8, #7C3AED); border: none;">
                 <i class="bi bi-save me-2"></i>Simpan Perubahan
               </button>
+              @if(Auth::guard('admin')->check())
+              <a href="{{ route('admin.kelola-pengaduan') }}" class="btn btn-lg btn-outline-secondary px-4">
+                Batal
+              </a>
+              @else
               <a href="{{ route('riwayat') }}" class="btn btn-lg btn-outline-secondary px-4">
                 Batal
               </a>
+              @endif
             </div>
           </form>
         </div>
