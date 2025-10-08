@@ -190,4 +190,32 @@ class AdminController extends Controller
         
         return back()->with('success', 'Password berhasil diubah!');
     }
+
+    public function showUserDetail(User $user)
+    {
+        $totalPengaduan = Pengaduan::where('user_id', $user->user_id)->count();
+        $menunggu = Pengaduan::where('user_id', $user->user_id)->where('status_pengaduan', 'Menunggu')->count();
+        $diproses = Pengaduan::where('user_id', $user->user_id)->where('status_pengaduan', 'Diproses')->count();
+        $selesai = Pengaduan::where('user_id', $user->user_id)->where('status_pengaduan', 'Selesai')->count();
+
+        return view('pages.admin.users.detail', compact(
+            'user',
+            'totalPengaduan',
+            'menunggu',
+            'diproses',
+            'selesai'
+        ));
+    }
+
+    public function destroyUser(User $user)
+    {
+        if (auth('admin')->id() == $user->user_id) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri!');
+        }
+        
+        $user->delete();
+
+        return redirect()->route('admin.kelola-user')
+                         ->with('success', 'User berhasil dihapus!');
+    }
 }
