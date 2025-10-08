@@ -123,4 +123,48 @@ class UserController extends Controller
             'ditolak'
         ));
     }
+
+    public function editUser($user_id)
+    {
+        $user = User::findOrFail($user_id);
+        return view('admin.users.edit', compact('user'));
+    }
+
+    public function updateUpdate(Request $request, $user_id)
+    {
+        $user = User::findOrFail($user_id);
+
+        $request->validate([
+            'nim' => [
+                'required',
+                Rule::unique('user', 'nim')->ignore($user->user_id, 'user_id') 
+            ],
+            'nama' => 'required',
+            'password' => 'nullable|min:6', 
+            'jenis_kelamin' => 'required|string',
+            'role' => 'required|string',
+            'prodi' => 'required_if:role,mahasiswa|integer|nullable',
+            'angkatan' => 'required_if:role,mahasiswa|integer|nullable',
+        ]);
+
+        $user->nim = $request->nim;
+        $user->nama = $request->nama;
+        $user->jenis_kelamin = $request->jenis_kelamin;
+        $user->tempat_lahir = $request->tempat_lahir;
+        $user->tanggal_lahir = $request->tanggal_lahir;
+        $user->alamat = $request->alamat;
+        $user->nomor_telepon = $request->nomor_telepon;
+        $user->jenis_pekerjaan_id = $request->jenis_pekerjaan_id ?? null;
+        $user->prodi = $request->prodi ?? null;
+        $user->angkatan = $request->angkatan ?? null;
+        $user->role = $request->role;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+        
+        return redirect()->route('admin.kelola-user')->with('success', 'Data pengguna berhasil diperbarui!');
+    }
 }
