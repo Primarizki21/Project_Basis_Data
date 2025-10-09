@@ -189,7 +189,9 @@
                                 </td>
                                 <td class="py-3 text-center">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="{{ route('admin.users.edit', $user->user_id) }}" class="btn btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
                                         <a href="{{ route('admin.kelola-user.detail', $user->user_id) }}" class="btn btn-outline-info" title="Detail">
                                             <i class="bi bi-eye"></i>
                                         </a>
@@ -269,7 +271,6 @@
                               <td class="py-3 text-center">
                                   <div class="btn-group btn-group-sm">
                                       <a href="#" class="btn btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
-                                      {{-- Praktik yang baik: jangan biarkan admin utama dihapus --}}
                                       <button class="btn btn-outline-danger" title="Hapus" @if($admin->id == 1) disabled @endif>
                                           <i class="bi bi-trash"></i>
                                       </button>

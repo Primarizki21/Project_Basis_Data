@@ -62,7 +62,7 @@
                             <div class="form-control-plaintext fw-bold">{{ $user->nama ?? '-' }}</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Email</label>
+                            <label class="form-label fw-semibold text-muted small">Alamat Email</label>
                             <div class="form-control-plaintext fw-bold">{{ $user->email ?? '-' }}</div>
                         </div>
                         <div class="col-md-6">
@@ -70,12 +70,36 @@
                             <div class="form-control-plaintext fw-bold">{{ $user->nim ?? '-' }}</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">No. Telepon</label>
-                            <div class="form-control-plaintext fw-bold">{{ $user->nomor_telepon ?? '-' }}</div>
+                            <label class="form-label fw-semibold text-muted small">Jenis Pekerjaan</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->pekerjaanfk->nama_pekerjaan ?? '-' }}</div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold text-muted small">Program Studi</label>
                             <div class="form-control-plaintext fw-bold">{{ $user->prodifk->nama_prodi ?? '-' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Angkatan</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->angkatan ?? '-' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Jenis Kelamin</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->jenis_kelamin ?? '-' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Tempat Lahir</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->tempat_lahir ?? '-' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Tanggal Lahir</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->tanggal_lahir ?? '-' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Alamat</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->alamat ?? '-' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">No. Telepon</label>
+                            <div class="form-control-plaintext fw-bold">{{ $user->nomor_telepon ?? '-' }}</div>
                         </div>
                     </div>
                 </div>
