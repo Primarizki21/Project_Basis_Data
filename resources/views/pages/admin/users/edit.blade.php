@@ -79,7 +79,7 @@
                     <option value="">-- Pilih Program Studi --</option>                    
                     @foreach($program_studi as $prodi)
                     <option 
-                    value="{{ $prodi->id }}" 
+                    value="{{ $prodi->prodi_id }}" 
                     @selected(old('prodi_id', $user->prodi_id) == $prodi->prodi_id)>
                     {{ $prodi->nama_prodi }}
                 </option>
