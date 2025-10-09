@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\Prodi;
 use App\Models\Pengaduan;
 use App\Models\JenisPekerjaan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -17,7 +21,6 @@ class UserController extends Controller
     public function showLogin()
     {
         return view('user');
-        return view('user');
     }
 
     public function register(Request $request)
@@ -26,8 +29,6 @@ class UserController extends Controller
             'nim' => 'required|unique:user,nim',
             'nama' => 'required',
             'password' => 'required|min:6',
-            'jenis_kelamin' => 'required|string',
-            'role' => 'required|string',
             'prodi' => 'required_if:role,mahasiswa|integer|nullable',
             'angkatan' => 'required_if:role,mahasiswa|integer|nullable',
         ]);
@@ -91,11 +92,7 @@ class UserController extends Controller
     public function profil()
     {
         $user = Auth::user();
-
-        // Total semua pengaduan user
         $totalPengaduan = Pengaduan::where('user_id', $user->user_id)->count();
-
-        // Hitung per status — sama dengan dashboard
         $menunggu = Pengaduan::where('user_id', $user->user_id)
             ->where('status_pengaduan', 'Menunggu')
             ->count();
@@ -127,44 +124,72 @@ class UserController extends Controller
     public function editUser($user_id)
     {
         $user = User::findOrFail($user_id);
-        return view('admin.users.edit', compact('user'));
+        $jenis_pekerjaan = JenisPekerjaan::all();
+        $program_studi = Prodi::all();
+        return view('pages.admin.users.edit', compact(
+            'user',
+            'jenis_pekerjaan',
+            'program_studi'
+        ));
     }
 
-    public function updateUpdate(Request $request, $user_id)
+    public function updateUser(Request $request, $user_id)
     {
         $user = User::findOrFail($user_id);
 
         $request->validate([
-            'nim' => [
+            'nama' => 'required|string|max:100',
+            'email' => [
                 'required',
-                Rule::unique('user', 'nim')->ignore($user->user_id, 'user_id') 
+                'string',
+                'email',
+                'max:100',
+                Rule::unique('user', 'email')->ignore($user->user_id, 'user_id'),
+                Rule::unique('admin', 'email'),
             ],
-            'nama' => 'required',
-            'password' => 'nullable|min:6', 
-            'jenis_kelamin' => 'required|string',
-            'role' => 'required|string',
-            'prodi' => 'required_if:role,mahasiswa|integer|nullable',
-            'angkatan' => 'required_if:role,mahasiswa|integer|nullable',
+            'password' => 'nullable|min:6|confirmed',
+            'account_type' => 'required|string|in:user,admin'
         ]);
 
-        $user->nim = $request->nim;
-        $user->nama = $request->nama;
-        $user->jenis_kelamin = $request->jenis_kelamin;
-        $user->tempat_lahir = $request->tempat_lahir;
-        $user->tanggal_lahir = $request->tanggal_lahir;
-        $user->alamat = $request->alamat;
-        $user->nomor_telepon = $request->nomor_telepon;
-        $user->jenis_pekerjaan_id = $request->jenis_pekerjaan_id ?? null;
-        $user->prodi = $request->prodi ?? null;
-        $user->angkatan = $request->angkatan ?? null;
-        $user->role = $request->role;
+        $newAccountType = $request->input('account_type');
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+        if ($newAccountType === 'user') {
+            $user->nim = $request->nim;
+            $user->nama = $request->nama;
+            $user->email = $request->email;
+            $user->jenis_kelamin = $request->jenis_kelamin;
+            $user->tempat_lahir = $request->tempat_lahir;
+            $user->tanggal_lahir = $request->tanggal_lahir;
+            $user->alamat = $request->alamat;
+            $user->nomor_telepon = $request->nomor_telepon;
+            $user->jenis_pekerjaan_id = $request->jenis_pekerjaan_id;
+            $user->prodi_id = $request->prodi_id;
+            $user->angkatan = $request->angkatan;
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+            return redirect()->route('admin.kelola-user')->with('success', 'Data pengguna berhasil diperbarui.');
         }
 
-        $user->save();
-        
-        return redirect()->route('admin.kelola-user')->with('success', 'Data pengguna berhasil diperbarui!');
+        if ($newAccountType === 'admin') {
+            DB::transaction(function () use ($user, $request) {
+                Admin::create([
+                    'nip'           => $user->nim,
+                    'nama'          => $request->input('nama', $user->nama),
+                    'email'         => $request->input('email', $user->email),
+                    'jenis_kelamin' => $user->jenis_kelamin,
+                    'tempat_lahir'  => $user->tempat_lahir,
+                    'tanggal_lahir' => $user->tanggal_lahir,
+                    'alamat'        => $user->alamat,
+                    'nomor_telepon' => $user->nomor_telepon,
+                    'jenis_pekerjaan_id' => $user->jenis_pekerjaan_id,
+                    'password'      => $request->filled('password') ? Hash::make($request->password) : $user->password,
+                ]);
+                $user->delete();
+            });
+
+            return redirect()->route('admin.kelola-user')->with('success', 'Pengguna berhasil dipromosikan menjadi Admin!');
+        }
     }
 }
