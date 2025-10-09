@@ -19,9 +19,6 @@ use App\Models\{User, Prodi, JenisPekerjaan};
 
 // Landing Page
 Route::get('/', [LandingPageController::class, 'index'])->name('welcome');
-// Route::get('/', function() {
-//     return view('welcome');
-// })->name('welcome');
 
 // =====================
 //  KATEGORI KOMPLAIN
@@ -30,6 +27,7 @@ Route::resource('kategori', KategoriKomplainController::class);
 
 // Halaman form pengaduan anonim
 Route::get('/pengaduan/anonim', [PengaduanController::class, 'createAnonim'])->name('pengaduan.createAnonim');
+
 // Proses penyimpanan pengaduan anonim
 Route::post('/pengaduan/anonim', [PengaduanController::class, 'storeAnonim'])->name('pengaduan.storeAnonim');
 
@@ -98,13 +96,11 @@ Route::post('/login', function (Request $r) {
 
     $credentials = $r->only('email', 'password');
     
-    // Try admin login first
     if (Auth::guard('admin')->attempt($credentials)) {
         $r->session()->regenerate();
         return redirect()->route('admin.dashboard');
     }
     
-    // Then try user login
     if (Auth::guard('web')->attempt($credentials)) {
         if (!str_ends_with($r->email, '@ftmm.unair.ac.id')) {
             Auth::guard('web')->logout();
@@ -142,18 +138,10 @@ Route::post('/logout', function (Request $r) {
 //  PROTECTED ROUTES - USER ONLY
 // =====================
 Route::middleware(['auth:web'])->group(function () {
-
-    // ✅ Dashboard via Controller (dynamic data)
     Route::get('/beranda', [DashboardController::class, 'index'])
         ->name('beranda');
-
-    // ✅ FIXED: Profil route now calls controller
     Route::get('/profil', [UserController::class, 'profil'])->name('profil');
-
-    // Other static pages
     Route::view('/kontak', 'pages.kontak')->name('kontak');
-
-    // ✅ Riwayat Pengaduan
     Route::get('/riwayat', [PengaduanController::class, 'index'])
         ->name('riwayat');
 
@@ -213,4 +201,6 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::put('/profil/password', [AdminController::class, 'updatePassword'])->name('profil.password');
     Route::get('/kelola-user/detail/{user}', [AdminController::class, 'showUserDetail'])->name('kelola-user.detail');
     Route::delete('/kelola-user/{user}', [AdminController::class, 'destroyUser'])->name('kelola-user.destroy');
+    Route::get('/users/{user_id}/edit', [UserController::class, 'editUser'])->name('users.edit');
+    Route::put('/users/{user_id}', [UserController::class, 'updateUser'])->name('users.update');
 });
