@@ -189,7 +189,7 @@
                                 </td>
                                 <td class="py-3 text-center">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-outline-primary" title="Edit">
+                                        <a href="{{ route('admin.users.edit', $user->user_id) }}" class="btn btn-outline-primary" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <a href="{{ route('admin.kelola-user.detail', $user->user_id) }}" class="btn btn-outline-info" title="Detail">
