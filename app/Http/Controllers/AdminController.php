@@ -11,8 +11,8 @@ use App\Models\ActivityLog;
 use App\Models\Prodi;
 use App\Models\JenisPekerjaan;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 
 
