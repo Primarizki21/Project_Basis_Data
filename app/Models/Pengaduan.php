@@ -23,6 +23,7 @@ class Pengaduan extends Model
         'deskripsi_kejadian',
         'tanggal_kejadian',
         'status_pengaduan',
+        'is_anonim',
         'status_pelapor',
     ];
 
@@ -45,5 +46,9 @@ class Pengaduan extends Model
     public function kategoriKomplain()
     {
         return $this->belongsTo(KategoriKomplain::class, 'kategori_komplain_id', 'kategori_komplain_id');
+    }
+    public function tindakLanjutTerbaru()
+    {
+        return $this->hasOne(TindakLanjut::class, 'pengaduan_id', 'pengaduan_id')->latestOfMany('created_at');
     }
 }
