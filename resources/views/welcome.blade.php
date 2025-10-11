@@ -254,9 +254,9 @@
 
     <div class="row g-4">
       @forelse($pengaduanAnonim as $index => $anonim)
-          <div class="col-lg-6 fade-in-up" style="animation-delay: {{ $index * 0.1 }}s;">
-              <div class="card border-0 shadow-sm h-100 hover-lift-card">
-                  <div class="card-body p-4">
+          <div class="col-lg-6 fade-in-up d-flex" style="animation-delay: {{ $index * 0.1 }}s;">
+              <div class="card border-0 shadow-sm h-100 w-100 hover-lift-card">
+                  <div class="card-body p-4 d-flex flex-column"> {{-- Tambahkan d-flex & flex-column di sini --}}
                       <div class="d-flex justify-content-between align-items-start mb-3">
                           <div>
                               <span class="badge mb-2" style="background-color: {{ $warnaKategori[$anonim->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
@@ -282,12 +282,36 @@
                           <p class="text-muted mb-0" style="font-size: 0.95rem;">{{ Str::limit($anonim->deskripsi_kejadian, 150) }}</p>
                       </div>
 
-                      {{-- Bagian tanggapan bisa ditambahkan di sini jika ada --}}
+                      @if($anonim->tindakLanjutTerbaru)
+                          <div class="mt-auto pt-3 border-top"> {{-- Tambahkan mt-auto di sini --}}
+                              <div class="p-3 rounded-3" style="background-color: #f8f9fa; border-left: 4px solid #7C3AED;">
+                                  <div class="d-flex justify-content-between align-items-center mb-2">
+                                      <h6 class="fw-bold mb-0" style="font-size: 0.9rem; color: #6B21A8;">
+                                          <i class="bi bi-chat-right-quote me-1"></i>
+                                          {{ $anonim->tindakLanjutTerbaru->jenis_tindak_lanjut ?? 'Tanggapan Admin' }}
+                                      </h6>
+                                      @if($anonim->tindakLanjutTerbaru->handler)
+                                      <span class="text-muted" style="font-size: 0.8rem;">
+                                          <i class="bi bi-person-check me-1"></i>
+                                          Oleh: <strong>{{ $anonim->tindakLanjutTerbaru->handler->nama }}</strong>
+                                      </span>
+                                      @endif
+                                  </div>
+                                  <p class="text-muted mb-2" style="font-size: 0.95rem;">
+                                      {{ $anonim->tindakLanjutTerbaru->deskripsi }}
+                                  </p>
+                                  <small class="text-muted d-block text-end fst-italic" style="font-size: 0.8rem;">
+                                      <i class="bi bi-clock me-1"></i>
+                                      {{ $anonim->tindakLanjutTerbaru->created_at->translatedFormat('d M Y, H:i') }}
+                                  </small>
+
+                              </div>
+                          </div>
+                      @endif
                       
                   </div>
               </div>
           </div>
-
       @empty
           <div class="col-12">
               <div class="text-center py-5">

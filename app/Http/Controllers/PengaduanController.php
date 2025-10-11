@@ -217,4 +217,19 @@ class PengaduanController extends Controller
 
         return redirect()->route('beranda')->with('success', 'Pengaduan anonim berhasil dikirim.');
     }
+    public function show(Pengaduan $pengaduan)
+    {
+        $pengaduan->load(['kategoriKomplain', 'bukti', 'tindakLanjut.handler']);
+        $warnaKategori = [
+        'Akademik' => '#0d6efd',
+        'Fasilitas' => '#198754',
+        'Kekerasan' => '#dc3545',
+        'Kemahasiswaan' => '#ffc107',
+        'Lainnya' => '#6c757d',
+    ];
+        return view('pengaduan.detail', compact(
+            'pengaduan',
+            'warnaKategori'
+        ));
+    }
 }

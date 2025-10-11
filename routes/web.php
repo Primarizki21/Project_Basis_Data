@@ -150,6 +150,7 @@ Route::middleware(['auth:web'])->group(function () {
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
+    Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])->name('pengaduan.show');
 
     // Profil Update
     Route::post('/profil/update', function (Request $r) {
