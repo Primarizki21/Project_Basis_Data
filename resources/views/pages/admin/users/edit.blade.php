@@ -46,22 +46,22 @@
             </div>
             <div class="mb-4">
               <label for="nama" class="form-label fw-semibold">Nama Lengkap</label>
-              <input type="text" id="nama" name="nama" class="form-control form-control-lg" value="{{ old('nama', $user->nama) }}" required>
+              <input type="text" id="nama" name="nama" class="form-control form-control-lg" value="{{ old('nama', $user->nama) }}" >
             </div>
 
             <div class="mb-4">
               <label for="email" class="form-label fw-semibold">Alamat Email</label>
-              <input type="email" id="email" name="email" class="form-control form-control-lg" value="{{ old('email', $user->email) }}" required>
+              <input type="email" id="email" name="email" class="form-control form-control-lg" value="{{ old('email', $user->email) }}" >
             </div>
             
             <div class="mb-4">
-              <label for="nim" class="form-label fw-semibold">NIM</label>
-              <input type="text" id="nim" name="nim" class="form-control form-control-lg" value="{{ old('nim', $user->nim) }}" required>
+              <label for="nim" class="form-label fw-semibold">NIM/NIP</label>
+              <input type="text" id="nim" name="nim" class="form-control form-control-lg" value="{{ old('nim', $user->nim) }}" >
             </div>
             
             <div class="mb-4">
                 <label for="jenis_pekerjaan_id" class="form-label fw-semibold">Jenis Pekerjaan</label>
-                <select name="jenis_pekerjaan_id" id="jenis_pekerjaan_id" class="form-select form-select-lg" required>
+                <select name="jenis_pekerjaan_id" id="jenis_pekerjaan_id" class="form-select form-select-lg" >
                     <option value="">-- Pilih Jenis Pekerjaan --</option>                    
                     @foreach($jenis_pekerjaan as $pekerjaan)
                     <option 
@@ -75,7 +75,7 @@
             
         <div class="mb-4">
             <label for="prodi_id" class="form-label fw-semibold">Program Studi</label>
-                <select name="prodi_id" id="prodi_id" class="form-select form-select-lg" required>
+                <select name="prodi_id" id="prodi_id" class="form-select form-select-lg" >
                     <option value="">-- Pilih Program Studi --</option>                    
                     @foreach($program_studi as $prodi)
                     <option 
@@ -89,12 +89,12 @@
 
         <div class="mb-4">
           <label for="angkatan" class="form-label fw-semibold">Angkatan</label>
-          <input type="text" id="angkatan" name="angkatan" class="form-control form-control-lg" value="{{ old('angkatan', $user->angkatan) }}" required>
+          <input type="text" id="angkatan" name="angkatan" class="form-control form-control-lg" value="{{ old('angkatan', $user->angkatan) }}" >
         </div>
         
         <div class="mb-4">
             <label for="jenis_kelamin" class="form-label fw-semibold">Jenis Kelamin</label>
-            <select name="jenis_kelamin" id="jenis_kelamin" class="form-select form-select-lg" required>
+            <select name="jenis_kelamin" id="jenis_kelamin" class="form-select form-select-lg" >
                 <option value="">-- Pilih Jenis Kelamin --</option>
                 <option value="Laki-laki" @selected(old('jenis_kelamin', $user->jenis_kelamin) == 'Laki-laki')>
                     Laki-laki
@@ -107,22 +107,22 @@
 
         <div class="mb-4">
           <label for="tempat_lahir" class="form-label fw-semibold">Tempat Lahir</label>
-          <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control form-control-lg" value="{{ old('tempat_lahir', $user->tempat_lahir) }}" required>
+          <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-control form-control-lg" value="{{ old('tempat_lahir', $user->tempat_lahir) }}" >
         </div>
             
         <div class="mb-4">
           <label for="tanggal_lahir" class="form-label fw-semibold">Tanggal Lahir</label>
-          <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control form-control-lg" value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}" required>
+          <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control form-control-lg" value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}" >
         </div>
         
         <div class="mb-4">
           <label for="alamat" class="form-label fw-semibold">Alamat</label>
-          <input type="text" id="alamat" name="alamat" class="form-control form-control-lg" value="{{ old('alamat', $user->alamat) }}" required>
+          <input type="text" id="alamat" name="alamat" class="form-control form-control-lg" value="{{ old('alamat', $user->alamat) }}" >
         </div>
         
         <div class="mb-4">
           <label for="nomor_telepon" class="form-label fw-semibold">No. Telepon</label>
-          <input type="text" id="nomor_telepon" name="nomor_telepon" class="form-control form-control-lg" value="{{ old('nomor_telepon', $user->nomor_telepon) }}" required>
+          <input type="text" id="nomor_telepon" name="nomor_telepon" class="form-control form-control-lg" value="{{ old('nomor_telepon', $user->nomor_telepon) }}" >
         </div>
             
             <div class="mb-4">
