@@ -12,9 +12,8 @@ class JenisPekerjaanSeeder extends Seeder
         // Siapkan data pekerjaan dalam bentuk array
         $pekerjaan = [
             ['nama_pekerjaan' => 'Mahasiswa'],
-            ['nama_pekerjaan' => 'Dosen'],
+            ['nama_pekerjaan' => 'Dosen/Peneliti'],
             ['nama_pekerjaan' => 'Tendik'],
-            ['nama_pekerjaan' => 'Peneliti'],
             ['nama_pekerjaan' => 'Lainnya'],
         ];
 

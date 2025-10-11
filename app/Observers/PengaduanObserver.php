@@ -22,7 +22,7 @@ class PengaduanObserver
         if ($pengaduan->isDirty('status_pengaduan')) {
             $status = $pengaduan->status_pengaduan;
             ActivityLog::create([
-                'user_id'      => $pengaduan->user_id, // Log dikaitkan dengan user pemilik pengaduan
+                'user_id'      => $pengaduan->user_id,
                 'description'  => "Status pengaduan #TKT-{$pengaduan->pengaduan_id} diubah menjadi '{$status}' oleh admin.",
                 'subject_id'   => $pengaduan->pengaduan_id,
                 'subject_type' => Pengaduan::class,
@@ -53,6 +53,16 @@ class PengaduanObserver
             ActivityLog::create([
                 'user_id'      => $pengaduan->user_id,
                 'description'  => "Kategori pengaduan #TKT-{$pengaduan->pengaduan_id} diubah menjadi '{$newCategoryName}'.",
+                'subject_id'   => $pengaduan->pengaduan_id,
+                'subject_type' => Pengaduan::class,
+            ]);
+        }
+
+        if ($pengaduan->isDirty('status_pelapor')) {
+            $newStatus = $pengaduan->status_pelapor;
+            ActivityLog::create([
+                'user_id'      => $pengaduan->user_id,
+                'description'  => "Status pelapor untuk pengaduan #TKT-{$pengaduan->pengaduan_id} diubah menjadi '{$newStatus}'.",
                 'subject_id'   => $pengaduan->pengaduan_id,
                 'subject_type' => Pengaduan::class,
             ]);
