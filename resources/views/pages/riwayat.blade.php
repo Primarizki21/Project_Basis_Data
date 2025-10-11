@@ -117,9 +117,14 @@
                       </td>
 
                       <td class="py-3 text-center">
-                        <a href="{{ route('pengaduan.edit', $item->pengaduan_id) }}" class="btn btn-sm btn-outline-success">
-                          <i class="bi bi-gear me-1"></i>Setting
-                        </a>
+                        <div class="btn-group btn-group-sm">
+                          <a href="{{ route('pengaduan.show', $item->pengaduan_id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a href="{{ route('pengaduan.edit', $item->pengaduan_id) }}" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-gear"></i>
+                          </a>
+                        </div>
                       </td>
                     </tr>
                   @endforeach
