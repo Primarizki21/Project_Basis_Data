@@ -44,7 +44,11 @@
 
                     <div class="mb-3 pb-2 border-bottom">
                         <label class="form-label fw-semibold text-muted small">Kategori Pengaduan</label>
-                        <div class="form-control-plaintext fw-bold">{{ $pengaduan->kategoriKomplain->jenis_komplain }}</div>
+                        <div class="form-control-plaintext fw-bold">
+                            <span class="badge fs-6" style="background-color: {{ $warnaKategori[$pengaduan->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
+                                {{ $pengaduan->kategoriKomplain->jenis_komplain ?? '-' }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="mb-3 pb-2 border-bottom">
@@ -55,16 +59,7 @@
                     <div class="mb-3 pb-2 border-bottom">
                         <label class="form-label fw-semibold text-muted small">Tanggal Kejadian</label>
                         <div class="form-control-plaintext fw-bold">{{ \Carbon\Carbon::parse($pengaduan->tanggal_kejadian)->translatedFormat('l, d F Y') }}</div>
-                    </div>
-
-                    <div class="mb-3 pb-2 border-bottom">
-                        <label class="form-label fw-semibold text-muted small">Kategori Pengaduan</label>
-                        <div class="form-control-plaintext fw-bold">
-                            <span class="badge fs-6" style="background-color: {{ $warnaKategori[$pengaduan->kategoriKomplain->jenis_komplain] ?? '#6c757d' }};">
-                                {{ $pengaduan->kategoriKomplain->jenis_komplain ?? '-' }}
-                            </span>
-                        </div>
-                    </div>
+                    </div> 
 
                     <div class="mb-3 pb-2 border-bottom">
                         <label class="form-label fw-semibold text-muted small">Status Pengaduan</label>

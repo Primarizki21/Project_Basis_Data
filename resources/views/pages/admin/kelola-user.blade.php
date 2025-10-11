@@ -178,7 +178,7 @@
                                 <td class="py-3">
                                     @if($user->pekerjaanfk->nama_pekerjaan == 'Mahasiswa')
                                         <span class="badge bg-success">Mahasiswa</span>
-                                    @elseif(in_array($user->pekerjaanfk->nama_pekerjaan, ['Dosen', 'Tendik', 'Peneliti']))
+                                    @elseif(in_array($user->pekerjaanfk->nama_pekerjaan, ['Dosen/Peneliti', 'Tendik']))
                                         <span class="badge bg-info">Staff</span>
                                     @else
                                         <span class="badge bg-secondary">{{ $user->pekerjaanfk->nama_pekerjaan }}</span>

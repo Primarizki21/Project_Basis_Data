@@ -128,20 +128,30 @@
                     </div>
                     <div class="activity-content">
                         <strong>{{ $activity->description }}</strong>
-                        @if ($activity->user)
+                        @if ($activity->subject_type === 'App\Models\Pengaduan' && is_null($activity->subject->user_id))
+                            <p class="text-muted mb-0 small">
+                                Oleh: Anonim
+                            </p>
+                        @elseif ($activity->user)
                             <p class="text-muted mb-0 small">
                                 Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
+                            </p>
+                            <p class="text-muted mb-0 small">
+                                {{ $activity->user->pekerjaanfk->nama_pekerjaan }}
                             </p>
                         @endif
 
                         @if ($activity->subject)
                             @if ($activity->subject_type === 'App\Models\Pengaduan')
                                 <p class="text-muted mb-0 small fst-italic">
-                                    "{{ Str::limit($activity->subject->deskripsi_kejadian, 50) }}"
+                                    "{{ Str::limit($activity->subject->deskripsi_kejadian, 100) }}"
                                 </p>
                             @elseif ($activity->subject_type === 'App\Models\User')
                                 <p class="text-muted mb-0 small">
-                                    {{ $activity->subject->email }}
+                                    {{ $activity->subject->nama }} ({{ $activity->subject->email }})
+                                </p>
+                                <p class="text-muted mb-0 small">
+                                    {{ $activity->subject->pekerjaanfk->nama_pekerjaan }}
                                 </p>
                             @endif
                         @endif

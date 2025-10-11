@@ -346,8 +346,7 @@
 
                         <!-- Prodi (Conditional) -->
                         <div class="col-md-6" id="prodiField" style="display: none;">
-                            <label for="prodi" class="form-label">Program Studi</label>
-                            <select class="form-select" id="prodi" name="prodi">
+                                <label for="prodi" class="form-label" id="prodiLabel">Program Studi</label>                            <select class="form-select" id="prodi" name="prodi">
                                 <option value="">Pilih Prodi</option>
                                 @foreach($listProdi ?? [] as $prodi)
                                 <option value="{{ $prodi->prodi_id }}" {{ old('prodi') == $prodi->prodi_id ? 'selected' : '' }}>
@@ -395,14 +394,25 @@
             const pekerjaanSelect = document.getElementById('jenis_pekerjaan_id');
             const prodiField = document.getElementById('prodiField');
             const angkatanField = document.getElementById('angkatanField');
+            const prodiLabel = document.getElementById('prodiLabel');
 
             function toggleFields() {
-                if (pekerjaanSelect.value === '1') {
+                const selectedValue = pekerjaanSelect.value;
+
+                if (selectedValue === '1') {
                     prodiField.style.display = 'block';
                     angkatanField.style.display = 'block';
+                    prodiLabel.textContent = 'Program Studi';
+                
+                } else if (selectedValue === '2' || selectedValue === '3') {
+                    prodiField.style.display = 'block';
+                    angkatanField.style.display = 'none';
+                    prodiLabel.textContent = 'Unit / Program Studi';
+                
                 } else {
                     prodiField.style.display = 'none';
                     angkatanField.style.display = 'none';
+                    prodiLabel.textContent = 'Program Studi';
                 }
             }
 

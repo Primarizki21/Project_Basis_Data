@@ -66,7 +66,6 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Ubah Status Pengaduan</label>
                     <select name="status_pengaduan" class="form-select form-select-lg" required>
-                      {{-- Sementara ditolak hapus dulu, nanti ditambah --}}
                         @foreach(['Menunggu', 'Diproses', 'Selesai'] as $status)
                             <option value="{{ $status }}" @if(old('status_pengaduan', $pengaduan->status_pengaduan) == $status) selected @endif>{{ $status }}</option>
                         @endforeach
@@ -97,12 +96,26 @@
             <div class="mb-4">
               <label class="form-label fw-semibold">Deskripsi Kejadian</label>
               <textarea name="deskripsi_kejadian" rows="6" required class="form-control form-control-lg">{{ $pengaduan->deskripsi_kejadian }}</textarea>
+              <small class="text-muted">Jelaskan secara rinci mengenai kejadian yang anda alami</small>
             </div>
 
             <!-- Tanggal Kejadian -->
             <div class="mb-4">
               <label class="form-label fw-semibold">Tanggal Kejadian</label>
               <input type="date" name="tanggal_kejadian" value="{{ $pengaduan->tanggal_kejadian }}" class="form-control form-control-lg">
+            </div>
+
+            <!-- Status Pelapor -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Status Pelapor <span class="text-danger">*</span></label>
+                <select name="status_pelapor" required class="form-select form-select-lg">
+                    <option value="">-- Pilih Status --</option>
+                    <option value="Korban" {{ old('status_pelapor', $pengaduan->status_pelapor) == 'Korban' ? 'selected' : '' }}>Korban</option>
+                    <option value="Keluarga" {{ old('status_pelapor', $pengaduan->status_pelapor) == 'Keluarga' ? 'selected' : '' }}>Keluarga Korban</option>
+                    <option value="Teman" {{ old('status_pelapor', $pengaduan->status_pelapor) == 'Teman' ? 'selected' : '' }}>Teman/Kenalan</option>
+                    <option value="Saksi" {{ old('status_pelapor', $pengaduan->status_pelapor) == 'Saksi' ? 'selected' : '' }}>Saksi Mata</option>
+                </select>
+                <small class="text-muted">Anda sebagai apa dalam kejadian ini?</small>
             </div>
 
             <!-- Upload Bukti Baru -->
