@@ -13,6 +13,7 @@ class ActivityLog extends Model
     protected $fillable = [
         'description',
         'user_id',
+        'admin_id',
         'subject_id',
         'subject_type',
     ];
@@ -25,6 +26,11 @@ class ActivityLog extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class, 'admin_id', 'admin_id');
     }
 
     public function getIconClassAttribute(): string

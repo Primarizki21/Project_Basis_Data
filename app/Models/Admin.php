@@ -37,4 +37,8 @@ class Admin extends Authenticatable
     {
         return $this->hasMany(TindakLanjut::class, 'admin_id', 'admin_id');
     }
+    public function activity()
+    {
+        return $this->hasMany(ActivityLog::class, 'admin_id', 'admin_id');
+    }
 }
