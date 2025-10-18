@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Models\Pengaduan;
 use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class PengaduanObserver
 {
@@ -11,7 +13,7 @@ class PengaduanObserver
     {
         ActivityLog::create([
             'user_id' => $pengaduan->user_id,
-            'description' => "Pengaduan baru masuk",
+            'description' => "Pengaduan #TKT-{$pengaduan->pengaduan_id} baru masuk",
             'subject_id' => $pengaduan->pengaduan_id,
             'subject_type' => Pengaduan::class,
         ]);
@@ -69,13 +71,28 @@ class PengaduanObserver
         }
     }
 
-
     /**
      * Handle the Pengaduan "deleted" event.
      */
     public function deleted(Pengaduan $pengaduan): void
     {
-        //
+        $admin = Auth::user();
+        ActivityLog::create([
+            'admin_id' => $admin ? $admin->admin_id : null,
+            'description' => "Pengaduan #TKT-{$pengaduan->pengaduan_id} telah dihapus",
+            'subject_id'   => $pengaduan->pengaduan_id, 
+            'subject_type' => Pengaduan::class,
+        ]);
+    }
+
+    public function deleting(Pengaduan $pengaduan): void
+    {
+        if ($pengaduan->bukti) {
+            foreach ($pengaduan->bukti as $bukti) {
+                Storage::disk('public')->delete($bukti->file_path);
+                $bukti->delete();
+            }
+        }
     }
 
     /**
