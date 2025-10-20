@@ -128,21 +128,47 @@
             <!-- Existing Files -->
             @if($pengaduan->bukti && count($pengaduan->bukti) > 0)
             <div class="mb-4">
-              <label class="form-label fw-semibold">Bukti yang Sudah Ada</label>
-              <div class="row g-2">
-                @foreach($pengaduan->bukti as $bukti)
-                <div class="col-md-4">
-                  <div class="card">
-                    <div class="card-body p-2">
-                      <small class="d-block text-truncate">{{ $bukti->nama_file }}</small>
-                      <button type="button" class="btn btn-sm btn-danger w-100 mt-1">Hapus</button>
-                    </div>
-                  </div>
+                <label class="form-label fw-semibold">Bukti yang Sudah Ada</label>
+                <div class="file-preview-list mt-2"> 
+                    @foreach($pengaduan->bukti as $bukti)
+                        @php
+                            $filePath = asset('storage/' . $bukti->file_path);
+                            $fileName = $bukti->nama_file;
+                            $fileSizeKB = (isset($bukti->ukuran_file)) ? round($bukti->ukuran_file / 1024, 2) : null;
+                            $extension = strtolower(pathinfo($bukti->file_path, PATHINFO_EXTENSION));
+                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+                            $isImage = in_array($extension, $imageExtensions);
+                        @endphp
+
+                        <div class="file-item" id="existing-file-{{ $bukti->bukti_pengaduan_id }}">
+                            
+                            @if($isImage)
+                                <img src="{{ $filePath }}" alt="{{ $fileName }}" class="file-thumbnail" onclick="showImageModal('{{ $filePath }}')">
+                            @else
+                                <i class="bi bi-file-earmark-text"></i>
+                            @endif
+
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">{{ $fileName }}</div>
+                                @if($fileSizeKB)
+                                    <small class="text-muted">{{ $fileSizeKB }} KB</small>
+                                @endif
+                            </div>
+
+                            <a href="{{ $filePath }}" target="_blank" class="ms-2 text-muted" title="Buka di tab baru">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+
+                            <i class="bi bi-x-circle remove-file" 
+                              onclick="markForDeletion(this, {{ $bukti->bukti_pengaduan_id }})"></i>
+                            
+                        </div>
+                    @endforeach
                 </div>
-                @endforeach
-              </div>
             </div>
             @endif
+
+<div id="deletedBuktiContainer"></div>
 
             <!-- Buttons -->
             <div class="d-flex gap-3">
@@ -181,6 +207,180 @@
     </div>
   </div>
 </div>
+
+<style>
+    .file-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #f9fafb;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        gap: 10px;
+        border: 1px solid #eee;
+        margin-top: 8px;
+    }
+    .file-thumbnail {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .file-item > .bi {
+        font-size: 1.5rem;
+        color: #6c757d;
+        width: 40px;
+        text-align: center;
+    }
+    .file-item .flex-grow-1 {
+        overflow: hidden;
+    }
+    .file-item .flex-grow-1 .fw-semibold {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .remove-file {
+        margin-left: auto;
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 1.25rem;
+    }
+    .remove-file:hover {
+        color: #a71d2a;
+    }
+    .image-preview-modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.85);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    .modal-image-container {
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+        background-color: transparent;
+        line-height: 0;
+    }
+    .modal-content {
+        display: block;
+        object-fit: contain;
+        max-width: 90%;
+        max-height: 90vh;
+        animation-name: zoom;
+        animation-duration: 0.3s;
+        cursor: default;
+    }
+    @keyframes zoom {
+        from {transform: scale(0.8)}
+        to {transform: scale(1)}
+    }
+    .close-modal-btn {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+    .close-modal-btn:hover,
+    .close-modal-btn:focus {
+        color: #bbb;
+        text-decoration: none;
+    }
+</style>
+
+<script>
+const buktiInput = document.getElementById('buktiInput');
+const filePreview = document.getElementById('filePreview');
+const modal = document.getElementById('imageModal');
+const modalImage = document.getElementById('modalImage');
+
+let allFiles = []; 
+
+buktiInput.addEventListener('change', function(e) {
+  const newFiles = Array.from(e.target.files);
+  allFiles = allFiles.concat(newFiles);
+  const dt = new DataTransfer();
+  allFiles.forEach(file => dt.items.add(file));
+  buktiInput.files = dt.files;
+  renderFilePreview(allFiles);
+});
+
+function renderFilePreview(files) {
+  filePreview.innerHTML = ''; 
+    Array.from(files).forEach((file, index) => {
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+        if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageUrl = e.target.result;
+        fileItem.innerHTML = `
+          <img src="${imageUrl}" alt="${file.name}" class="file-thumbnail" onclick="showImageModal('${imageUrl}')">
+          <div class="flex-grow-1">
+            <div class="fw-semibold">${file.name}</div>
+            <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+          </div>
+          <i class="bi bi-x-circle remove-file" onclick="removeFile(${index})"></i>
+        `;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      fileItem.innerHTML = `
+        <i class="bi bi-file-earmark-text"></i>
+        <div class="flex-grow-1">
+          <div class="fw-semibold">${file.name}</div>
+          <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+        </div>
+        <i class="bi bi-x-circle remove-file" onclick="removeFile(${index})"></i>
+      `;
+    }
+    filePreview.appendChild(fileItem);
+  });
+}
+function markForDeletion(iconElement, buktiId) {
+  if (!confirm('Anda yakin ingin menghapus bukti ini? File akan dihapus permanen saat Anda menyimpan perubahan.')) {
+      return;
+  }
+  
+  // 1. Temukan elemen .file-item terdekat
+  const fileItem = iconElement.closest('.file-item');
+  if (fileItem) {
+      // Sembunyikan dari tampilan
+      fileItem.style.display = 'none';
+  }
+  
+  const container = document.getElementById('deletedBuktiContainer');
+  
+  const hiddenInput = document.createElement('input');
+  hiddenInput.type = 'hidden';
+  hiddenInput.name = 'delete_bukti[]';
+  hiddenInput.value = buktiId;
+  container.appendChild(hiddenInput);
+}
+function showImageModal(src) {
+  modal.style.display = "flex";
+  modalImage.src = src;
+}
+
+function closeImageModal(event) {
+  if (event) {
+    event.stopPropagation(); 
+  }
+  modal.style.display = "none";
+}
+</script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 @endsection

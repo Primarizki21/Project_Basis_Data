@@ -128,19 +128,24 @@
                     </div>
                     <div class="activity-content">
                         <strong>{{ $activity->description }}</strong>
-                        @if ($activity->subject_type === 'App\Models\Pengaduan' && is_null($activity->subject->user_id))
+                        @if ($activity->admin)
                             <p class="text-muted mb-0 small">
-                                Oleh: Anonim
+                                Oleh: {{ $activity->admin->nama }} (Admin)
                             </p>
                         @elseif ($activity->user)
                             <p class="text-muted mb-0 small">
                                 Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
                             </p>
+                            @if ($activity->user->pekerjaanfk)
+                                <p class="text-muted mb-0 small">
+                                    {{ $activity->user->pekerjaanfk->nama_pekerjaan }}
+                                </p>
+                            @endif
+                        @elseif ($activity->subject_type === 'App\Models\Pengaduan' && $activity->subject && is_null($activity->subject->user_id))
                             <p class="text-muted mb-0 small">
-                                {{ $activity->user->pekerjaanfk->nama_pekerjaan }}
+                                Oleh: Anonim
                             </p>
                         @endif
-
                         @if ($activity->subject)
                             @if ($activity->subject_type === 'App\Models\Pengaduan')
                                 <p class="text-muted mb-0 small fst-italic">
@@ -150,28 +155,33 @@
                                 <p class="text-muted mb-0 small">
                                     {{ $activity->subject->nama }} ({{ $activity->subject->email }})
                                 </p>
-                                <p class="text-muted mb-0 small">
-                                    {{ $activity->subject->pekerjaanfk->nama_pekerjaan }}
+                                @if ($activity->subject->pekerjaanfk)
+                                    <p class="text-muted mb-0 small">
+                                        {{ $activity->subject->pekerjaanfk->nama_pekerjaan }}
+                                    </p>
+                                @endif
+                            @endif
+                        @else
+                            @if ($activity->subject_type === 'App\Models\Pengaduan')
+                                <p class="text-muted mb-0 small fst-italic">
+                                    (Data pengaduan terkait telah dihapus)
                                 </p>
                             @endif
                         @endif
                         <small class="text-muted">{{ $activity->created_at->diffForHumans() }}</small>
                     </div>
                 </div>
-
               @empty
-                  {{-- Ini akan ditampilkan jika variabel $activities kosong --}}
-                  <div class="activity-item">
-                      <div class="activity-icon" style="background: #6c757d;">
-                          <i class="bi bi-info-circle"></i>
-                      </div>
-                      <div class="activity-content">
-                          <strong>Belum ada aktivitas.</strong>
-                          <p class="text-muted mb-0 small">Semua aktivitas terbaru akan muncul di sini.</p>
-                      </div>
-                  </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #6c757d;">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>Belum ada aktivitas.</strong>
+                        <p class="text-muted mb-0 small">Semua aktivitas terbaru akan muncul di sini.</p>
+                    </div>
+                </div>
               @endforelse
-
           </div>
         </div>
       </div>

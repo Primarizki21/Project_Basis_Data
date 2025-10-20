@@ -24,8 +24,6 @@
         <div class="card-body p-4">
           <form action="{{ route('pengaduan.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-
-            <!-- Kategori (Jika dari landing page) -->
             @php
               $preKategoriId = request()->query('kategori');
               $preKategoriObj = null;
@@ -35,6 +33,16 @@
             @endphp
 
             @if($preKategoriObj)
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <strong>Input Gagal, mohon periksa kembali:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
               <!-- Show selected kategori from landing -->
               <div class="mb-4">
                 <label class="form-label fw-semibold">Kategori Pengaduan</label>
@@ -116,6 +124,14 @@
                 </label>
               </div>
               <div id="filePreview" class="mt-3"></div>
+            </div>
+
+            <!-- Modal Preview Gambar -->
+            <div id="imageModal" class="image-preview-modal" onclick="closeImageModal()">
+              <span class="close-modal-btn" onclick="closeImageModal(event)">&times;</span>
+              <div class="modal-image-container" onclick="event.stopPropagation()">
+                <img class="modal-content" id="modalImage">
+              </div>
             </div>
 
             <!-- Persetujuan -->
@@ -235,53 +251,178 @@
   width: 100%;
   margin: 0;
 }
-
 #filePreview .file-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background: #f9fafb;
-  border-radius: 8px;
-  margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    gap: 10px;
+    border: 1px solid #eee;
+    margin-top: 8px;
 }
-
-#filePreview .file-item i {
-  font-size: 1.5rem;
-  margin-right: 10px;
-  color: #6B21A8;
-}
-
 #filePreview .remove-file {
   margin-left: auto;
   cursor: pointer;
   color: #ef4444;
+  font-size: 1.25rem;
+}
+.file-thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Style untuk Ikon (Non-gambar) */
+.file-item > .bi {
+  font-size: 1.5rem;
+  color: #6c757d;
+  width: 40px;
+  text-align: center;
+}
+
+.file-item .flex-grow-1 {
+  overflow: hidden;
+}
+
+.file-item .flex-grow-1 .fw-semibold {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.remove-file:hover {
+  color: #a71d2a;
+}
+/* Style untuk Modal Popup Gambar */
+.image-preview-modal {
+  display: none;
+  position: fixed; 
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; 
+  background-color: rgba(0, 0, 0, 0.85);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-image-container {
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
+  background-color: transparent;
+  line-height: 0; 
+}
+.modal-content {
+  display: block; 
+  object-fit: contain;
+  max-width: 90%;
+  max-height: 90vh; 
+  animation-name: zoom;
+  animation-duration: 0.3s;
+}
+@keyframes zoom {
+  from {transform: scale(0.8)}
+  to {transform: scale(1)}
+}
+.close-modal-btn {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.close-modal-btn:hover,
+.close-modal-btn:focus {
+  color: #bbb;
+  text-decoration: none;
+}
+.image-preview-modal {
+    cursor: pointer;
+}
+.modal-content {
+    cursor: default;
 }
 </style>
 
 <script>
-// File upload preview
-document.getElementById('buktiInput').addEventListener('change', function(e) {
-  const filePreview = document.getElementById('filePreview');
-  filePreview.innerHTML = '';
-  
-  Array.from(e.target.files).forEach((file, index) => {
+const buktiInput = document.getElementById('buktiInput');
+const filePreview = document.getElementById('filePreview');
+const modal = document.getElementById('imageModal');
+const modalImage = document.getElementById('modalImage');
+
+let allFiles = []; 
+
+buktiInput.addEventListener('change', function(e) {
+  const newFiles = Array.from(e.target.files);
+  allFiles = allFiles.concat(newFiles);
+  const dt = new DataTransfer();
+  allFiles.forEach(file => dt.items.add(file));
+  buktiInput.files = dt.files;
+  renderFilePreview(allFiles);
+});
+
+function renderFilePreview(files) {
+  filePreview.innerHTML = ''; 
+    Array.from(files).forEach((file, index) => {
     const fileItem = document.createElement('div');
     fileItem.className = 'file-item';
-    fileItem.innerHTML = `
-      <i class="bi bi-file-earmark"></i>
-      <div class="flex-grow-1">
-        <div class="fw-semibold">${file.name}</div>
-        <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
-      </div>
-      <i class="bi bi-x-circle remove-file" onclick="removeFile(${index})"></i>
-    `;
+        if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageUrl = e.target.result;
+        fileItem.innerHTML = `
+          <img src="${imageUrl}" alt="${file.name}" class="file-thumbnail" onclick="showImageModal('${imageUrl}')">
+          <div class="flex-grow-1">
+            <div class="fw-semibold">${file.name}</div>
+            <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+          </div>
+          <i class="bi bi-x-circle remove-file" onclick="removeFile(${index})"></i>
+        `;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      fileItem.innerHTML = `
+        <i class="bi bi-file-earmark-text"></i>
+        <div class="flex-grow-1">
+          <div class="fw-semibold">${file.name}</div>
+          <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+        </div>
+        <i class="bi bi-x-circle remove-file" onclick="removeFile(${index})"></i>
+      `;
+    }
     filePreview.appendChild(fileItem);
   });
-});
+}
+
+function removeFile(index) {
+  allFiles.splice(index, 1);
+  const dt = new DataTransfer();
+  allFiles.forEach(file => dt.items.add(file));
+  buktiInput.files = dt.files;
+  renderFilePreview(allFiles);
+}
+function showImageModal(src) {
+  modal.style.display = "flex";
+  modalImage.src = src;
+}
+
+function closeImageModal(event) {
+  if (event) {
+    event.stopPropagation(); 
+  }
+  modal.style.display = "none";
+}
 
 // Drag & drop
 const uploadArea = document.getElementById('uploadArea');
-const buktiInput = document.getElementById('buktiInput');
 
 uploadArea.addEventListener('dragover', (e) => {
   e.preventDefault();
@@ -297,29 +438,9 @@ uploadArea.addEventListener('drop',
   e.preventDefault();
   uploadArea.classList.remove('dragover');
   buktiInput.files = e.dataTransfer.files;
-  
-  // Trigger change event
   const event = new Event('change');
   buktiInput.dispatchEvent(event);
 });
-
-// Remove file function
-function removeFile(index) {
-  const dt = new DataTransfer();
-  const files = buktiInput.files;
-  
-  for (let i = 0; i < files.length; i++) {
-    if (i !== index) {
-      dt.items.add(files[i]);
-    }
-  }
-  
-  buktiInput.files = dt.files;
-  
-  // Refresh preview
-  const event = new Event('change');
-  buktiInput.dispatchEvent(event);
-}
 </script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
