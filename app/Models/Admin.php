@@ -41,4 +41,8 @@ class Admin extends Authenticatable
     {
         return $this->hasMany(ActivityLog::class, 'admin_id', 'admin_id');
     }
+    public function buktipengaduan()
+    {
+        return $this->hasMany(BuktiPengaduan::class, 'admin_id', 'admin_id');
+    }
 }
