@@ -24,8 +24,6 @@
         <div class="card-body p-4">
           <form action="{{ route('pengaduan.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-
-            <!-- Kategori (Jika dari landing page) -->
             @php
               $preKategoriId = request()->query('kategori');
               $preKategoriObj = null;
@@ -35,6 +33,16 @@
             @endphp
 
             @if($preKategoriObj)
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <strong>Input Gagal, mohon periksa kembali:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
               <!-- Show selected kategori from landing -->
               <div class="mb-4">
                 <label class="form-label fw-semibold">Kategori Pengaduan</label>
@@ -243,25 +251,16 @@
   width: 100%;
   margin: 0;
 }
-
 #filePreview .file-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background: #f9fafb;
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-#filePreview .file-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background: #f9fafb;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  gap: 10px;
-  border: 1px solid #eee;
-  margin-top: 8px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    gap: 10px;
+    border: 1px solid #eee;
+    margin-top: 8px;
 }
 #filePreview .remove-file {
   margin-left: auto;
@@ -364,27 +363,18 @@ let allFiles = [];
 buktiInput.addEventListener('change', function(e) {
   const newFiles = Array.from(e.target.files);
   allFiles = allFiles.concat(newFiles);
-  
-  // 3. Update <input> agar form submission mengirim SEMUA file
-  // Kita harus membuat FileList baru menggunakan DataTransfer
   const dt = new DataTransfer();
   allFiles.forEach(file => dt.items.add(file));
   buktiInput.files = dt.files;
-  
-  // 4. Render ulang tampilan berdasarkan "daftar utama"
   renderFilePreview(allFiles);
 });
 
 function renderFilePreview(files) {
   filePreview.innerHTML = ''; 
-  
-  // Sekarang kita loop 'allFiles' (yang ada di parameter 'files')
-  Array.from(files).forEach((file, index) => {
+    Array.from(files).forEach((file, index) => {
     const fileItem = document.createElement('div');
     fileItem.className = 'file-item';
-    
-    // Sisa kode ini SAMA PERSIS seperti milik Anda
-    if (file.type.startsWith('image/')) {
+        if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = function(e) {
         const imageUrl = e.target.result;
@@ -413,18 +403,10 @@ function renderFilePreview(files) {
 }
 
 function removeFile(index) {
-  // --- DIMODIFIKASI ---
-  // 1. Hapus file dari "daftar utama" kita
   allFiles.splice(index, 1);
-  
-  // 2. Buat FileList baru dari "daftar utama" yang sudah di-update
   const dt = new DataTransfer();
   allFiles.forEach(file => dt.items.add(file));
-  
-  // 3. Setel ulang file di <input>
   buktiInput.files = dt.files;
-  
-  // 4. Render ulang tampilan dari "daftar utama"
   renderFilePreview(allFiles);
 }
 function showImageModal(src) {
@@ -456,29 +438,9 @@ uploadArea.addEventListener('drop',
   e.preventDefault();
   uploadArea.classList.remove('dragover');
   buktiInput.files = e.dataTransfer.files;
-  
-  // Trigger change event
   const event = new Event('change');
   buktiInput.dispatchEvent(event);
 });
-
-// Remove file function
-// function removeFile(index) {
-//   const dt = new DataTransfer();
-//   const files = buktiInput.files;
-  
-//   for (let i = 0; i < files.length; i++) {
-//     if (i !== index) {
-//       dt.items.add(files[i]);
-//     }
-//   }
-  
-//   buktiInput.files = dt.files;
-  
-//   // Refresh preview
-//   const event = new Event('change');
-//   buktiInput.dispatchEvent(event);
-// }
 </script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
