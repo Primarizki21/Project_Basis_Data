@@ -68,9 +68,6 @@ class UserController extends Controller
         return redirect()->route('index');
     }
 
-    // ============================
-    // USER CRUD SECTION
-    // ============================
     public function create()
     {
         $listPekerjaan = JenisPekerjaan::all();
@@ -86,9 +83,6 @@ class UserController extends Controller
         ]);
     }
 
-    // ============================
-    // PROFIL PAGE SECTION
-    // ============================
     public function profil()
     {
         $user = Auth::user();
@@ -124,7 +118,6 @@ class UserController extends Controller
     public function editUser($user_id)
     {
         $user = User::findOrFail($user_id);
-<<<<<<< HEAD
         $jenis_pekerjaan = JenisPekerjaan::all();
         $program_studi = Prodi::all();
         return view('pages.admin.users.edit', compact(
@@ -135,17 +128,10 @@ class UserController extends Controller
     }
 
     public function updateUser(Request $request, $user_id)
-=======
-        return view('admin.users.edit', compact('user'));
-    }
-
-    public function updateUpdate(Request $request, $user_id)
->>>>>>> 5fd3fad (temporary commit, need to fix)
     {
         $user = User::findOrFail($user_id);
 
         $request->validate([
-<<<<<<< HEAD
             'nama' => 'required|string|max:100',
             'email' => [
                 'required',
@@ -199,38 +185,5 @@ class UserController extends Controller
 
             return redirect()->route('admin.kelola-user')->with('success', 'Pengguna berhasil dipromosikan menjadi Admin!');
         }
-=======
-            'nim' => [
-                'required',
-                Rule::unique('user', 'nim')->ignore($user->user_id, 'user_id') 
-            ],
-            'nama' => 'required',
-            'password' => 'nullable|min:6', 
-            'jenis_kelamin' => 'required|string',
-            'role' => 'required|string',
-            'prodi' => 'required_if:role,mahasiswa|integer|nullable',
-            'angkatan' => 'required_if:role,mahasiswa|integer|nullable',
-        ]);
-
-        $user->nim = $request->nim;
-        $user->nama = $request->nama;
-        $user->jenis_kelamin = $request->jenis_kelamin;
-        $user->tempat_lahir = $request->tempat_lahir;
-        $user->tanggal_lahir = $request->tanggal_lahir;
-        $user->alamat = $request->alamat;
-        $user->nomor_telepon = $request->nomor_telepon;
-        $user->jenis_pekerjaan_id = $request->jenis_pekerjaan_id ?? null;
-        $user->prodi = $request->prodi ?? null;
-        $user->angkatan = $request->angkatan ?? null;
-        $user->role = $request->role;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-        
-        return redirect()->route('admin.kelola-user')->with('success', 'Data pengguna berhasil diperbarui!');
->>>>>>> 5fd3fad (temporary commit, need to fix)
     }
 }

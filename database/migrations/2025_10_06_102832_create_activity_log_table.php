@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('activity_log', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id')->nullable();
+            $table->unsignedInteger('admin_id')->nullable();
             $table->foreign('user_id')
-                ->references('user_id') // kolom PK di tabel user
-                ->on('user')            // nama tabel user
+                ->references('user_id')
+                ->on('user')
                 ->nullOnDelete(); 
-        
+            $table->foreign('admin_id')
+                ->references('admin_id')
+                ->on('admin')
+                ->nullOnDelete(); 
             $table->string('description'); 
-            // Ini bagian Polymorphic: subject_id & subject_type
-            // subject_id akan menyimpan ID dari User/Pengaduan
-            // subject_type akan menyimpan nama modelnya (e.g., 'App\Models\User')
             $table->morphs('subject'); 
-            
             $table->timestamps();
         });
     }

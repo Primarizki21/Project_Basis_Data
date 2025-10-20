@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('bukti_pengaduan', function (Blueprint $table) {
             $table->increments('bukti_pengaduan_id');
             $table->unsignedInteger('pengaduan_id')->nullable();
-            $table->string('file_path', 255)->nullable();
+            $table->string('nama_file')->nullable();
+            $table->string('file_path')->nullable();
+            $table->unsignedBigInteger('ukuran_file')->nullable();
             $table->enum('jenis_bukti', ['Bukti Digital', 'Bukti Fisik', 'Bukti Lainnya'])->nullable();
             $table->unsignedInteger('user_id')->nullable();
+            $table->unsignedInteger('admin_id')->nullable();
             $table->timestamps();
         });
     }

@@ -87,22 +87,56 @@
                     <div class="mb-3 pb-2 border-bottom">
                         <label class="form-label fw-semibold text-muted small">Bukti Terlampir</label>
                         @if($pengaduan->bukti && count($pengaduan->bukti) > 0)
-                            <div class="list-group mt-2">
+                            <div id="filePreview" class="mt-2">
                                 @foreach($pengaduan->bukti as $bukti)
-                                    <a href="{{ asset('storage/' . $bukti->path_file) }}" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                        <span>
-                                            <i class="bi bi-file-earmark-text me-2"></i>
-                                            {{ $bukti->nama_file }}
-                                        </span>
-                                        <i class="bi bi-box-arrow-up-right"></i>
-                                    </a>
+                                    @php
+                                        $filePath = asset('storage/' . $bukti->file_path);
+                                        $fileName = $bukti->nama_file;
+                                        $extension = strtolower(pathinfo($bukti->file_path, PATHINFO_EXTENSION));
+                                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+                                        $isImage = in_array($extension, $imageExtensions);
+                                        $fileSizeKB = (isset($bukti->ukuran_file)) ? round($bukti->ukuran_file / 1024, 2) : null;
+                                    @endphp
+
+                                    <div class="file-item">
+                                        @if($isImage)
+                                            <img src="{{ $filePath }}" alt="{{ $fileName }}" class="file-thumbnail"
+                                                onclick="showImageModal('{{ $filePath }}')">
+                                                
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">{{ $fileName }}</div>
+                                                @if($fileSizeKB)
+                                                    <small class="text-muted">{{ $fileSizeKB }} KB</small>
+                                                @endif
+                                            </div>
+                                            <a href="{{ $filePath }}" target="_blank" class="ms-2 text-muted" title="Buka di tab baru">
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+                                        @else
+                                            <i class="bi bi-file-earmark-text file-icon"></i>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">{{ $fileName }}</div>
+                                                @if($fileSizeKB)
+                                                    <small class="text-muted">{{ $fileSizeKB }} KB</small>
+                                                @endif
+                                            </div>
+                                            <a href="{{ $filePath }}" target="_blank" class="ms-2 text-muted" title="Buka di tab baru">
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+                                        @endif
+                                    </div>
                                 @endforeach
                             </div>
                         @else
                             <div class="text-muted mt-2">Tidak ada bukti yang dilampirkan.</div>
                         @endif
                     </div>
-
+                    <div id="imageModal" class="image-preview-modal" onclick="closeImageModal()">
+                        <span class="close-modal-btn" onclick="closeImageModal(event)">&times;</span>
+                        <div class="modal-image-container" onclick="event.stopPropagation()">
+                            <img class="modal-content" id="modalImage">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,6 +175,113 @@
         </div>
     </div>
 </div>
+
+<style>
+    #filePreview .file-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #f9fafb;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        gap: 10px;
+        border: 1px solid #eee;
+        margin-top: 8px;
+    }
+    .file-thumbnail {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .file-item > .bi {
+        font-size: 1.5rem;
+        color: #6c757d;
+        width: 40px;
+        text-align: center;
+    }
+    .file-item .flex-grow-1 {
+        overflow: hidden;
+    }
+    .file-item .flex-grow-1 .fw-semibold {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #filePreview .remove-file {
+        margin-left: auto;
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 1.25rem;
+    }
+    .remove-file:hover {
+        color: #a71d2a;
+    }
+    .image-preview-modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.85);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    .modal-image-container {
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+        background-color: transparent;
+        line-height: 0;
+    }
+    .modal-content {
+        display: block;
+        object-fit: contain;
+        max-width: 90%;
+        max-height: 90vh;
+        animation-name: zoom;
+        animation-duration: 0.3s;
+        cursor: default;
+    }
+    @keyframes zoom {
+        from {transform: scale(0.8)}
+        to {transform: scale(1)}
+    }
+    .close-modal-btn {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+    .close-modal-btn:hover,
+    .close-modal-btn:focus {
+        color: #bbb;
+        text-decoration: none;
+    }
+</style>
+
+<script>
+const modal = document.getElementById('imageModal');
+const modalImage = document.getElementById('modalImage');
+function showImageModal(src) {
+  modal.style.display = "flex";
+  modalImage.src = src;
+}
+function closeImageModal(event) {
+  if (event) {
+    event.stopPropagation(); 
+  }
+  modal.style.display = "none";
+}
+</script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 @endsection

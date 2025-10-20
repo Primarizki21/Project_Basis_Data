@@ -19,19 +19,25 @@ class BuktiPengaduan extends Model
     protected $fillable = [
         'pengaduan_id',
         'file_path',
+        'nama_file',
+        'ukuran_file',
         'jenis_bukti',
         'user_id',
+        'admin_id',
     ];
 
-    // Relasi ke pengaduan (many-to-one)
     public function pengaduan()
     {
         return $this->belongsTo(Pengaduan::class, 'pengaduan_id', 'pengaduan_id');
     }
 
-    // Relasi ke user (pelapor yang upload bukti)
     public function uploader()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function handler()
+    {
+        return $this->belongsTo(Admin::class, 'admin_id', 'admin_id');
     }
 }
