@@ -71,10 +71,15 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Tambah Catatan Tindak Lanjut Baru</label>
                     <textarea name="deskripsi_tindak_lanjut" rows="4" required class="form-control form-control-lg">{{ old('deskripsi_tindak_lanjut') }}</textarea>
                     <small class="text-muted">Catatan ini akan ditambahkan sebagai riwayat baru.</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Upload Bukti Investigasi (Opsional)</label>
+                    <input type="file" name="bukti[]" multiple class="form-control" accept="image/*,.pdf">
+                    <small class="text-muted">Bukti yang di-upload di sini akan ditandai sebagai bukti dari admin.</small>
                 </div>
             </div>
             @endif
@@ -118,12 +123,14 @@
                 <small class="text-muted">Anda sebagai apa dalam kejadian ini?</small>
             </div>
 
-            <!-- Upload Bukti Baru -->
-            <div class="mb-4">
-              <label class="form-label fw-semibold">Upload Bukti Tambahan (Opsional)</label>
-              <input type="file" name="bukti[]" multiple class="form-control" accept="image/*,.pdf">
-              <small class="text-muted">Biarkan kosong jika tidak ingin menambah bukti</small>
-            </div>
+            <!-- Upload Bukti -->
+            @if(!Auth::guard('admin')->check())
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Upload Bukti Tambahan (Opsional)</label>
+                    <input type="file" name="bukti[]" multiple class="form-control" accept="image/*,.pdf">
+                    <small class="text-muted">Biarkan kosong jika tidak ingin menambah bukti</small>
+                </div>
+            @endif
 
             <!-- Existing Files -->
             @if($pengaduan->bukti && count($pengaduan->bukti) > 0)
