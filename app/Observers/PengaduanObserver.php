@@ -21,10 +21,16 @@ class PengaduanObserver
 
     public function updated(Pengaduan $pengaduan): void
     {
+        if (Auth::guard('admin')->check()) {
+            $adminId = Auth::guard('admin')->id();
+        } elseif (Auth::check()) {
+            $userId = Auth::id();
+        }
         if ($pengaduan->isDirty('status_pengaduan')) {
             $status = $pengaduan->status_pengaduan;
             ActivityLog::create([
                 'user_id'      => $pengaduan->user_id,
+                'admin_id'      => $pengaduan->admin_id,
                 'description'  => "Status pengaduan #TKT-{$pengaduan->pengaduan_id} diubah menjadi '{$status}' oleh admin.",
                 'subject_id'   => $pengaduan->pengaduan_id,
                 'subject_type' => Pengaduan::class,
