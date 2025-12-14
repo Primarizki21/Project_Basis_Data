@@ -11,6 +11,7 @@ use Database\Seeders\JenisPekerjaanSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\ProdiSeeder;
 use Database\Seeders\PengaduanSeeder;
+use Database\Seeders\TindakLanjutSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(AdminSeeder::class);
         $this->call(PengaduanSeeder::class);
+        $this->call(TindakLanjutSeeder::class);
 
     }
 }

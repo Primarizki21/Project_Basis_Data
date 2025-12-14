@@ -193,7 +193,9 @@ Route::middleware(['auth:web'])->group(function () {
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboardIndex'])->name('dashboard');
     Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
-    Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
+    Route::get('/visualisasi', function () {
+        return view('pages.admin.visualisasi');
+    })->name('visualisasi');    Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
     Route::post('/kelola-user', [AdminController::class, 'storeUser'])->name('kelola-user.store');
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
