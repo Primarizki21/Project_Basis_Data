@@ -35,35 +35,72 @@ class ActivityLog extends Model
 
     public function getIconClassAttribute(): string
     {
-        if (Str::contains($this->description, ['selesai', 'Selesai'])) {
-            return 'bi-check-circle';
+        switch ($this->title_summary) {
+            case "Pengaduan Baru":
+                return 'bi-file-earmark-plus';
+            case "Perubahan Bukti":
+                return 'bi-paperclip';
+            case "Tindak Lanjut":
+                return 'bi-chat-left-text-fill';
+            case "Perubahan Status":
+                return 'bi-gear-fill';
+            case "Kasus Selesai":
+                return 'bi-check-circle-fill';
+            case "Kasus Ditolak":
+                return 'bi-x-circle-fill';
+            case "User Baru":
+                return 'bi-person-plus-fill';
+            default:
+                return 'bi-bell';
         }
-        if (Str::contains($this->description, ['diubah menjadi Diproses', 'sedang diproses'])) {
-            return 'bi-gear';
-        }
-        if (Str::contains($this->description, ['baru masuk', 'Baru masuk'])) {
-            return 'bi-file-earmark-plus';
-        }
-        if (Str::contains($this->description, ['User baru', 'terdaftar'])) {
-            return 'bi-person-plus';
-        }
-        return 'bi-bell'; // Default
     }
 
     public function getIconColorAttribute(): string
     {
-        if (Str::contains($this->description, ['selesai', 'Selesai'])) {
-            return '#10b981'; // Hijau
+        switch ($this->title_summary) {
+            case "Pengaduan Baru":
+                return '#0ea5f0';
+            case "Perubahan Bukti":
+                return '#6366f1';
+            case "Tindak Lanjut":
+                return '#a855f7';
+            case "Perubahan Status":
+                return '#f59e0b';
+            case "Kasus Selesai":
+                return '#10b981';
+            case "Kasus Ditolak":
+                return '#ef4444';
+            case "User Baru":
+                return '#6B21A8';
+            default:
+                return '#6c757d';
         }
-        if (Str::contains($this->description, ['diubah menjadi Diproses', 'sedang diproses'])) {
-            return '#f59e0b'; // Oranye
+    }
+
+    public function getTitleSummaryAttribute(): string
+    {
+        $lowerDesc = strtolower($this->description); 
+        if (Str::contains($lowerDesc, ['selesai', 'Selesai'])) {
+            return "Kasus Selesai";
         }
-        if (Str::contains($this->description, ['baru masuk', 'Baru masuk'])) {
-            return '#0ea5f0'; // Biru
+        if (Str::contains($lowerDesc, ['ditolak', 'Ditolak'])) {
+            return "Kasus Ditolak";
         }
-        if (Str::contains($this->description, ['User baru', 'terdaftar'])) {
-            return '#6B21A8'; // Ungu
+        if (Str::contains($lowerDesc, ['bukti', 'file', 'gambar'])) {
+            return "Perubahan Bukti";
         }
-        return '#6c757d'; // Default
+        if (Str::contains($lowerDesc, ['diubah menjadi Diproses', 'sedang diproses', 'status'])) {
+            return "Perubahan Status";
+        }
+        if (Str::contains($lowerDesc, ['tindak lanjut', 'catatan'])) {
+            return "Tindak Lanjut";
+        }
+        if (Str::contains($lowerDesc, 'baru masuk')) {
+            return "Pengaduan Baru";
+        }
+        if (Str::contains($lowerDesc, ['user baru', 'terdaftar'])) {
+            return "User Baru";
+        }
+        return "Aktivitas Lainnya";
     }
 }

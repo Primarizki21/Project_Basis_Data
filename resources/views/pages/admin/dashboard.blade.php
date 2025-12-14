@@ -120,67 +120,99 @@
         </div>
         <div class="card-body p-0">
           <div class="activity-timeline">
-
               @forelse($activities as $activity)
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: {{ $activity->icon_color }};">
-                        <i class="bi {{ $activity->icon_class }}"></i>
-                    </div>
-                    <div class="activity-content">
-                        <strong>{{ $activity->description }}</strong>
-                        @if ($activity->admin)
-                            <p class="text-muted mb-0 small">
-                                Oleh: {{ $activity->admin->nama }} (Admin)
-                            </p>
-                        @elseif ($activity->user)
-                            <p class="text-muted mb-0 small">
-                                Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
-                            </p>
-                            @if ($activity->user->pekerjaanfk)
-                                <p class="text-muted mb-0 small">
-                                    {{ $activity->user->pekerjaanfk->nama_pekerjaan }}
-                                </p>
-                            @endif
-                        @elseif ($activity->subject_type === 'App\Models\Pengaduan' && $activity->subject && is_null($activity->subject->user_id))
-                            <p class="text-muted mb-0 small">
-                                Oleh: Anonim
-                            </p>
-                        @endif
-                        @if ($activity->subject)
-                            @if ($activity->subject_type === 'App\Models\Pengaduan')
-                                <p class="text-muted mb-0 small fst-italic">
-                                    "{{ Str::limit($activity->subject->deskripsi_kejadian, 100) }}"
-                                </p>
-                            @elseif ($activity->subject_type === 'App\Models\User')
-                                <p class="text-muted mb-0 small">
-                                    {{ $activity->subject->nama }} ({{ $activity->subject->email }})
-                                </p>
-                                @if ($activity->subject->pekerjaanfk)
-                                    <p class="text-muted mb-0 small">
-                                        {{ $activity->subject->pekerjaanfk->nama_pekerjaan }}
-                                    </p>
-                                @endif
-                            @endif
-                        @else
-                            @if ($activity->subject_type === 'App\Models\Pengaduan')
-                                <p class="text-muted mb-0 small fst-italic">
-                                    (Data pengaduan terkait telah dihapus)
-                                </p>
-                            @endif
-                        @endif
-                        <small class="text-muted">{{ $activity->created_at->diffForHumans() }}</small>
-                    </div>
-                </div>
+                  <div class="activity-item">
+                      <div class="activity-icon" style="background: {{ $activity->icon_color }};">
+                          <i class="bi {{ $activity->icon_class }}"></i>
+                      </div>
+                      <div class="activity-content">
+                          @if ($activity->subject && $activity->subject_type === 'App\Models\Pengaduan')
+                              <strong>
+                                  Pengaduan 
+                                  <a href="{{ route('admin.pengaduan.edit', $activity->subject->pengaduan_id) }}">
+                                      #{{ $activity->subject->pengaduan_id }}
+                                  </a>: {{ $activity->title_summary }}
+                              </strong>
+                              @if ($activity->admin)
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: {{ $activity->admin->nama }} (Admin)
+                                  </p>
+                              @elseif ($activity->user)
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
+                                  </p>
+                                  @if ($activity->user->pekerjaanfk)
+                                      <p class="text-muted mb-0 small">
+                                          {{ $activity->user->pekerjaanfk->nama_pekerjaan }}
+                                      </p>
+                                  @endif
+                              @elseif (is_null($activity->subject->user_id))
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: Anonim
+                                  </p>
+                              @endif
+                              <p class="mb-0">{{ $activity->description }}</p>
+                              @if ($activity->title_summary != "Perubahan Bukti")
+                                  <p class="text-muted mb-0 small fst-italic">
+                                      "{{ Str::limit($activity->subject->deskripsi_kejadian, 100) }}"
+                                  </p>
+                              @endif
+                          @elseif ($activity->subject && $activity->subject_type === 'App\Models\User')
+                              <strong>{{ $activity->description }}</strong>
+                              @if ($activity->admin)
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: {{ $activity->admin->nama }} (Admin)
+                                  </p>
+                              @elseif ($activity->user)
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
+                                  </p>
+                              @endif
+                              <p class="text-muted mb-0 small">
+                                  {{ $activity->subject->nama }} ({{ $activity->subject->email }})
+                              </p>
+                              @if ($activity->subject->pekerjaanfk)
+                                  <p class="text-muted mb-0 small">
+                                      {{ $activity->subject->pekerjaanfk->nama_pekerjaan }}
+                                  </p>
+                              @endif
+                          @else
+                              <strong>{{ $activity->description }}</strong>
+                              @if ($activity->admin)
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: {{ $activity->admin->nama }} (Admin)
+                                  </p>
+                              @elseif ($activity->user)
+                                  <p class="text-muted mb-0 small">
+                                      Oleh: {{ $activity->user->nama }} ({{ $activity->user->email }})
+                                  </p>
+                                  @if ($activity->user->pekerjaanfk)
+                                      <p class="text-muted mb-0 small">
+                                          {{ $activity->user->pekerjaanfk->nama_pekerjaan }}
+                                      </p>
+                                  @endif
+                              @endif
+
+                              @if (!$activity->subject && $activity->subject_type === 'App\Models\Pengaduan')
+                                  <p class="text-muted mb-0 small fst-italic">
+                                      (Data pengaduan terkait telah dihapus)
+                                  </p>
+                              @endif
+                          @endif
+
+                          <small class="text-muted">{{ $activity->created_at->diffForHumans() }}</small>
+                      </div>
+                  </div>
               @empty
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: #6c757d;">
-                        <i class="bi bi-info-circle"></i>
-                    </div>
-                    <div class="activity-content">
-                        <strong>Belum ada aktivitas.</strong>
-                        <p class="text-muted mb-0 small">Semua aktivitas terbaru akan muncul di sini.</p>
-                    </div>
-                </div>
+                  <div class="activity-item">
+                      <div class="activity-icon" style="background: #6c757d;">
+                          <i class="bi bi-info-circle"></i>
+                      </div>
+                      <div class="activity-content">
+                          <strong>Belum ada aktivitas.</strong>
+                          <p class="text-muted mb-0 small">Semua aktivitas terbaru akan muncul di sini.</p>
+                      </div>
+                  </div>
               @endforelse
           </div>
         </div>

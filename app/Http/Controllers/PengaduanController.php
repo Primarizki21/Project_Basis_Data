@@ -154,7 +154,6 @@ class PengaduanController extends Controller
                     $namaFileAsli = $file->getClientOriginalName();
                     $ukuranFile = $file->getSize();
                     $path = $file->store('bukti_pengaduan', 'public');
-
                     BuktiPengaduan::create([
                         'pengaduan_id' => $pengaduan->pengaduan_id,
                         'file_path'    => $path,
@@ -162,6 +161,7 @@ class PengaduanController extends Controller
                         'ukuran_file'  => $ukuranFile,
                         'jenis_bukti'  => 'Bukti Digital',
                         'user_id'      => $pengaduan->user_id, 
+                        'admin_id'     => Auth::guard('admin')->check() ? Auth::guard('admin')->id() : null
                     ]);
                 }
             }
