@@ -4,7 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\{
     UserController,
     LaporanController,
@@ -15,6 +18,7 @@ use App\Http\Controllers\{
     LandingPageController,
     AdminController
 };
+
 use App\Models\{User, Prodi, JenisPekerjaan};
 
 // Landing Page
@@ -43,7 +47,63 @@ Route::get('/register', function () {
     return view('auth.register', compact('listPekerjaan', 'listProdi'));
 })->name('register.form');
 
-Route::get('/forgot', fn() => view('auth.forgot'))->name('password.request');
+
+// =====================
+//  FORGOT / RESET PASSWORD (CUSTOM, NO AUTH STARTER)
+//  URL:
+//   - GET  /forgot  (form email)
+//   - POST /forgot  (send link)
+//   - GET  /reset-password/{token} (form reset)
+//   - POST /reset-password (submit reset)
+// =====================
+
+// Show "forgot password" form
+Route::get('/forgot', fn() => view('auth.forgot'))
+    ->middleware('guest')
+    ->name('password.request');
+
+// Send reset link email
+Route::post('/forgot', function (Request $r) {
+    $r->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink($r->only('email'));
+
+    return $status === Password::RESET_LINK_SENT
+        ? back()->with('success', __($status))
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
+// Show reset form (token page)
+Route::get('/reset-password/{token}', function (string $token, Request $r) {
+    return view('auth.reset-password', [
+        'token' => $token,
+        'email' => $r->query('email'),
+    ]);
+})->middleware('guest')->name('password.reset');
+
+// Handle actual password reset
+Route::post('/reset-password', function (Request $r) {
+    $r->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:6|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $r->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, string $password) {
+            $user->forceFill([
+                'password' => Hash::make($password),
+                'remember_token' => Str::random(60),
+            ])->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? redirect()->route('login.form')->with('success', __($status))
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.update');
+
 
 // =====================
 //  REGISTER
@@ -81,8 +141,10 @@ Route::post('/register', function (Request $r) {
         'angkatan' => $r->angkatan,
         'password' => Hash::make($r->password),
     ]);
+
     return redirect()->route('login.form')->with('success', 'Akun berhasil terdaftar! Silakan login.');
 })->name('register');
+
 
 // =====================
 //  LOGIN
@@ -95,12 +157,14 @@ Route::post('/login', function (Request $r) {
     if ($validator->fails()) return back()->withErrors($validator)->withInput();
 
     $credentials = $r->only('email', 'password');
-    
+
+    // Try admin login first
     if (Auth::guard('admin')->attempt($credentials)) {
         $r->session()->regenerate();
         return redirect()->route('admin.dashboard');
     }
-    
+
+    // Then try user login
     if (Auth::guard('web')->attempt($credentials)) {
         if (!str_ends_with($r->email, '@ftmm.unair.ac.id')) {
             Auth::guard('web')->logout();
@@ -113,16 +177,6 @@ Route::post('/login', function (Request $r) {
     return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
 })->name('login');
 
-// =====================
-//  FORGOT PASSWORD
-// =====================
-Route::post('/forgot', function (Request $r) {
-    $r->validate(['email' => 'required|email']);
-    $log = session('forgot_log', []);
-    $log[] = ['email' => $r->email, 'at' => now()->toDateTimeString()];
-    session(['forgot_log' => $log]);
-    return redirect()->route('login.form')->with('success','Link reset password telah dikirim, silakan cek email.');
-})->name('forgot');
 
 // =====================
 //  LOGOUT
@@ -131,19 +185,22 @@ Route::post('/logout', function (Request $r) {
     Auth::logout();
     $r->session()->invalidate();
     $r->session()->regenerateToken();
-    return redirect()->route('login.form')->with('success','Kamu telah logout.');
+    return redirect()->route('login.form')->with('success', 'Kamu telah logout.');
 })->name('logout');
+
 
 // =====================
 //  PROTECTED ROUTES - USER ONLY
 // =====================
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/beranda', [DashboardController::class, 'index'])
-        ->name('beranda');
+
+    Route::get('/beranda', [DashboardController::class, 'index'])->name('beranda');
+
     Route::get('/profil', [UserController::class, 'profil'])->name('profil');
+
     Route::view('/kontak', 'pages.kontak')->name('kontak');
-    Route::get('/riwayat', [PengaduanController::class, 'index'])
-        ->name('riwayat');
+
+    Route::get('/riwayat', [PengaduanController::class, 'index'])->name('riwayat');
 
     // Pengaduan CRUD
     Route::get('/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.create');
@@ -158,34 +215,37 @@ Route::middleware(['auth:web'])->group(function () {
             'nama' => 'required',
             'nomor_telepon' => 'nullable|string|max:15',
         ]);
+
         $user = Auth::user();
         $user->update([
             'nama' => $r->nama,
             'nomor_telepon' => $r->nomor_telepon ?? $user->nomor_telepon,
         ]);
+
         return back()->with('success', 'Profil berhasil diperbarui.');
     })->name('profil.update');
 
-    // Password Update
+    // Password Update (while logged in)
     Route::put('/profil/password', function (Request $r) {
         $r->validate([
             'old_password' => 'required',
             'new_password' => 'required|min:6|confirmed',
         ]);
-        
+
         $user = Auth::user();
-        
+
         if (!Hash::check($r->old_password, $user->password)) {
             return back()->withErrors(['old_password' => 'Password lama tidak sesuai']);
         }
-        
+
         $user->update([
             'password' => Hash::make($r->new_password)
         ]);
-        
+
         return back()->with('success', 'Password berhasil diubah');
     })->name('profil.password');
 });
+
 
 // =====================
 //  PROTECTED ROUTES - ADMIN ONLY

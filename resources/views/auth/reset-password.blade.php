@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lupa Password - VOIZ FTMM</title>
+    <title>Reset Password - VOIZ FTMM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -21,7 +21,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 20% 50%, rgba(107, 33, 168, 0.03) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(14, 165, 240, 0.03) 0%, transparent 50%);
             z-index: 0;
@@ -48,14 +48,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .auth-header {
@@ -180,14 +174,8 @@
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .alert-success {
@@ -253,14 +241,8 @@
         }
 
         @media (max-width: 576px) {
-            .auth-body {
-                padding: 2rem 1.5rem;
-            }
-
-            .back-to-home {
-                top: 1rem;
-                left: 1rem;
-            }
+            .auth-body { padding: 2rem 1.5rem; }
+            .back-to-home { top: 1rem; left: 1rem; }
         }
     </style>
 </head>
@@ -276,10 +258,10 @@
         <div class="auth-card">
             <div class="auth-header">
                 <div class="icon-circle">
-                    <i class="bi bi-key"></i>
+                    <i class="bi bi-shield-lock"></i>
                 </div>
-                <h1>Lupa Password?</h1>
-                <p>Jangan khawatir, kami akan bantu reset</p>
+                <h1>Reset Password</h1>
+                <p>Buat password baru untuk akun Anda</p>
             </div>
 
             <div class="auth-body">
@@ -288,8 +270,8 @@
                     <div class="d-flex align-items-start">
                         <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Email Terkirim!</strong>
-                            <p class="mb-0 mt-1">Link reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam secara berkala.</p>
+                            <strong>Berhasil!</strong>
+                            <p class="mb-0 mt-1">{{ session('success') }}</p>
                         </div>
                     </div>
                 </div>
@@ -302,33 +284,60 @@
                 @endif
 
                 <div class="info-box">
-                    <p><i class="bi bi-info-circle me-2"></i>Masukkan email yang terdaftar, kami akan mengirimkan link untuk reset password Anda.</p>
+                    <p><i class="bi bi-info-circle me-2"></i>Masukkan password baru Anda, lalu konfirmasi untuk menyelesaikan reset.</p>
                 </div>
 
-                <form action="{{ route('password.email') }}" method="POST">
-
+                <form action="{{ route('password.update') }}" method="POST">
                     @csrf
 
+                    <input type="hidden" name="token" value="{{ $token }}">
+
                     <div class="mb-4">
-                        <label for="email" class="form-label">Email Terdaftar</label>
+                        <label for="email" class="form-label">Email</label>
                         <div class="input-group">
                             <i class="bi bi-envelope input-icon"></i>
-                            <input type="email" 
-                                   class="form-control with-icon @error('email') is-invalid @enderror" 
-                                   id="email" 
-                                   name="email" 
-                                   value="{{ old('email') }}" 
+                            <input type="email"
+                                   class="form-control with-icon @error('email') is-invalid @enderror"
+                                   id="email"
+                                   name="email"
+                                   value="{{ old('email', $email) }}"
                                    placeholder="nama@ftmm.unair.ac.id"
                                    required>
                         </div>
                     </div>
 
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password Baru</label>
+                        <div class="input-group">
+                            <i class="bi bi-lock input-icon"></i>
+                            <input type="password"
+                                   class="form-control with-icon @error('password') is-invalid @enderror"
+                                   id="password"
+                                   name="password"
+                                   placeholder="Minimal 6 karakter"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password_confirmation" class="form-label">Konfirmasi Password Baru</label>
+                        <div class="input-group">
+                            <i class="bi bi-lock-fill input-icon"></i>
+                            <input type="password"
+                                   class="form-control with-icon"
+                                   id="password_confirmation"
+                                   name="password_confirmation"
+                                   placeholder="Ulangi password baru"
+                                   required>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-primary w-100 mb-3">
-                        <i class="bi bi-envelope me-2"></i>Kirim Link Reset Password
+                        <i class="bi bi-check2-circle me-2"></i>Reset Password
                     </button>
 
                     <div class="text-center">
-                        <span class="text-muted">Sudah ingat password?</span>
+                        <span class="text-muted">Ingat password lama?</span>
                         <a href="{{ route('login.form') }}" class="link-primary ms-1">Masuk di sini</a>
                     </div>
                 </form>
