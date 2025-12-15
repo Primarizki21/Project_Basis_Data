@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedInteger('kategori_komplain_id')->nullable();
             $table->text('deskripsi_kejadian');
             $table->date('tanggal_kejadian')->nullable();
-            $table->enum('status_pengaduan', ['Diproses', 'Selesai', 'Menunggu'])->nullable();
+            $table->enum('status_pengaduan', ['Diproses', 'Selesai', 'Menunggu', 'Ditolak'])->nullable();
             $table->boolean('is_anonim')->default(false);
             $table->enum('status_pelapor', ['Korban', 'Keluarga', 'Teman', 'Saksi'])->nullable();
             $table->timestamps();
