@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Pengaduan;
 use App\Models\KategoriKomplain;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class PengaduanSeeder extends Seeder
@@ -15,8 +16,8 @@ class PengaduanSeeder extends Seeder
         $kategoriAkademik = KategoriKomplain::where('jenis_komplain', 'Akademik')->first();
         $kategoriFasilitas = KategoriKomplain::where('jenis_komplain', 'Fasilitas')->first();
         $kategoriMahasiswa = KategoriKomplain::where('jenis_komplain', 'Kemahasiswaan')->first();
-        $kategoriKekerasan = KategoriKomplain::where('jenis_komplain', 'Kekerasan')->first();
-        $kategoriLainnya = KategoriKomplain::where('jenis_komplain', 'Lainnya')->first();
+        // $kategoriKekerasan = KategoriKomplain::where('jenis_komplain', 'Kekerasan')->first();
+        // $kategoriLainnya = KategoriKomplain::where('jenis_komplain', 'Lainnya')->first();
 
         $pengaduan = [
             [
@@ -80,37 +81,56 @@ class PengaduanSeeder extends Seeder
 
         $dataPengaduan = [];
 
-        // 2. Loop User ID 1 sampai 5
-        for ($userId = 1; $userId <= 5; $userId++) {
+        $userIds = User::pluck('user_id')->toArray(); 
 
-            // Siapkan kolam status (75 item: 25 Menunggu, 25 Diproses, 25 Selesai)
-            // Kita buat array ini lalu di-acak (shuffle) agar distribusinya merata tapi acak saat di-assign
+        // Safety Check: Kalau UserSeeder belum dijalankan
+        if (empty($userIds)) {
+            $this->command->info('Data User kosong. Harap jalankan UserSeeder dulu.');
+            return;
+        }
+
+        foreach ($userIds as $userId) {
+            
+            // 1. Update Status Pool
             $statusPool = array_merge(
                 array_fill(0, 25, 'Menunggu'),
                 array_fill(0, 25, 'Diproses'),
-                array_fill(0, 25, 'Selesai')
+                array_fill(0, 25, 'Selesai'),
+                array_fill(0, 25, 'Ditolak')
             );
-            shuffle($statusPool); // Acak urutan status
+            shuffle($statusPool); 
 
-            // 3. Loop setiap kategori (5 Jenis)
+            // 2. Loop setiap kategori (Anggap ada 5 Jenis)
             foreach ($categories as $namaKategori => $kategoriId) {
-                
-                // Setiap jenis dapat 15 pengaduan
-                for ($i = 0; $i < 15; $i++) {
+                // Setiap jenis dapat 20 pengaduan
+                for ($i = 0; $i < 20; $i++) {
                     
-                    // Ambil satu status dari kolam (pop) agar jumlah pas
-                    $statusRandom = array_pop($statusPool);
+                    // Pastikan pool tidak kosong (safety check)
+                    if (empty($statusPool)) {
+                        $statusRandom = 'Menunggu'; 
+                    } else {
+                        $statusRandom = array_pop($statusPool);
+                    }
 
                     // Generate Tanggal Random (Mulai 2025-01-01 s.d. Sekarang)
                     $startDate = Carbon::create(2025, 1, 1)->timestamp;
                     $endDate   = Carbon::now()->timestamp;
                     $randomTimestamp = rand($startDate, $endDate);
                     
+                    // Tanggal Kejadian & Created At
                     $tanggalKejadian = Carbon::createFromTimestamp($randomTimestamp);
-                    $createdAt       = Carbon::createFromTimestamp($randomTimestamp)->addHours(rand(1, 24)); // Created setelah kejadian
-                    $updatedAt       = (clone $createdAt)->addDays(rand(1, 5)); // Updated beberapa hari setelah create
+                    $createdAt       = Carbon::createFromTimestamp($randomTimestamp)->addHours(rand(1, 24)); 
+                    
+                    // LOGIKA BARU: Penentuan Updated At berdasarkan Status
+                    $updatedAt = $createdAt->copy(); // Clone dulu biar aman
+                    
+                    if ($statusRandom === 'Menunggu') {
+                        $updatedAt = $createdAt->copy(); 
+                    } else {
+                        $updatedAt->addDays(rand(1, 5))->addHours(rand(1, 12));
+                    }
 
-                    // Variasi Deskripsi Biar Gak Bosen
+                    // Variasi Deskripsi
                     $deskripsi = "Ini adalah pengaduan percobaan untuk kategori $namaKategori oleh User $userId. ";
                     if ($namaKategori == 'Fasilitas') $deskripsi .= "AC atau fasilitas kelas rusak dan belum diperbaiki.";
                     if ($namaKategori == 'Akademik') $deskripsi .= "Masalah terkait nilai mata kuliah yang belum keluar.";
@@ -123,7 +143,7 @@ class PengaduanSeeder extends Seeder
                         'deskripsi_kejadian'   => $deskripsi . ' (Auto Generated Seeder #' . rand(1000, 9999) . ')',
                         'tanggal_kejadian'     => $tanggalKejadian->format('Y-m-d H:i:s'),
                         'status_pengaduan'     => $statusRandom,
-                        'is_anonim'            => false, // Punya User ID -> Tidak Anonim
+                        'is_anonim'            => false,
                         'status_pelapor'       => 'Korban',
                         'created_at'           => $createdAt->format('Y-m-d H:i:s'),
                         'updated_at'           => $updatedAt->format('Y-m-d H:i:s'),
@@ -133,7 +153,6 @@ class PengaduanSeeder extends Seeder
         }
 
         // 4. Insert ke Database (Pakai Chunk biar ringan memori)
-        // Total data = 5 user * 75 pengaduan = 375 row
         foreach (array_chunk($dataPengaduan, 100) as $chunk) {
             Pengaduan::insert($chunk); // Pastikan Model Pengaduan sesuai
         }
