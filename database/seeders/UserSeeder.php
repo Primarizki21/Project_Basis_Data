@@ -25,5 +25,62 @@ class UserSeeder extends Seeder
             'angkatan'     => '2023',
             'password'      => Hash::make('123456'),
         ]);
+
+        $faker = Faker::create('id_ID');
+
+        $angkatanList = [2021, 2022, 2023, 2024, 2025];
+        $prodiList    = [1, 2, 3, 4, 5];
+        $genderList   = ['Laki-laki', 'Perempuan'];
+
+        // Loop 1: Angkatan
+        foreach ($angkatanList as $angkatan) {
+
+            $tahunDuaDigit = substr($angkatan, -2); // 2023 -> '23'
+            $kodeAngkatan = $tahunDuaDigit . '1';   // '231'
+            
+            // --- PERBAIKAN 1: Reset Counter DI SINI (Per Angkatan), bukan Per Prodi ---
+            // Jadi dalam 1 angkatan, nomor urut akan jalan terus dari 61 sampai 70 (karena 5 prodi x 2 orang)
+            // Ini mencegah ada dua orang punya akhiran '062' di angkatan yang sama.
+            $counterNim = 60; 
+
+            // Loop 2: Prodi
+            foreach ($prodiList as $prodiId) {
+
+                // Loop 3: Gender
+                foreach ($genderList as $gender) {
+                    
+                    $counterNim++; 
+                    
+                    $nomorUrut = str_pad($counterNim, 3, '0', STR_PAD_LEFT);
+                    $nim = "16{$prodiId}{$kodeAngkatan}{$nomorUrut}";
+
+                    if ($gender == 'Laki-laki') {
+                        $firstName = $faker->firstNameMale();
+                        $lastName  = $faker->lastName();
+                    } else {
+                        $firstName = $faker->firstNameFemale();
+                        $lastName  = $faker->lastName();
+                    }
+                    $fullName = $firstName . ' ' . $lastName;
+
+                    $email = strtolower($firstName) . $tahunDuaDigit . $nomorUrut . '@ftmm.unair.ac.id';
+
+                    User::create([
+                        'nim'                => $nim,
+                        'nama'               => $fullName,
+                        'email'              => $email,
+                        'jenis_kelamin'      => $gender,
+                        'tempat_lahir'       => $faker->city(),
+                        'tanggal_lahir'      => $faker->dateTimeBetween('-22 years', '-18 years')->format('Y-m-d'),
+                        'alamat'             => $faker->address(),
+                        'nomor_telepon'      => $faker->numerify('08##########'),
+                        'jenis_pekerjaan_id' => '1',
+                        'prodi_id'           => $prodiId,
+                        'angkatan'           => $angkatan,
+                        'password'           => Hash::make('123456'),
+                    ]);
+                }
+            }
+        }
     }
 }
