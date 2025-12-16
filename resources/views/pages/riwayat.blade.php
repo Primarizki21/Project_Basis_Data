@@ -15,39 +15,60 @@
     <div class="col-12">
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
-          <div class="row g-3">
-            <div class="col-md-3">
-              <label class="form-label fw-semibold small">Status</label>
-              <select class="form-select">
-                <option value="">Semua Status</option>
-                <option value="Menunggu">Menunggu</option>
-                <option value="Diproses">Diproses</option>
-                <option value="Selesai">Selesai</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-semibold small">Kategori</label>
-              <select class="form-select">
-                <option value="">Semua Kategori</option>
-                <option value="Akademik">Akademik</option>
-                <option value="Fasilitas">Fasilitas</option>
-                <option value="Kekerasan">Kekerasan</option>
-                <option value="Kemahasiswaan">Kemahasiswaan</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold small">&nbsp;</label>
-              <div class="d-flex gap-2">
-                <button class="btn btn-primary">
-                  <i class="bi bi-funnel me-2"></i>Filter
-                </button>
-                <button class="btn btn-outline-secondary">
-                  <i class="bi bi-arrow-clockwise me-2"></i>Reset
-                </button>
+          <form action="{{ route('riwayat') }}" method="GET">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold small">Status</label>
+                <select class="form-select" name="status">
+                  <option value="" {{ request('status') == '' ? 'selected' : '' }}>Semua Status</option>
+                  <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
+                  <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                  <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                </select>
+              </div>
+              {{-- Filter : Kategori --}}
+              <div class="col-md-3">
+                <label class="form-label fw-semibold small">Kategori</label>
+                <select class="form-select" name="kategori_komplain_id">
+                  <option value="">Semua Kategori</option>
+                  <option value="1" {{ request('kategori_komplain_id') == '1' ? 'selected' : '' }}>Akademik</option>
+                  <option value="2" {{ request('kategori_komplain_id') == '2' ? 'selected' : '' }}>Fasilitas</option>
+                  <option value="3" {{ request('kategori_komplain_id') == '3' ? 'selected' : '' }}>Kekerasan</option>
+                  <option value="4" {{ request('kategori_komplain_id') == '4' ? 'selected' : '' }}>Kemahasiswaan</option>
+                  <option value="5" {{ request('kategori_komplain_id') == '5' ? 'selected' : '' }}>Lainnya</option>
+                </select>
+              </div>
+              
+              {{-- Filter: Tanggal --}}
+              <div class="col-md-2">
+                  <label class="form-label fw-semibold small">Tanggal</label>
+                  <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}">
+              </div>
+
+              {{-- Filter : Search --}}
+              <div class="col-md-4">
+                  <label class="form-label fw-semibold small">Cari Tiket / Deskripsi</label>
+                  <div class="input-group">
+                      <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                      <input type="text" 
+                          name="search" 
+                          class="form-control" 
+                          placeholder="Cari..." 
+                          value="{{ request('search') }}">
+                  </div>
+              </div>
+              <div class="col-12 mt-3">
+                  <div class="d-flex gap-2">
+                      <button type="submit" class="btn btn-primary">
+                          <i class="bi bi-funnel me-2"></i>Filter
+                      </button>
+                      <a href="{{ route('riwayat') }}" class="btn btn-outline-secondary">
+                          <i class="bi bi-arrow-clockwise me-2"></i>Reset
+                      </a>
+                  </div>
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
