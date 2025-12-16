@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PengaduanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $pengaduanQuery = Pengaduan::with('pelapor', 'kategoriKomplain');
         $warnaKategori = [
@@ -24,10 +24,30 @@ class PengaduanController extends Controller
             'Lainnya' => '#6c757d',
         ];
         if (Auth::guard('admin')->check()) {
-            $pengaduan = $pengaduanQuery->latest()->get();
         } else {
-            $pengaduan = $pengaduanQuery->where('user_id', Auth::id())->latest()->get();
+            $pengaduanQuery->where('user_id', Auth::id());
         }
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $pengaduanQuery->where(function($q) use ($searchTerm) {
+                if (preg_match('/^#?TKT-?(\d+)$/i', $searchTerm, $matches)) {
+                    $q->where('pengaduan_id', $matches[1]);
+                } else {
+                    $q->where('deskripsi_kejadian', 'like', '%' . $searchTerm . '%');
+                }
+            });
+        }
+        if ($request->filled('status')) {
+            $pengaduanQuery->where('status_pengaduan', $request->status);
+        }
+        if ($request->filled('kategori_komplain_id')) {
+            $pengaduanQuery->where('kategori_komplain_id', $request->kategori_komplain_id);
+        }
+        if ($request->filled('tanggal')) {
+            $pengaduanQuery->whereDate('tanggal_kejadian', $request->tanggal);
+        }
+        $pengaduan = $pengaduanQuery->latest()->get();
+
         return view('pages.riwayat', compact(
             'warnaKategori', 
             'pengaduan'
