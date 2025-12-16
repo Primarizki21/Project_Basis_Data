@@ -12,6 +12,8 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\ProdiSeeder;
 use Database\Seeders\PengaduanSeeder;
 use Database\Seeders\TindakLanjutSeeder;
+// use Database\Seeders\DimProfilSeeder;
+// use Database\Seeders\DimWaktuSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(PengaduanSeeder::class);
         $this->call(TindakLanjutSeeder::class);
-
+        // $this->call(DimProfilSeeder::class);
+        // $this->call(DimWaktuSeeder::class);
     }
 }
