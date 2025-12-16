@@ -4,317 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupa Password - VOIZ FTMM</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(107, 33, 168, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(14, 165, 240, 0.03) 0%, transparent 50%);
-            z-index: 0;
-        }
-
-        .auth-container {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .auth-card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            max-width: 450px;
-            width: 100%;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .auth-header {
-            background: linear-gradient(135deg, #6B21A8 0%, #7C3AED 50%, #0ea5f0 100%);
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .auth-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(20px, 20px); }
-        }
-
-        .icon-circle {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .icon-circle i {
-            font-size: 2.5rem;
-            color: white;
-        }
-
-        .auth-header h1 {
-            color: white;
-            font-weight: 700;
-            margin: 0;
-            font-size: 1.75rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .auth-header p {
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0.5rem 0 0 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .auth-body {
-            padding: 2.5rem 2rem;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: #7C3AED;
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
-        }
-
-        .input-group {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        .form-control.with-icon {
-            padding-left: 3rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #6B21A8, #7C3AED);
-            border: none;
-            border-radius: 12px;
-            padding: 0.875rem 1.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(107, 33, 168, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(107, 33, 168, 0.4);
-        }
-
-        .alert {
-            border-radius: 12px;
-            border: none;
-            padding: 1rem;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-            color: #059669;
-            border-left: 4px solid #10b981;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
-            color: #dc2626;
-            border-left: 4px solid #ef4444;
-        }
-
-        .info-box {
-            background: linear-gradient(135deg, rgba(14, 165, 240, 0.05), rgba(59, 130, 246, 0.05));
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-box p {
-            margin: 0;
-            color: #0284c7;
-            font-size: 0.9rem;
-        }
-
-        .link-primary {
-            color: #7C3AED;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .link-primary:hover {
-            color: #6B21A8;
-        }
-
-        .back-to-home {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            z-index: 10;
-        }
-
-        .back-to-home a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #6b7280;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .back-to-home a:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        @media (max-width: 576px) {
-            .auth-body {
-                padding: 2rem 1.5rem;
-            }
-
-            .back-to-home {
-                top: 1rem;
-                left: 1rem;
-            }
-        }
-    </style>
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body>
-    <div class="back-to-home">
-        <a href="{{ route('login.form') }}">
-            <i class="bi bi-arrow-left"></i>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 relative overflow-x-hidden">
+    <!-- Background Patterns -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[20%] left-[20%] w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-[20%] right-[20%] w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Back to Home -->
+    <div class="absolute top-4 left-4 lg:top-8 lg:left-8 z-10">
+        <a href="{{ route('login.form') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-primary bg-white px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:-translate-x-1 transition-all duration-300 font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
             <span>Kembali</span>
         </a>
     </div>
 
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <div class="icon-circle">
-                    <i class="bi bi-key"></i>
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden w-full max-w-[450px] animate-[slideUp_0.6s_ease-out]">
+            <!-- Header -->
+            <div class="relative bg-gradient-to-br from-primary via-[#7C3AED] to-secondary p-8 text-center overflow-hidden">
+                <div class="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] animate-[float_6s_ease-in-out_infinite] bg-[radial-gradient(circle,rgba(255,255,255,0.1)_0%,transparent_70%)]"></div>
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 relative z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-white">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                    </svg>
                 </div>
-                <h1>Lupa Password?</h1>
-                <p>Jangan khawatir, kami akan bantu reset</p>
+                <h1 class="relative z-10 text-white font-bold text-2xl m-0">Lupa Password?</h1>
+                <p class="relative z-10 text-white/90 mt-2 m-0">Jangan khawatir, kami akan bantu reset</p>
             </div>
 
-            <div class="auth-body">
+            <!-- Body -->
+            <div class="p-8 lg:p-10">
                 @if(session('success'))
-                <div class="alert alert-success mb-4">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
-                        <div>
-                            <strong>Email Terkirim!</strong>
-                            <p class="mb-0 mt-1">Link reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam secara berkala.</p>
-                        </div>
+                <div class="bg-green-50 text-green-700 p-4 rounded-xl mb-6 flex items-start border-l-4 border-green-500 animate-[slideIn_0.5s_ease-out]">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3 flex-shrink-0 mt-0.5">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                        <strong class="block font-bold">Email Terkirim!</strong>
+                        <p class="text-sm mt-1">Link reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam secara berkala.</p>
                     </div>
                 </div>
                 @endif
 
                 @if($errors->any())
-                <div class="alert alert-danger mb-4">
-                    <i class="bi bi-exclamation-triangle me-2"></i>{{ $errors->first() }}
+                <div class="bg-red-50 text-red-700 p-4 rounded-xl mb-6 flex items-center border-l-4 border-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    {{ $errors->first() }}
                 </div>
                 @endif
 
-                <div class="info-box">
-                    <p><i class="bi bi-info-circle me-2"></i>Masukkan email yang terdaftar, kami akan mengirimkan link untuk reset password Anda.</p>
+                <div class="bg-gradient-to-br from-[#0ea5f0]/5 to-blue-500/5 rounded-xl p-4 mb-6 text-[#0284c7] text-sm flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2 flex-shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <p>Masukkan email yang terdaftar, kami akan mengirimkan link untuk reset password Anda.</p>
                 </div>
 
                 <form action="{{ route('password.email') }}" method="POST">
 
                     @csrf
 
-                    <div class="mb-4">
-                        <label for="email" class="form-label">Email Terdaftar</label>
-                        <div class="input-group">
-                            <i class="bi bi-envelope input-icon"></i>
+                    <div class="mb-6">
+                        <label for="email" class="block font-semibold text-gray-700 mb-2">Email Terdaftar</label>
+                        <div class="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                            </svg>
                             <input type="email" 
-                                   class="form-control with-icon @error('email') is-invalid @enderror" 
+                                   class="w-full border-2 border-gray-200 rounded-xl py-3 pl-12 pr-4 text-gray-700 focus:outline-none focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/10 transition-all duration-300 @error('email') border-red-500 @enderror"
                                    id="email" 
                                    name="email" 
                                    value="{{ old('email') }}" 
@@ -323,19 +87,20 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 mb-3">
-                        <i class="bi bi-envelope me-2"></i>Kirim Link Reset Password
+                    <button type="submit" class="w-full bg-gradient-to-r from-[#6B21A8] to-[#7C3AED] text-white font-semibold py-3.5 px-6 rounded-xl shadow-[0_4px_12px_rgba(107,33,168,0.3)] hover:shadow-[0_8px_20px_rgba(107,33,168,0.4)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                        Kirim Link Reset Password
                     </button>
 
                     <div class="text-center">
-                        <span class="text-muted">Sudah ingat password?</span>
-                        <a href="{{ route('login.form') }}" class="link-primary ms-1">Masuk di sini</a>
+                        <span class="text-gray-500">Sudah ingat password?</span>
+                        <a href="{{ route('login.form') }}" class="text-[#7C3AED] hover:text-[#6B21A8] hover:underline font-medium ml-1">Masuk di sini</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

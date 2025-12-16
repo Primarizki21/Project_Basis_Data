@@ -1,145 +1,140 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div class="container mx-auto px-4 lg:px-6 py-6 animate-[fadeIn_0.6s_ease-out]">
     <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="fw-bold mb-1">Profil Administrator</h2>
-            <p class="text-muted mb-0">Informasi akun dan keamanan Anda</p>
-        </div>
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Profil Administrator</h2>
+        <p class="text-gray-500">Informasi akun dan keamanan Anda</p>
     </div>
 
-    <div class="row g-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Profile Info Card -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 text-center">
-                    <!-- Avatar -->
-                    <div class="mb-3">
-                        <div class="mx-auto" style="width: 120px; height: 120px; border-radius: 20px; background: linear-gradient(135deg, #6B21A8, #0ea5f0); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 3rem; box-shadow: 0 10px 30px rgba(107, 33, 168, 0.3);">
-                            {{ strtoupper(substr(Auth::guard('admin')->user()->nama ?? 'A', 0, 1)) }}
-                        </div>
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+                <!-- Avatar -->
+                <div class="mb-6">
+                    <div class="w-[120px] h-[120px] mx-auto rounded-[20px] bg-gradient-to-br from-[#6B21A8] to-[#0ea5f0] flex items-center justify-center text-white font-bold text-5xl shadow-[0_10px_30px_rgba(107,33,168,0.3)]">
+                        {{ strtoupper(substr(Auth::guard('admin')->user()->nama ?? 'A', 0, 1)) }}
                     </div>
+                </div>
 
-                    <!-- Admin Info -->
-                    <h4 class="fw-bold mb-1">{{ Auth::guard('admin')->user()->nama ?? 'Administrator' }}</h4>
-                    <p class="text-muted mb-2">{{ Auth::guard('admin')->user()->email ?? 'admin@mail.com' }}</p>
-                    <span class="badge px-3 py-2" style="background: linear-gradient(135deg, #6B21A8, #0ea5f0);">
-                        <i class="bi bi-shield-check me-1"></i>Administrator
-                    </span>
+                <!-- Admin Info -->
+                <h4 class="text-xl font-bold text-gray-800 mb-1">{{ Auth::guard('admin')->user()->nama ?? 'Administrator' }}</h4>
+                <p class="text-gray-500 mb-4 text-sm">{{ Auth::guard('admin')->user()->email ?? 'admin@mail.com' }}</p>
+                <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#6B21A8] to-[#0ea5f0] text-white rounded-full font-medium text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
+                    Administrator
+                </span>
 
-                    <!-- Stats for ADMIN -->
-                    <div class="row mt-4 text-center">
-                        <div class="col-4">
-                            <h5 class="fw-bold mb-0" style="color: #6B21A8;">{{ $totalPengaduan ?? 0 }}</h5>
-                            <small class="text-muted">Total Aduan</small>
-                        </div>
-                        <div class="col-4">
-                            <h5 class="fw-bold mb-0" style="color: #10b981;">{{ $selesai ?? 0 }}</h5>
-                            <small class="text-muted">Selesai</small>
-                        </div>
-                        <div class="col-4">
-                            <h5 class="fw-bold mb-0" style="color: #0ea5f0;">
-                                @php
-                                    $persentase = ($totalPengaduan ?? 0) > 0
-                                        ? round(($selesai / $totalPengaduan) * 100)
-                                        : 0;
-                                @endphp
-                                {{ $persentase }}%
-                            </h5>
-                            <small class="text-muted">Resolved</small>
-                        </div>
+                <!-- Stats for ADMIN -->
+                <div class="grid grid-cols-3 gap-2 mt-8 pt-6 border-t border-gray-100">
+                    <div class="text-center">
+                        <h5 class="font-bold text-xl text-[#6B21A8] mb-1">{{ $totalPengaduan ?? 0 }}</h5>
+                        <small class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Total Aduan</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="font-bold text-xl text-[#10b981] mb-1">{{ $selesai ?? 0 }}</h5>
+                        <small class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Selesai</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="font-bold text-xl text-[#0ea5f0] mb-1">
+                            @php
+                                $persentase = ($totalPengaduan ?? 0) > 0
+                                    ? round(($selesai / $totalPengaduan) * 100)
+                                    : 0;
+                            @endphp
+                            {{ $persentase }}%
+                        </h5>
+                        <small class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Resolved</small>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Actions -->
-            <div class="card border-0 shadow-sm mt-4">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3">Aksi Cepat</h6>
-                    <a href="{{ route('admin.dashboard') }}" class="btn w-100 mb-2 text-white" style="background: linear-gradient(135deg, #6B21A8, #0ea5f0); border: none;">
-                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6">
+                <h6 class="font-bold text-gray-800 mb-4">Aksi Cepat</h6>
+                <div class="space-y-3">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-center w-full py-2.5 px-4 bg-gradient-to-r from-[#6B21A8] to-[#0ea5f0] text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                        Dashboard
                     </a>
-                    <a href="{{ route('admin.kelola-pengaduan') }}" class="btn btn-outline-primary w-100 mb-2">
-                        <i class="bi bi-inbox me-2"></i>Kelola Pengaduan
+                    <a href="{{ route('admin.kelola-pengaduan') }}" class="flex items-center justify-center w-full py-2.5 px-4 border border-[#0ea5f0] text-[#0ea5f0] font-semibold rounded-xl hover:bg-[#0ea5f0] hover:text-white transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
+                        Kelola Pengaduan
                     </a>
-                    {{-- Ganti 'admin.visualisasi' jika nama route berbeda --}}
-                    {{-- <a href="{{ route('admin.visualisasi') }}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-bar-chart me-2"></i>Visualisasi
-                    </a> --}}
                 </div>
             </div>
         </div>
 
         <!-- Info & Password Section -->
-        <div class="col-lg-8">
+        <div class="lg:col-span-2 space-y-8">
             <!-- Personal Info -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-0 p-4">
-                    <h5 class="fw-bold mb-0">Informasi Personal</h5>
-                    <small class="text-muted">Data ini hanya bisa dilihat dan tidak dapat diubah melalui halaman ini.</small>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100">
+                    <h5 class="font-bold text-lg text-gray-800">Informasi Personal</h5>
+                    <small class="text-gray-500">Data ini hanya bisa dilihat dan tidak dapat diubah melalui halaman ini.</small>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Nama Lengkap</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->nama ?? '-' }}</div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Nama Lengkap</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->nama ?? '-' }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Email</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->email ?? '-' }}</div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->email ?? '-' }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">NIP</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->nip ?? '-' }}</div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">NIP</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->nip ?? '-' }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">No. Telepon</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->nomor_telepon ?? '-' }}</div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">No. Telepon</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->nomor_telepon ?? '-' }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Jenis Kelamin</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->jenis_kelamin ?? '-' }}</div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Jenis Kelamin</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->jenis_kelamin ?? '-' }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Tanggal Lahir</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->tanggal_lahir ? \Carbon\Carbon::parse(Auth::guard('admin')->user()->tanggal_lahir)->format('d F Y') : '-' }}</div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Lahir</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->tanggal_lahir ? \Carbon\Carbon::parse(Auth::guard('admin')->user()->tanggal_lahir)->format('d F Y') : '-' }}</div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold text-muted small">Alamat</label>
-                            <div class="form-control-plaintext fw-bold">{{ Auth::guard('admin')->user()->alamat ?? '-' }}</div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Alamat</label>
+                            <div class="text-gray-900 font-medium py-2 border-b border-gray-100">{{ Auth::guard('admin')->user()->alamat ?? '-' }}</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Change Password Section -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="fw-bold mb-0">Keamanan Akun</h5>
-                            <small class="text-muted">Ubah password untuk keamanan akun Anda</small>
-                        </div>
-                        <button class="btn btn-outline-primary btn-sm" type="button" onclick="togglePasswordForm()">
-                            <i class="bi bi-key me-1"></i>
-                            <span id="toggleText">Ubah Password</span>
-                        </button>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                    <div>
+                        <h5 class="font-bold text-lg text-gray-800">Keamanan Akun</h5>
+                        <small class="text-gray-500">Ubah password untuk keamanan akun Anda</small>
                     </div>
+                    <button id="toggleBtn" class="inline-flex items-center px-4 py-2 border border-[#0ea5f0] text-[#0ea5f0] text-sm font-semibold rounded-lg hover:bg-[#0ea5f0] hover:text-white transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>
+                        <span id="toggleText">Ubah Password</span>
+                    </button>
                 </div>
 
-                <div id="passwordForm" style="display: none;">
-                    <div class="card-body p-4 border-top">
+                <div id="passwordForm" class="hidden">
+                    <div class="p-6 bg-gray-50/50">
                         @if(session('success'))
-                        <div class="alert alert-success">
-                            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                        <div class="bg-green-100 text-green-700 px-4 py-3 rounded-xl mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                            {{ session('success') }}
                         </div>
                         @endif
 
                         @if($errors->any())
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle me-2"></i>{{ $errors->first() }}
+                        <div class="bg-red-100 text-red-700 px-4 py-3 rounded-xl mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" /></svg>
+                            {{ $errors->first() }}
                         </div>
                         @endif
 
@@ -147,26 +142,27 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Password Lama <span class="text-danger">*</span></label>
-                                <input type="password" name="old_password" class="form-control form-control-lg" placeholder="Masukkan password lama" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Password Baru <span class="text-danger">*</span></label>
-                                <input type="password" name="new_password" class="form-control form-control-lg" placeholder="Min. 6 karakter" required>
+                            <div class="mb-4">
+                                <label class="block font-semibold text-gray-700 mb-2 text-sm">Password Lama <span class="text-red-500">*</span></label>
+                                <input type="password" name="old_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all" placeholder="Masukkan password lama" required>
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Konfirmasi Password Baru <span class="text-danger">*</span></label>
-                                <input type="password" name="new_password_confirmation" class="form-control form-control-lg" placeholder="Ulangi password baru" required>
+                                <label class="block font-semibold text-gray-700 mb-2 text-sm">Password Baru <span class="text-red-500">*</span></label>
+                                <input type="password" name="new_password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all" placeholder="Min. 6 karakter" required>
                             </div>
 
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-warning px-4">
-                                    <i class="bi bi-shield-check me-2"></i>Update Password
+                            <div class="mb-6">
+                                <label class="block font-semibold text-gray-700 mb-2 text-sm">Konfirmasi Password Baru <span class="text-red-500">*</span></label>
+                                <input type="password" name="new_password_confirmation" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all" placeholder="Ulangi password baru" required>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <button type="submit" class="inline-flex items-center px-6 py-2.5 bg-[#f59e0b] text-white font-semibold rounded-xl hover:bg-[#d97706] transition-all shadow-md hover:shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
+                                    Update Password
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordForm()">
+                                <button type="button" id="cancelBtn" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-100 transition-all">
                                     Batal
                                 </button>
                             </div>
@@ -179,27 +175,24 @@
 </div>
 
 <script>
-function togglePasswordForm() {
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('toggleBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
     const form = document.getElementById('passwordForm');
     const toggleText = document.getElementById('toggleText');
 
-    if (form.style.display === 'none') {
-        form.style.display = 'block';
-        toggleText.textContent = 'Tutup Form';
-    } else {
-        form.style.display = 'none';
-        toggleText.textContent = 'Ubah Password';
+    function toggleForm() {
+        if (form.classList.contains('hidden')) {
+            form.classList.remove('hidden');
+            toggleText.textContent = 'Tutup Form';
+        } else {
+            form.classList.add('hidden');
+            toggleText.textContent = 'Ubah Password';
+        }
     }
-}
+
+    if(toggleBtn) toggleBtn.addEventListener('click', toggleForm);
+    if(cancelBtn) cancelBtn.addEventListener('click', toggleForm);
+});
 </script>
-
-<style>
-.form-control-plaintext {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #e5e7eb;
-    color: #1f2937;
-}
-</style>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 @endsection

@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VOIZ FTMM</title>
-    {{-- @vite(['resources/css/app.css','resources/js/app.js']) --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="bg-light">
+<body class="bg-gray-100 font-sans">
 
     @guest
         @include('layouts.navbar')
@@ -19,78 +17,93 @@
         {{-- Sidebar --}}
         @include('layouts.sidebar')
 
-        {{-- Main Content Area dengan Margin --}}
-        <div id="main-content" style="margin-left: 280px; min-height: 100vh; transition: margin-left 0.3s ease;">
-            {{-- Toggle Button untuk Mobile --}}
-            <button id="sidebarToggle" class="btn btn-primary d-lg-none" style="position: fixed; top: 15px; left: 15px; z-index: 999; border-radius: 10px;">
-                <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+        {{-- Main Content Area --}}
+        <div id="main-content" class="min-h-screen transition-all duration-300 lg:ml-[280px]">
+            {{-- Toggle Button for Mobile --}}
+            <button id="sidebarToggle" class="lg:hidden fixed top-4 left-4 z-50 bg-primary text-white p-2 rounded-lg shadow-lg hover:bg-opacity-90 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
             </button>
 
-            <div class="p-4">
+            <div class="p-4 md:p-8">
                 @yield('content')
             </div>
         </div>
     @endguest
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     {{-- Sidebar Toggle Script --}}
     @auth
     <script>
-        const sidebar = document.querySelector('.sidebar');
-        const mainContent = document.getElementById('main-content');
-        const toggleBtn = document.getElementById('sidebarToggle');
-        let sidebarOpen = true;
-
-        // Toggle Sidebar Function
-        function toggleSidebar() {
-            sidebarOpen = !sidebarOpen;
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('main-content');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const menuIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>`;
+            const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
             
-            if (sidebarOpen) {
-                sidebar.style.left = '0';
-                mainContent.style.marginLeft = '280px';
-                toggleBtn.innerHTML = '<i class="bi bi-list" style="font-size: 1.5rem;"></i>';
-            } else {
-                sidebar.style.left = '-280px';
-                mainContent.style.marginLeft = '0';
-                toggleBtn.innerHTML = '<i class="bi bi-x-lg" style="font-size: 1.5rem;"></i>';
+            // Check screen size
+            let isDesktop = window.innerWidth >= 1024;
+            let sidebarOpen = isDesktop;
+
+            // Initial State
+            function updateState() {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.remove('-translate-x-full');
+                    mainContent.classList.add('lg:ml-[280px]');
+                    if(toggleBtn) toggleBtn.classList.add('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    mainContent.classList.remove('lg:ml-[280px]');
+                    if(toggleBtn) {
+                        toggleBtn.classList.remove('hidden');
+                        toggleBtn.innerHTML = menuIcon;
+                    }
+                    sidebarOpen = false;
+                }
             }
-        }
 
-        // Event Listener
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', toggleSidebar);
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggle = toggleBtn && toggleBtn.contains(event.target);
-            const isMobile = window.innerWidth < 992;
-
-            if (!isClickInsideSidebar && !isClickOnToggle && sidebarOpen && isMobile) {
-                toggleSidebar();
+            // Toggle Function
+            function toggleSidebar() {
+                sidebarOpen = !sidebarOpen;
+                if (sidebarOpen) {
+                    sidebar.classList.remove('-translate-x-full');
+                    toggleBtn.innerHTML = closeIcon;
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    toggleBtn.innerHTML = menuIcon;
+                }
             }
-        });
 
-        // Responsive behavior
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 992) {
-                sidebar.style.left = '0';
-                mainContent.style.marginLeft = '280px';
-                sidebarOpen = true;
-            }
-        });
-
-        // Initialize on mobile
-        if (window.innerWidth < 992) {
-            sidebar.style.left = '-280px';
-            mainContent.style.marginLeft = '0';
-            sidebarOpen = false;
             if (toggleBtn) {
-                toggleBtn.innerHTML = '<i class="bi bi-x-lg" style="font-size: 1.5rem;"></i>';
+                toggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleSidebar();
+                });
             }
-        }
+
+            // Close on outside click (mobile)
+            document.addEventListener('click', (event) => {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = toggleBtn && toggleBtn.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebarOpen && window.innerWidth < 1024) {
+                    toggleSidebar();
+                }
+            });
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                updateState();
+            });
+
+            // Initialize
+            // The initial class states in HTML handle the default desktop view.
+            // But we need to make sure the mobile state is correct if loaded on mobile.
+             if (window.innerWidth < 1024) {
+                 sidebar.classList.add('-translate-x-full');
+             }
+        });
     </script>
     @endauth
 </body>
