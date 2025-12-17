@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Api\VisualisasiController;
 
 use App\Http\Controllers\{
     UserController,
@@ -106,93 +107,6 @@ Route::post('/reset-password', function (Request $r) {
 })->middleware('guest')->name('password.update');
 
 // =====================
-//  TEMP OLAP API (DASHBOARD)
-// =====================
-Route::get('/api/visualisasi/summary', function () {
-    $count = DB::connection('mysql_olap')
-        ->table('fact_interaksi_tiket')
-        ->count();
-
-    return response()->json([
-        'total_pengaduan' => $count
-    ]);
-});
-
-Route::get('/api/visualisasi/kategori', function () {
-    return DB::connection('mysql_olap')
-        ->table('fact_interaksi_tiket as f')
-        ->join('dim_kategori as k', 'k.sk_kategori', '=', 'f.sk_kategori')
-        ->selectRaw('k.jenis_komplain as label, COUNT(*) as value')
-        ->groupBy('k.jenis_komplain')
-        ->get();
-});
-
-Route::get('/api/visualisasi/status', function () {
-    return DB::connection('mysql_olap')
-        ->table('fact_interaksi_tiket')
-        ->selectRaw('status_pengaduan as label, COUNT(*) as value')
-        ->groupBy('status_pengaduan')
-        ->get();
-});
-
-Route::get('/api/visualisasi/response-time', function () {
-    return DB::connection('mysql_olap')
-        ->table('fact_interaksi_tiket as f')
-        ->join('dim_kategori as k', 'k.sk_kategori', '=', 'f.sk_kategori')
-        ->selectRaw('k.jenis_komplain as label, AVG(durasi_penanganan) as value')
-        ->groupBy('k.jenis_komplain')
-        ->get();
-});
-
-Route::get('/api/visualisasi/trend-bulanan', function () {
-    return DB::connection('mysql_olap')
-        ->table('fact_interaksi_tiket as f')
-        ->join('dim_waktu as w', 'f.sk_waktu', '=', 'w.sk_waktu')
-        ->selectRaw('
-            w.tahun,
-            w.bulan,
-            COUNT(*) as total,
-            SUM(f.status_pengaduan = "Selesai") as selesai
-        ')
-        ->groupBy('w.tahun', 'w.bulan')
-        ->orderBy('w.tahun')
-        ->orderBy('w.bulan')
-        ->get();
-});
-
-Route::get('/api/visualisasi/avg-waktu-proses', function () {
-    $avg = DB::connection('mysql_olap')
-        ->table('fact_interaksi_tiket')
-        ->where('status_pengaduan', 'Selesai')
-        ->avg('durasi_penanganan');
-
-    return [
-        'avg_hari' => $avg ? round($avg / 24, 2) : null
-    ];
-});
-
-Route::get('/api/visualisasi/performa-admin-bulanan', function () {
-    // ambil 12 bulan terakhir (atau semua kalau data masih dikit)
-    $rows = DB::connection('mysql_olap')
-        ->table('fact_performa_admin_bulanan as f')
-        ->join('dim_admin as a', 'a.sk_admin', '=', 'f.sk_admin')
-        ->join('dim_waktu as w', 'w.sk_waktu', '=', 'f.sk_waktu')
-        ->selectRaw('
-            a.nama as admin,
-            w.tahun,
-            w.bulan,
-            f.total_tiket_ditangani as total,
-            f.jumlah_komplain_selesai as selesai,
-            f.total_aktivitas as aktivitas
-        ')
-        ->orderBy('w.tahun')
-        ->orderBy('w.bulan')
-        ->get();
-
-    return response()->json($rows);
-});
-
-// =====================
 //  REGISTER
 // =====================
 Route::post('/register', function (Request $r) {
@@ -231,7 +145,6 @@ Route::post('/register', function (Request $r) {
 
     return redirect()->route('login.form')->with('success', 'Akun berhasil terdaftar! Silakan login.');
 })->name('register');
-
 
 // =====================
 //  LOGIN
@@ -333,8 +246,6 @@ Route::middleware(['auth:web'])->group(function () {
     })->name('profil.password');
 });
 
-
-
 // =====================
 //  PROTECTED ROUTES - ADMIN ONLY
 // =====================
@@ -343,7 +254,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/kelola-pengaduan', [AdminController::class, 'kelolaPengaduan'])->name('kelola-pengaduan');
     Route::get('/visualisasi', function () {
         return view('pages.admin.visualisasi');
-    })->name('visualisasi');    Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
+    })->name('visualisasi');    
+    Route::get('/kelola-user', [AdminController::class, 'kelolaUser'])->name('kelola-user');
     Route::post('/kelola-user', [AdminController::class, 'storeUser'])->name('kelola-user.store');
     Route::get('/pengaduan/{pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
     Route::put('/pengaduan/{pengaduan}', [PengaduanController::class, 'update'])->name('pengaduan.update');
@@ -356,3 +268,12 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::put('/users/{user_id}', [UserController::class, 'updateUser'])->name('users.update');
 });
 
+Route::middleware(['auth:admin'])->prefix('api/visualisasi')->group(function () {
+    Route::get('/summary', [VisualisasiController::class, 'summary']);
+    Route::get('/trend-bulanan', [VisualisasiController::class, 'trendBulanan']);
+    Route::get('/kategori', [VisualisasiController::class, 'kategori']);
+    Route::get('/status', [VisualisasiController::class, 'status']);
+    Route::get('/response-time', [VisualisasiController::class, 'responseTime']);
+    Route::get('/avg-waktu-proses', [VisualisasiController::class, 'avgWaktuProses']);
+    Route::get('/performa-admin-bulanan', [VisualisasiController::class, 'performaAdminBulanan']);
+});
