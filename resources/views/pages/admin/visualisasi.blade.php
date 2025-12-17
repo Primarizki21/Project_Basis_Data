@@ -108,6 +108,46 @@
     </div>
   </div>
 </div>
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-0 p-4">
+        <h5 class="fw-bold mb-0">Demografi Prodi</h5>
+        <small class="text-muted">Jumlah pengaduan per prodi</small>
+      </div>
+      <div class="card-body p-4">
+        <canvas id="demografiProdiChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-0 p-4">
+        <h5 class="fw-bold mb-0">Jenis Kelamin</h5>
+        <small class="text-muted">Distribusi pelapor</small>
+      </div>
+      <div class="card-body p-4">
+        <canvas id="demografiGenderChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-0 p-4">
+        <h5 class="fw-bold mb-0">Angkatan</h5>
+        <small class="text-muted">Jumlah pengaduan per angkatan</small>
+      </div>
+      <div class="card-body p-4">
+        <canvas id="demografiAngkatanChart" height="80"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 </div>
@@ -135,6 +175,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('--- [DEBUG] START VISUALISASI SCRIPT ---');
+
+  
 
   // Cek apakah Library Chart.js terbaca
   if (typeof Chart === 'undefined') {
@@ -255,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('[DEBUG] Error Response Time:', error);
   }
 
-  // --- 5. MONTHLY TREND (Line Chart) ---
+   // --- 5. MONTHLY TREND (Line Chart) ---
   console.log('--- [DEBUG] 5. Fetching Trend Bulanan... ---');
   try {
     const resp = await fetch('/api/visualisasi/trend-bulanan');
@@ -374,6 +416,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.error('[DEBUG] Error Admin Performance:', e);
   }
+
+  // DEMOGRAFI PRODI
+try {
+  const prodi = await fetch('/api/visualisasi/demografi-prodi').then(r => r.json());
+  new Chart(document.getElementById('demografiProdiChart'), {
+    type: 'bar',
+    data: {
+      labels: prodi.map(x => x.label),
+      datasets: [{ data: prodi.map(x => x.value) }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+} catch (e) { console.warn('Demografi prodi gagal', e); }
+
+// DEMOGRAFI GENDER
+try {
+  const g = await fetch('/api/visualisasi/demografi-gender').then(r => r.json());
+  new Chart(document.getElementById('demografiGenderChart'), {
+    type: 'doughnut',
+    data: {
+      labels: g.map(x => x.label),
+      datasets: [{ data: g.map(x => x.value) }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+  });
+} catch (e) { console.warn('Demografi gender gagal', e); }
+
+// DEMOGRAFI ANGKATAN
+try {
+  const a = await fetch('/api/visualisasi/demografi-angkatan').then(r => r.json());
+  new Chart(document.getElementById('demografiAngkatanChart'), {
+    type: 'bar',
+    data: {
+      labels: a.map(x => x.label),
+      datasets: [{ data: a.map(x => x.value) }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+} catch (e) { console.warn('Demografi angkatan gagal', e); }
+
 
 });
 </script>

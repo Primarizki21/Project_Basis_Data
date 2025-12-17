@@ -105,4 +105,47 @@ class VisualisasiController extends Controller
 
         return response()->json($rows);
     }
+    public function demografiProdi()
+    {
+    $data = DB::connection('mysql_olap')
+        ->table('fact_interaksi_tiket as f')
+        ->join('dim_pelapor as p', 'p.sk_pelapor', '=', 'f.sk_pelapor')
+        ->selectRaw('COALESCE(p.nama_prodi, "Tidak diketahui") as label, COUNT(*) as value')
+        ->groupBy('label')
+        ->orderByDesc('value')
+        ->get();
+
+    return response()->json($data);
+    }
+
+    public function demografiGender()
+    {
+        $data = DB::connection('mysql_olap')
+            ->table('fact_interaksi_tiket as f')
+            ->join('dim_pelapor as p', 'p.sk_pelapor', '=', 'f.sk_pelapor')
+            ->selectRaw('COALESCE(p.jenis_kelamin, "Tidak diketahui") as label, COUNT(*) as value')
+            ->groupBy('label')
+            ->orderByDesc('value')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function demografiAngkatan()
+    {
+        $data = DB::connection('mysql_olap')
+            ->table('fact_interaksi_tiket as f')
+            ->join('dim_pelapor as p', 'p.sk_pelapor', '=', 'f.sk_pelapor')
+            ->selectRaw('COALESCE(p.angkatan, "Tidak diketahui") as label, COUNT(*) as value')
+            ->groupBy('label')
+            ->orderBy('label')
+            ->get();
+
+        return response()->json($data);
+    }
+
+
+  
+
 }
+
