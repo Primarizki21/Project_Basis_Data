@@ -130,175 +130,250 @@
   }
 </style>
 
-</style>
-
 <!-- ================= SCRIPT ================= -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('--- [DEBUG] START VISUALISASI SCRIPT ---');
 
-  // TOTAL
-  const summary = await fetch('/api/visualisasi/summary').then(r => r.json());
-  document.getElementById('totalPengaduan').innerText = summary.total_pengaduan;
+  // Cek apakah Library Chart.js terbaca
+  if (typeof Chart === 'undefined') {
+    console.error('--- [FATAL ERROR] Library Chart.js TIDAK TERMUAT. Cek koneksi internet atau CDN URL. ---');
+    alert('Library Chart.js gagal dimuat! Cek Console.');
+    return;
+  } else {
+    console.log('--- [DEBUG] Chart.js version:', Chart.version);
+  }
 
-  // KATEGORI
-  const kategori = await fetch('/api/visualisasi/kategori').then(r => r.json());
-  new Chart(categoryPieChart, {
-    type: 'doughnut',
-    data: {
-      labels: kategori.map(x => x.label),
-      datasets: [{
-        data: kategori.map(x => x.value),
-        backgroundColor: ['#6B21A8','#0ea5f0','#ef4444','#f59e0b','#8b5cf6']
-      }]
-    },
-    options: { plugins: { legend: { position: 'bottom' } } }
-  });
-
-  // STATUS
-  const status = await fetch('/api/visualisasi/status').then(r => r.json());
-  new Chart(statusChart, {
-    type: 'pie',
-    data: {
-      labels: status.map(x => x.label),
-      datasets: [{
-        data: status.map(x => x.value),
-        backgroundColor: ['#10b981','#f59e0b','#ef4444']
-      }]
-    },
-    options: { plugins: { legend: { position: 'bottom' } } }
-  });
-
-  // =========================
-// ADMIN PERFORMANCE (BULANAN)
-// =========================
-try {
-  const res = await fetch('/api/visualisasi/performa-admin-bulanan');
-  const rows = await res.json();
-
-  // bikin label bulan: 2025-12, 2026-01 dst
-  const monthKey = (r) => `${r.tahun}-${String(r.bulan).padStart(2,'0')}`;
-
-  // list bulan unik urut
-  const labels = [...new Set(rows.map(monthKey))];
-
-  // list admin unik
-  const admins = [...new Set(rows.map(r => r.admin))];
-
-  // dataset per admin (bar stacked atau line; ini bar biasa)
-  const datasets = admins.map((admin) => {
-    const data = labels.map((lbl) => {
-      const hit = rows.find(r => r.admin === admin && monthKey(r) === lbl);
-      return hit ? Number(hit.total) : 0;
-    });
-    return {
-      label: admin,
-      data,
-      borderWidth: 1
-    };
-  });
-
-  new Chart(document.getElementById('adminPerformanceChart'), {
-    type: 'bar',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom' }
-      },
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'Jumlah Tiket' } }
-      }
-    }
-  });
-} catch (e) {
-  console.warn('Performa admin bulanan gagal', e);
-}
-
-
-  // RESPONSE TIME
-  const rt = await fetch('/api/visualisasi/response-time').then(r => r.json());
-  new Chart(responseTimeChart, {
-    type: 'bar',
-    data: {
-      labels: rt.map(x => x.label),
-      datasets: [{
-        data: rt.map(x => Number(x.value)),
-        backgroundColor: 'rgba(107,33,168,0.8)'
-      }]
-    },
-    options: {
-      scales: { y: { beginAtZero: true } },
-      plugins: { legend: { display: false } }
-    }
-  });
-
-   // =========================
-  // MONTHLY TREND (REAL)
-  // =========================
+  // --- 1. TOTAL PENGADUAN ---
+  console.log('--- [DEBUG] 1. Fetching Summary... ---');
   try {
-    const rows = await fetch('/api/visualisasi/trend-bulanan').then(r => r.json());
+    const resp = await fetch('/api/visualisasi/summary');
+    const summary = await resp.json();
+    console.log('[DEBUG] Data Summary diterima:', summary);
+    
+    const elTotal = document.getElementById('totalPengaduan');
+    if (elTotal) {
+      elTotal.innerText = summary.total_pengaduan;
+      console.log('[DEBUG] Element #totalPengaduan updated.');
+    } else {
+      console.error('[DEBUG] Element #totalPengaduan TIDAK DITEMUKAN di HTML.');
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error Summary:', error);
+  }
 
-    // kalau API balik kosong, fallback
-    if (!Array.isArray(rows) || rows.length === 0) throw new Error('Data trend kosong');
+  // --- 2. KATEGORI (Pie Chart) ---
+  console.log('--- [DEBUG] 2. Fetching Kategori... ---');
+  try {
+    const resp = await fetch('/api/visualisasi/kategori');
+    const kategori = await resp.json();
+    console.log('[DEBUG] Data Kategori diterima:', kategori);
 
-    const labels  = rows.map(r => `${String(r.bulan).padStart(2,'0')}/${r.tahun}`);
-    const totals  = rows.map(r => Number(r.total || 0));
-    const selesai = rows.map(r => Number(r.selesai || 0));
+    const ctxKategori = document.getElementById('categoryPieChart');
+    if (ctxKategori) {
+      // Cek isi data mapping
+      const labels = kategori.map(x => x.label);
+      const values = kategori.map(x => x.value);
+      console.log('[DEBUG] Kategori Mapping -> Labels:', labels, 'Values:', values);
 
-    new Chart(document.getElementById('monthlyTrendChart'), {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Total Pengaduan',
-            data: totals,
-            borderColor: '#6B21A8',
-            backgroundColor: 'rgba(107,33,168,0.12)',
-            tension: 0.35,
-            fill: true
-          },
-          {
-            label: 'Selesai',
-            data: selesai,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16,185,129,0.10)',
-            tension: 0.35,
-            fill: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { position: 'top' } }
-      }
-    });
+      new Chart(ctxKategori, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: ['#6B21A8','#0ea5f0','#ef4444','#f59e0b','#8b5cf6']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+      console.log('[DEBUG] Chart Kategori berhasil di-init.');
+    } else {
+      console.error('[DEBUG] Canvas #categoryPieChart TIDAK DITEMUKAN.');
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error Kategori:', error);
+  }
 
+  // --- 3. STATUS (Pie Chart) ---
+  console.log('--- [DEBUG] 3. Fetching Status... ---');
+  try {
+    const resp = await fetch('/api/visualisasi/status');
+    const status = await resp.json();
+    console.log('[DEBUG] Data Status diterima:', status);
+
+    const ctxStatus = document.getElementById('statusChart');
+    if (ctxStatus) {
+      new Chart(ctxStatus, {
+        type: 'pie',
+        data: {
+          labels: status.map(x => x.label),
+          datasets: [{
+            data: status.map(x => x.value),
+            backgroundColor: ['#10b981','#f59e0b','#ef4444']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+      console.log('[DEBUG] Chart Status berhasil di-init.');
+    } else {
+      console.error('[DEBUG] Canvas #statusChart TIDAK DITEMUKAN.');
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error Status:', error);
+  }
+
+  // --- 4. RESPONSE TIME (Bar Chart) ---
+  console.log('--- [DEBUG] 4. Fetching Response Time... ---');
+  try {
+    const resp = await fetch('/api/visualisasi/response-time');
+    const rt = await resp.json();
+    console.log('[DEBUG] Data Response Time diterima:', rt);
+
+    const ctxResp = document.getElementById('responseTimeChart');
+    if (ctxResp) {
+      new Chart(ctxResp, {
+        type: 'bar',
+        data: {
+          labels: rt.map(x => x.label),
+          datasets: [{
+            data: rt.map(x => Number(x.value)),
+            backgroundColor: 'rgba(107,33,168,0.8)'
+          }]
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: { legend: { display: false } }
+        }
+      });
+      console.log('[DEBUG] Chart Response Time berhasil di-init.');
+    } else {
+      console.error('[DEBUG] Canvas #responseTimeChart TIDAK DITEMUKAN.');
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error Response Time:', error);
+  }
+
+  // --- 5. MONTHLY TREND (Line Chart) ---
+  console.log('--- [DEBUG] 5. Fetching Trend Bulanan... ---');
+  try {
+    const resp = await fetch('/api/visualisasi/trend-bulanan');
+    const rows = await resp.json();
+    console.log('[DEBUG] Data Trend diterima:', rows);
+
+    const ctxTrend = document.getElementById('monthlyTrendChart');
+    if (ctxTrend) {
+      const labels  = Array.isArray(rows) ? rows.map(r => `${String(r.bulan).padStart(2,'0')}/${r.tahun}`) : [];
+      const totals  = Array.isArray(rows) ? rows.map(r => Number(r.total || 0)) : [];
+      const selesai = Array.isArray(rows) ? rows.map(r => Number(r.selesai || 0)) : [];
+
+      console.log('[DEBUG] Trend Mapping -> Labels:', labels, 'Total:', totals);
+
+      new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Total Pengaduan',
+              data: totals,
+              borderColor: '#6B21A8',
+              backgroundColor: 'rgba(107,33,168,0.12)',
+              tension: 0.35,
+              fill: true
+            },
+            {
+              label: 'Selesai',
+              data: selesai,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16,185,129,0.10)',
+              tension: 0.35,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { position: 'top' } }
+        }
+      });
+      console.log('[DEBUG] Chart Trend berhasil di-init.');
+    } else {
+      console.error('[DEBUG] Canvas #monthlyTrendChart TIDAK DITEMUKAN.');
+    }
   } catch (e) {
-    console.warn('Trend bulanan gagal, pakai placeholder:', e);
-
-    // fallback placeholder kalau error
-    new Chart(document.getElementById('monthlyTrendChart'), {
-      type: 'line',
-      data: { labels: ['-'], datasets: [{ label: 'Belum tersedia', data: [0] }] }
-    });
+    console.error('[DEBUG] Error Trend:', e);
   }
 
-  // AVG WAKTU PROSES
+  // --- 6. AVG WAKTU PROSES ---
   try {
-    const res = await fetch('/api/visualisasi/avg-waktu-proses');
-    const d = await res.json();
-
-    document.getElementById('avgWaktu').innerText =
-      d.avg_hari !== null ? d.avg_hari : '—';
-  } catch {
-    document.getElementById('avgWaktu').innerText = '—';
+    const resp = await fetch('/api/visualisasi/avg-waktu-proses');
+    const d = await resp.json();
+    console.log('[DEBUG] Data Avg Waktu diterima:', d);
+    const elAvg = document.getElementById('avgWaktu');
+    if (elAvg) {
+        elAvg.innerText = (d.avg_hari !== null) ? d.avg_hari : '—';
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error Avg Waktu:', error);
   }
 
+  // --- 7. ADMIN PERFORMANCE ---
+  console.log('--- [DEBUG] 7. Fetching Admin Performance... ---');
+  try {
+    const resp = await fetch('/api/visualisasi/performa-admin-bulanan');
+    const rows = await resp.json();
+    console.log('[DEBUG] Data Admin Performance diterima (RAW):', rows);
 
+    const ctxAdmin = document.getElementById('adminPerformanceChart');
+
+    if (ctxAdmin && Array.isArray(rows) && rows.length > 0) {
+      const monthKey = (r) => `${r.tahun}-${String(r.bulan).padStart(2,'0')}`;
+      const labels = [...new Set(rows.map(monthKey))].sort();
+      const admins = [...new Set(rows.map(r => r.admin))];
+
+      console.log('[DEBUG] Admin Processing -> Labels:', labels);
+      console.log('[DEBUG] Admin Processing -> Admins List:', admins);
+
+      const datasets = admins.map((admin, index) => {
+        const data = labels.map((lbl) => {
+          const hit = rows.find(r => r.admin === admin && monthKey(r) === lbl);
+          return hit ? Number(hit.total) : 0;
+        });
+        const colors = ['#6B21A8', '#0ea5f0', '#ef4444', '#f59e0b', '#10b981'];
+        return {
+          label: admin,
+          data: data,
+          backgroundColor: colors[index % colors.length],
+          borderWidth: 1
+        };
+      });
+
+      console.log('[DEBUG] Admin Final Datasets:', datasets);
+
+      new Chart(ctxAdmin, {
+        type: 'bar',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Jumlah Tiket' } }
+          }
+        }
+      });
+      console.log('[DEBUG] Chart Admin berhasil di-init.');
+    } else {
+      console.warn("[DEBUG] Data Admin kosong atau Canvas #adminPerformanceChart tidak ketemu.");
+      if(!ctxAdmin) console.error("[DEBUG] Masalahnya: Canvas ID tidak ada di HTML.");
+      if(!Array.isArray(rows)) console.error("[DEBUG] Masalahnya: Response bukan Array.");
+    }
+  } catch (e) {
+    console.error('[DEBUG] Error Admin Performance:', e);
+  }
 
 });
 </script>
