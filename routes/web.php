@@ -276,4 +276,9 @@ Route::middleware(['auth:admin'])->prefix('api/visualisasi')->group(function () 
     Route::get('/response-time', [VisualisasiController::class, 'responseTime']);
     Route::get('/avg-waktu-proses', [VisualisasiController::class, 'avgWaktuProses']);
     Route::get('/performa-admin-bulanan', [VisualisasiController::class, 'performaAdminBulanan']);
+    Route::get('/demografi-prodi', [VisualisasiController::class, 'demografiProdi']);
+    Route::get('/demografi-gender', [VisualisasiController::class, 'demografiGender']);
+    Route::get('/demografi-angkatan', [VisualisasiController::class, 'demografiAngkatan']);
 });
+
+

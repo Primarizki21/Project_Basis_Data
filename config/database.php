@@ -68,7 +68,7 @@ return [
             'url' => env('DB_URL'),
             'host' => env('DB_OLAP_HOST', '127.0.0.1'),
             'port' => env('DB_OLAP_PORT', '3306'),
-            'database' => env('DB_OLAP_DATABASE', 'laravel'),
+            'database' => env('DB_OLAP_DATABASE', 'basisdata_olap'),
             'username' => env('DB_OLAP_USERNAME', 'root'),
             'password' => env('DB_OLAP_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
