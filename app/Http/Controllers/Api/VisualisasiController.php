@@ -42,18 +42,6 @@ class VisualisasiController extends Controller
         return response()->json($data);
     }
 
-    public function responseTime()
-    {
-        $data = DB::connection('mysql_olap')
-            ->table('fact_interaksi_tiket as f')
-            ->join('dim_kategori as k', 'k.sk_kategori', '=', 'f.sk_kategori')
-            ->selectRaw('k.jenis_komplain as label, AVG(durasi_penanganan) as value')
-            ->groupBy('k.jenis_komplain')
-            ->get();
-
-        return response()->json($data);
-    }
-
     public function trendBulanan()
     {
         $data = DB::connection('mysql_olap')
@@ -68,6 +56,23 @@ class VisualisasiController extends Controller
             ->groupBy('w.tahun', 'w.bulan')
             ->orderBy('w.tahun')
             ->orderBy('w.bulan')
+            ->get();
+
+        return response()->json($data);
+    }
+    
+    public function responseTime()
+    {
+        $data = DB::connection('mysql_olap')
+            ->table('fact_interaksi_tiket as f')
+            ->join('dim_kategori as k', 'k.sk_kategori', '=', 'f.sk_kategori')
+            ->where('f.status_pengaduan', 'Selesai') // ✅ samakan
+            ->selectRaw('
+                k.jenis_komplain as label,
+                ROUND(AVG(f.durasi_penanganan) / 24, 2) as value
+            ')
+            ->groupBy('k.jenis_komplain')
+            ->orderBy('value', 'ASC')
             ->get();
 
         return response()->json($data);
@@ -99,12 +104,14 @@ class VisualisasiController extends Controller
                 f.jumlah_komplain_selesai as selesai,
                 f.total_aktivitas as aktivitas
             ')
+            ->orderBy('a.nama')
             ->orderBy('w.tahun')
             ->orderBy('w.bulan')
             ->get();
 
         return response()->json($rows);
     }
+
     public function demografiProdi()
     {
     $data = DB::connection('mysql_olap')
