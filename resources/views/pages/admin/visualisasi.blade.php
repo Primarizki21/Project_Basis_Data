@@ -28,7 +28,7 @@
       <div class="card border-0 shadow-sm h-100"
            style="background: linear-gradient(135deg, #f59e0b, #d97706);">
         <div class="card-body p-4 text-white">
-          <h6 class="mb-3 opacity-75">Rata-rata Waktu Proses</h6>
+          <h6 class="mb-3 opacity-75">Rata-rata Waktu Penyelesaian</h6>
           <h2 class="fw-bold mb-2" id="avgWaktu">—</h2>
           <small class="opacity-75">Hari</small>
         </div>
@@ -53,7 +53,7 @@
   <div class="col-lg-6">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-header bg-white border-0 p-4">
-        <h5 class="fw-bold mb-0">Perbandingan Waktu Respon</h5>
+        <h5 class="fw-bold mb-0">Perbandingan Waktu Penyelesaian</h5>
         <small class="text-muted">Rata-rata per kategori (hari)</small>
       </div>
       <div class="card-body p-4">
@@ -168,10 +168,29 @@
     height: 380px;   /* coba 320-520 sesuai selera */
     width: 100%;
   }
+<style>
+  /* page background */
+  body {
+    background: #f3f4f6; /* light gray so white cards stand out */
+}
+
+/* make cards pop */
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 .75rem 1.5rem rgba(0,0,0,0.08) !important; /* stronger than shadow-sm */
+  border-radius: 16px; /* optional, nicer */
+}
+
+/* optional: header separation */
+.card-header {
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+}
 </style>
 
 <!-- ================= SCRIPT ================= -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.3.0/dist/chartjs-chart-matrix.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('--- [DEBUG] START VISUALISASI SCRIPT ---');
@@ -248,12 +267,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ctxStatus = document.getElementById('statusChart');
     if (ctxStatus) {
       new Chart(ctxStatus, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
           labels: status.map(x => x.label),
           datasets: [{
             data: status.map(x => x.value),
-            backgroundColor: ['#10b981','#f59e0b','#ef4444']
+            backgroundColor: ['#10b981','#f59e0b','#ef4444', '#8A8484']
           }]
         },
         options: { plugins: { legend: { position: 'bottom' } } }
@@ -266,36 +285,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('[DEBUG] Error Status:', error);
   }
 
-  // --- 4. RESPONSE TIME (Bar Chart) ---
-  console.log('--- [DEBUG] 4. Fetching Response Time... ---');
-  try {
-    const resp = await fetch('/api/visualisasi/response-time');
-    const rt = await resp.json();
-    console.log('[DEBUG] Data Response Time diterima:', rt);
+// --- 4. RESPONSE TIME (Horizontal Bar) ---
+console.log('--- [DEBUG] 4. Fetching Response Time... ---');
+try {
+  const resp = await fetch('/api/visualisasi/response-time');
+  const rt = await resp.json();
 
-    const ctxResp = document.getElementById('responseTimeChart');
-    if (ctxResp) {
-      new Chart(ctxResp, {
-        type: 'bar',
-        data: {
-          labels: rt.map(x => x.label),
-          datasets: [{
-            data: rt.map(x => Number(x.value)),
-            backgroundColor: 'rgba(107,33,168,0.8)'
-          }]
+  const colorMap = {
+    'Akademik': '#0d6efd',
+    'Fasilitas': '#198754',
+    'Kekerasan': '#dc3545',
+    'Kemahasiswaan': '#ffc107',
+    'Lainnya': '#6c757d',
+  };
+
+  const ctxResp = document.getElementById('responseTimeChart');
+  if (ctxResp) {
+    new Chart(ctxResp, {
+      type: 'bar',
+      data: {
+        labels: rt.map(x => x.label),
+        datasets: [{
+          data: rt.map(x => Number(x.value)),
+          backgroundColor: rt.map(x => colorMap[x.label] ?? '#9BD0F5'),
+          borderColor: rt.map(x => colorMap[x.label] ?? '#9BD0F5'),
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        indexAxis: 'y', // ✅ horizontal
+        scales: {
+          x: { beginAtZero: true }, // nilai durasi di sumbu X
+          y: { reverse: true }      // ✅ biar yang paling cepat (ASC) tampil di atas
         },
-        options: {
-          scales: { y: { beginAtZero: true } },
-          plugins: { legend: { display: false } }
-        }
-      });
-      console.log('[DEBUG] Chart Response Time berhasil di-init.');
-    } else {
-      console.error('[DEBUG] Canvas #responseTimeChart TIDAK DITEMUKAN.');
-    }
-  } catch (error) {
-    console.error('[DEBUG] Error Response Time:', error);
+        plugins: { legend: { display: false } }
+      }
+    });
   }
+} catch (error) {
+  console.error('[DEBUG] Error Response Time:', error);
+}
+
+
 
    // --- 5. MONTHLY TREND (Line Chart) ---
   console.log('--- [DEBUG] 5. Fetching Trend Bulanan... ---');
@@ -420,14 +451,40 @@ document.addEventListener('DOMContentLoaded', async () => {
   // DEMOGRAFI PRODI
 try {
   const prodi = await fetch('/api/visualisasi/demografi-prodi').then(r => r.json());
-  new Chart(document.getElementById('demografiProdiChart'), {
-    type: 'bar',
-    data: {
-      labels: prodi.map(x => x.label),
-      datasets: [{ data: prodi.map(x => x.value) }]
-    },
-    options: { plugins: { legend: { display: false } } }
-  });
+  const colorMap = {
+  'Teknologi Sains Data': '#9613CF',
+  'Rekayasa Nanoteknologi': '#CC2929',
+  'Teknik Robotika & Kecerdasan Buatan': '#8A8484',
+  'Teknik Industri': '#518CDB',
+  'Teknik Elektro': '#E3D649',
+};
+
+new Chart(document.getElementById('demografiProdiChart'), {
+  type: 'bar',
+  data: {
+    labels: prodi.map(x => x.label),
+    datasets: [{
+      data: prodi.map(x => x.value),
+      backgroundColor: prodi.map(x => colorMap[x.label] ?? '#9BD0F5'),
+      borderColor: prodi.map(x => colorMap[x.label] ?? '#9BD0F5'),
+      borderWidth: 1,
+    }]
+  },
+  options: { 
+    plugins: { legend: { display: false } },
+    scales: {
+    x: {
+      ticks: {
+        autoSkip: false,
+        maxRotation: 0,
+        minRotation: 0
+      }
+    }
+  }
+  }
+});
+
+  
 } catch (e) { console.warn('Demografi prodi gagal', e); }
 
 // DEMOGRAFI GENDER
@@ -446,11 +503,25 @@ try {
 // DEMOGRAFI ANGKATAN
 try {
   const a = await fetch('/api/visualisasi/demografi-angkatan').then(r => r.json());
+
+  const colorMap = {
+    '2021': '#7C3AED',
+    '2022': '#F59E0B',
+    '2023': '#10B981',
+    '2024': '#EF4444',
+    '2025': '#3B82F6',
+  };
+
   new Chart(document.getElementById('demografiAngkatanChart'), {
     type: 'bar',
     data: {
-      labels: a.map(x => x.label),
-      datasets: [{ data: a.map(x => x.value) }]
+      labels: a.map(x => String(x.label)),
+      datasets: [{
+        data: a.map(x => x.value),
+        backgroundColor: a.map(x => colorMap[String(x.label)] ?? '#9BD0F5'),
+        borderColor: a.map(x => colorMap[String(x.label)] ?? '#9BD0F5'),
+        borderWidth: 1,
+      }]
     },
     options: { plugins: { legend: { display: false } } }
   });
