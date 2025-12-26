@@ -105,7 +105,13 @@ Jalankan migrasi untuk membuat tabel dan mengisi data awal (dummy data) agar apl
 php artisan migrate:fresh --seed
 ```
 
-### 7. Jalankan Server
+### 7. Setup Storage Link
+Buat symbolic link untuk folder storage agar file yang diupload bisa diakses oleh publik.
+```bash
+php artisan storage:link
+```
+
+### 8. Jalankan Server
 Jalankan server pengembangan lokal Laravel.
 ```bash
 php artisan serve
